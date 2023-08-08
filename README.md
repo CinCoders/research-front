@@ -1,8 +1,8 @@
 # Research Dashboard
 
-The Research Dashboard is a system built to display information extracted from professors' Lattes curriculum.
+The Research Dashboard is an intuitive and user-friendly front end that showcases the information extracted from professors' Lattes curriculum through the API. It provides interactive dashboards and visualizations for a comprehensive and insightful presentation, giving a better and more engaging visualization of the summarized information, allowing researchers to gain valuable insights into the academic contributions of large groups of professors with ease.
 
-## Technologies used
+## Main Technologies used
 
 - [React](https://pt*br.reactjs.org/)
 - [MUI](https://mui.com/)
