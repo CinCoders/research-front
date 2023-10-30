@@ -23,17 +23,14 @@ function ImportXml() {
     pageSize: 25,
   });
   const [firstRowByProfessor, setFirstRowByProfessor] = useState<{ [professor: string]: ImportXmlRows }>({});
-  const [isRotating, setIsRotating] = useState(false);
+  const [rotatingButtons, setRotatingButtons] = useState<{ [professor: string]: boolean }>({});
 
-  const handleButtonClick = () => {
-    setIsRotating(true);
-
-    // Add your custom logic or API call here
-
-    // Reset the rotation after a delay (e.g., 2 seconds)
+  const handleButtonClick = (professor: string) => {
+    // setIsRotating(true);
+    setRotatingButtons(prevState => ({ ...prevState, [professor]: true }));
     setTimeout(() => {
-      setIsRotating(false);
-    }, 2000);
+      setRotatingButtons(prevState => ({ ...prevState, [professor]: false }));
+    }, 4000);
   };
   const columns: GridColDef[] = [
     {
@@ -94,21 +91,24 @@ function ImportXml() {
       align: 'center',
       flex: 2,
       renderCell: params => {
-        // Check if the professor from the current row exists in firstRowByProfessor
-        // console.log(params);
-        if (params.row && params.row.professor) {
+        // console.log({ params });
+        if (params.row) {
           const { professor } = params.row;
           // console.log(firstRowByProfessor);
-          // console.log(professor);
-          console.log(firstRowByProfessor);
-          // console.log(professor);
-          if (firstRowByProfessor[professor] === params.row) {
+          // console.log('hey b4');
+          // console.log(params.row.importTime);
+          console.log(firstRowByProfessor[professor]);
+          console.log(params.row, 'params.row');
+          console.log(firstRowByProfessor[professor] === params.row);
+          if (firstRowByProfessor[professor]?.id === params.row.id) {
+            // console.log('hey');
             return (
               <AnimatedRefreshButton
-                isRotating={isRotating} // Pass the isRotating prop
-                onClick={handleButtonClick}
+                isRotating={rotatingButtons[professor]}
+                onClick={() => handleButtonClick(professor)}
                 variant='text'
-                startIcon={isRotating ? <RefreshIcon /> : null}
+                style={{ pointerEvents: rotatingButtons[professor] ? 'none' : 'auto' }}
+                disableRipple
               >
                 <RefreshIcon />
               </AnimatedRefreshButton>
@@ -119,18 +119,6 @@ function ImportXml() {
       },
     },
   ];
-
-  // function renderReprocess() {
-  //   return (
-  //     <button
-  //       type='button'
-  //       onClick={() => console.log('hey')}
-  //       style={{ background: 'none', border: 'none', cursor: 'pointer' }}
-  //     >
-  //       <RefreshIcon />
-  //     </button>
-  //   );
-  // }
 
   function dateInFull(date: Date) {
     const fullDate = date.toLocaleString(undefined, {
@@ -164,6 +152,7 @@ function ImportXml() {
         if (professor && !(professor in firstRowByProfessor)) {
           // firstRowByProfessor[professor] = xml;
           // Instead of modifying `firstRowByProfessor` directly, update it using `setFirstRowByProfessor`.
+
           setFirstRowByProfessor(prevData => {
             const newData = { ...prevData };
 
@@ -177,7 +166,7 @@ function ImportXml() {
           });
         }
       });
-      console.log(firstRowByProfessor);
+      // console.log(firstRowByProfessor);
       setPageState(currentValue => ({ ...currentValue, total: data.totalElements }));
       setRows(xmls);
     } catch {
@@ -196,6 +185,17 @@ function ImportXml() {
   useEffect(() => {
     loadPaginatedData(pageState.page, pageState.pageSize);
   }, [pageState.pageSize, pageState.page, loadPaginatedData]);
+  // useEffect(() => {
+  //   const newFirstRowByProfessor = rows.reduce((acc, curr) => {
+  //     const { professor } = curr;
+  //     if (professor && !(professor in acc)) {
+  //       acc[professor] = curr;
+  //     }
+  //     return acc;
+  //   }, {} as { [professor: string]: ImportXmlRows });
+
+  //   setFirstRowByProfessor(newFirstRowByProfessor);
+  // }, [rows]);
 
   return (
     <XMLDiv>

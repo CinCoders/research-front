@@ -14,16 +14,14 @@ const spin = keyframes`
 `;
 
 export const AnimatedRefreshButton = styled(Button)<CustomButtonProps>`
-  // Pass your custom prop type to Button
   background: none;
   border: none;
   cursor: pointer;
 
-  /* Apply the animation when the 'isRotating' prop is true */
   ${props =>
     props.isRotating &&
     css`
-      animation: ${spin} 2s linear infinite;
+      animation: ${spin} 1s linear infinite;
     `}
 `;
 
