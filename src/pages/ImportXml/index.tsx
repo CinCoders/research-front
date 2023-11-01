@@ -25,13 +25,6 @@ function ImportXml() {
   const [firstRowByProfessor, setFirstRowByProfessor] = useState<{ [professor: string]: ImportXmlRows }>({});
   const [rotatingButtons, setRotatingButtons] = useState<{ [professor: string]: boolean }>({});
 
-  const handleButtonClick = (professor: string) => {
-    // setIsRotating(true);
-    setRotatingButtons(prevState => ({ ...prevState, [professor]: true }));
-    setTimeout(() => {
-      setRotatingButtons(prevState => ({ ...prevState, [professor]: false }));
-    }, 4000);
-  };
   const columns: GridColDef[] = [
     {
       field: 'name',
@@ -81,7 +74,7 @@ function ImportXml() {
       headerName: 'Usuário',
       headerAlign: 'center',
       align: 'center',
-      description: 'Usuário que realizou a importação',
+      description: 'Usuário que realizou a i  mportação',
       flex: 10,
     },
     {
@@ -91,17 +84,10 @@ function ImportXml() {
       align: 'center',
       flex: 2,
       renderCell: params => {
-        // console.log({ params });
         if (params.row) {
           const { professor } = params.row;
-          // console.log(firstRowByProfessor);
-          // console.log('hey b4');
-          // console.log(params.row.importTime);
-          console.log(firstRowByProfessor[professor]);
-          console.log(params.row, 'params.row');
-          console.log(firstRowByProfessor[professor] === params.row);
+          console.log(params.row);
           if (firstRowByProfessor[professor]?.id === params.row.id) {
-            // console.log('hey');
             return (
               <AnimatedRefreshButton
                 isRotating={rotatingButtons[professor]}
@@ -166,7 +152,6 @@ function ImportXml() {
           });
         }
       });
-      // console.log(firstRowByProfessor);
       setPageState(currentValue => ({ ...currentValue, total: data.totalElements }));
       setRows(xmls);
     } catch {
@@ -196,7 +181,27 @@ function ImportXml() {
 
   //   setFirstRowByProfessor(newFirstRowByProfessor);
   // }, [rows]);
-
+  const handleButtonClick = (professor: string) => {
+    // setIsRotating(true);
+    console.log(professor);
+    setRotatingButtons(prevState => ({ ...prevState, [professor]: true }));
+    // setTimeout(() => {
+    //   setRotatingButtons(prevState => ({ ...prevState, [professor]: false }));
+    // }, 4000);
+    try {
+      const a = ImportXmlService.reprocessXML(professor);
+      console.log(a);
+    } catch (error) {
+      toast.error('Não foi possível reprocessar o XML. Tente novamente mais tarde.', {
+        containerId: 'page',
+      });
+    } finally {
+      setTimeout(() => {
+        setRotatingButtons(prevState => ({ ...prevState, [professor]: false }));
+      }, 4000);
+      loadPaginatedData(pageState.page, pageState.pageSize);
+    }
+  };
   return (
     <XMLDiv>
       <DataDiv>
