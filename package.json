@@ -20,7 +20,7 @@
     "eject": "react-scripts eject"
   },
   "dependencies": {
-    "@cincoders/cinnamon": "^1.0.2",
+    "@cincoders/cinnamon": "^1.2.0",
     "@mui/icons-material": "^5.4.1",
     "@mui/material": "^5.5.0",
     "@mui/x-data-grid": "^5.12.1",
