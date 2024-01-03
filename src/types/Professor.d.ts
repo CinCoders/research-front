@@ -9,4 +9,9 @@ export interface ProfessorDetails {
   id?: number;
   professorName: string;
   identifier: string;
+  artisticProductions: number;
+  books: number;
+  computerArticles: number;
+  computerPublications: number;
+  patents: number;
 }
