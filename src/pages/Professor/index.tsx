@@ -59,7 +59,7 @@ function ProfessorInfo() {
       return response;
     }
     getProfessorName();
-  }, [professor]);
+  }, [professor.id]);
 
   const handleChange = (event: SyntheticEvent, newValue: number) => {
     setValue(newValue);
