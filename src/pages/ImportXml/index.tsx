@@ -24,66 +24,68 @@ function ImportXml() {
   const [firstRowByProfessor, setFirstRowByProfessor] = useState<{ [professor: string]: ImportXmlRows }>({});
   const [rotatingButtons, setRotatingButtons] = useState<{ [professor: string]: boolean }>({});
 
-  const loadPaginatedData = useCallback(
-    async (page: number, pageSize: number, reproc = false) => {
-      setRows([]);
-      setLoading(true);
-      try {
-        const { data } = await ImportXmlService.findAllImportedXmls(pageSize, page - 1);
-        const xmls = data.data.map((elem, i) => ({
-          id: i,
-          professor: elem.professor,
-          name: elem.name,
-          status: elem.status,
-          includedAt: dateInFull(new Date(elem.includedAt)),
-          importTime: elem.importTime ? `${elem.importTime}s` : '',
-          user: elem.user,
-        }));
-        console.log('xmls', xmls);
-        const reversedXmls = [...xmls].reverse();
-        console.log(firstRowByProfessor);
-        // const updatedFirstRowByProfessor = { ...firstRowByProfessor };
-        setFirstRowByProfessor(prevState => {
-          const updatedState = { ...prevState };
+  function dateInFull(date: Date) {
+    const fullDate = date.toLocaleString(undefined, {
+      year: 'numeric',
+      month: 'long',
+      day: '2-digit',
+      hour: '2-digit',
+      minute: '2-digit',
+      second: '2-digit',
+    });
+    return fullDate;
+  }
 
-          reversedXmls.forEach(xml => {
-            const { professor } = xml;
+  const loadPaginatedData = useCallback(async (page: number, pageSize: number, reproc = false) => {
+    setRows([]);
+    setLoading(true);
 
-            if (professor && !(professor in prevState)) {
-              updatedState[professor] = xml;
-            } else if (professor && professor in prevState && reproc) {
-              updatedState[professor] = xml;
-            }
-          });
+    try {
+      const { data } = await ImportXmlService.findAllImportedXmls(pageSize, page - 1);
+      const xmls = data.data.map((elem, i) => ({
+        id: i,
+        professor: elem.professor,
+        name: elem.name,
+        status: elem.status,
+        includedAt: dateInFull(new Date(elem.includedAt)),
+        importTime: elem.importTime ? `${elem.importTime}s` : '',
+        user: elem.user,
+      }));
+      const reversedXmls = [...xmls].reverse();
+      setFirstRowByProfessor(prevState => {
+        const updatedState = { ...prevState };
 
-          return updatedState;
+        reversedXmls.forEach(xml => {
+          const { professor } = xml;
+
+          if (professor && !(professor in prevState)) {
+            updatedState[professor] = xml;
+          } else if (professor && professor in prevState && reproc) {
+            setPageState(currentValue => ({ ...currentValue, page }));
+
+            updatedState[professor] = xml;
+          }
         });
 
-        console.log('reversedXmls', reversedXmls);
-        console.log('firstRowByProfessor', firstRowByProfessor);
-        setRows(xmls);
-        setPageState(currentValue => ({ ...currentValue, total: data.totalElements }));
-      } catch {
-        toast.error('Não foi possível carregar o histórico de importações. Tente novamente mais tarde.', {
-          containerId: 'page',
-        });
-      } finally {
-        setLoading(false);
-      }
-    },
-    [firstRowByProfessor],
-  );
+        return updatedState;
+      });
+
+      setRows(xmls);
+      setPageState(currentValue => ({ ...currentValue, total: data.totalElements }));
+    } catch {
+      toast.error('Não foi possível carregar o histórico de importações. Tente novamente mais tarde.', {
+        containerId: 'page',
+      });
+    } finally {
+      setLoading(false);
+    }
+  }, []);
 
   const handleButtonClick = async (professor: string) => {
     setRotatingButtons(prevState => ({ ...prevState, [professor]: true }));
     try {
       await ImportXmlService.reprocessXML(professor);
-      // setTimeout(() => {
-      await loadPaginatedData(pageState.page, pageState.pageSize, true);
-      // }, 5000);
-      // await loadPaginatedData(pageState.page, pageState.pageSize);
-      // console.log(testResult);
-      // loadPaginatedData(pageState.page, pageState.pageSize);
+      await loadPaginatedData(1, pageState.pageSize, true);
     } catch (error) {
       toast.error('Não foi possível reprocessar o XML. Tente novamente mais tarde.', {
         containerId: 'page',
@@ -92,10 +94,6 @@ function ImportXml() {
       setRotatingButtons(prevState => ({ ...prevState, [professor]: false }));
     }
   };
-
-  useEffect(() => {
-    console.log('Updated firstRowByProfessor:', firstRowByProfessor);
-  }, [firstRowByProfessor]);
 
   const columns: GridColDef[] = [
     {
@@ -183,27 +181,13 @@ function ImportXml() {
     },
   ];
 
-  function dateInFull(date: Date) {
-    const fullDate = date.toLocaleString(undefined, {
-      year: 'numeric',
-      month: 'long',
-      day: '2-digit',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-    });
-    return fullDate;
-  }
-
   const updateRows = useMemo(() => {
-    console.log('triggered usememo');
     const updatedRows = rows.map(xml => ({
       ...xml,
       showIcon:
         firstRowByProfessor[xml.professor]?.includedAt === xml.includedAt &&
         firstRowByProfessor[xml.professor].importTime === xml.importTime,
     }));
-    console.log(updatedRows);
     return updatedRows;
   }, [rows]);
 
@@ -245,6 +229,7 @@ function ImportXml() {
               },
             },
           }}
+          key={pageState.page}
         />
       </DataDiv>
       <ButtonsDiv>
