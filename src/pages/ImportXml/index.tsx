@@ -81,7 +81,7 @@ function ImportXml() {
     }
   }, []);
 
-  const handleButtonClick = async (professor: string) => {
+  const handleReprocessClick = async (professor: string) => {
     setRotatingButtons(prevState => ({ ...prevState, [professor]: true }));
     try {
       await ImportXmlService.reprocessXML(professor);
@@ -160,7 +160,7 @@ function ImportXml() {
           return (
             <AnimatedRefreshButton
               isRotating={rotatingButtons[professor] || status === 'In Progress'}
-              onClick={() => handleButtonClick(professor)}
+              onClick={() => handleReprocessClick(professor)}
               variant='text'
               style={{
                 pointerEvents: rotatingButtons[professor] || status === 'In Progress' ? 'none' : 'auto',
