@@ -1,6 +1,6 @@
 import { DataGrid, GridColDef, ptBR } from '@mui/x-data-grid';
 import { toast, useNavbar } from '@cincoders/cinnamon';
-import { useState, useEffect, useCallback, useMemo } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Modal, Grow } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { XMLDiv, DataDiv, ButtonsDiv, ImportButton, CardType, AnimatedRefreshButton } from './styles';
@@ -21,8 +21,8 @@ function ImportXml() {
     isLoading: false,
     pageSize: 25,
   });
-  const [firstRowByProfessor, setFirstRowByProfessor] = useState<{ [professor: string]: ImportXmlRows }>({});
-  const [rotatingButtons, setRotatingButtons] = useState<{ [professor: string]: boolean }>({});
+  // const [firstRowByProfessor, setFirstRowByProfessor] = useState<{ [professor: string]: ImportXmlRows }>({});
+  // const [rotatingButtons, setRotatingButtons] = useState<{ [professor: string]: boolean }>({});
 
   function dateInFull(date: Date) {
     const fullDate = date.toLocaleString(undefined, {
@@ -36,39 +36,42 @@ function ImportXml() {
     return fullDate;
   }
 
-  const loadPaginatedData = useCallback(async (page: number, pageSize: number, reproc = false) => {
+  const loadPaginatedData = useCallback(async (page: number, pageSize: number) => {
     setRows([]);
     setLoading(true);
 
     try {
       const { data } = await ImportXmlService.findAllImportedXmls(pageSize, page - 1);
-      const xmls = data.data.map((elem, i) => ({
-        id: i,
+
+      const xmls = data.data.map(elem => ({
+        id: elem.id,
         professor: elem.professor,
         name: elem.name,
         status: elem.status,
         includedAt: dateInFull(new Date(elem.includedAt)),
         importTime: elem.importTime ? `${elem.importTime}s` : '',
         user: elem.user,
+        reprocessFlag: elem.reprocessFlag,
       }));
-      const reversedXmls = [...xmls].reverse();
-      setFirstRowByProfessor(prevState => {
-        const updatedState = { ...prevState };
+      console.log(xmls);
+      // const reversedXmls = [...xmls].reverse();
+      // setFirstRowByProfessor(prevState => {
+      //   const updatedState = { ...prevState };
 
-        reversedXmls.forEach(xml => {
-          const { professor } = xml;
+      //   reversedXmls.forEach(xml => {
+      //     const { professor } = xml;
 
-          if (professor && !(professor in prevState)) {
-            updatedState[professor] = xml;
-          } else if (professor && professor in prevState && reproc) {
-            setPageState(currentValue => ({ ...currentValue, page }));
+      //     if (professor && !(professor in prevState)) {
+      //       updatedState[professor] = xml;
+      //     } else if (professor && professor in prevState && reproc) {
+      //       setPageState(currentValue => ({ ...currentValue, page }));
 
-            updatedState[professor] = xml;
-          }
-        });
+      //       updatedState[professor] = xml;
+      //     }
+      //   });
 
-        return updatedState;
-      });
+      //   return updatedState;
+      // });
 
       setRows(xmls);
       setPageState(currentValue => ({ ...currentValue, total: data.totalElements }));
@@ -81,17 +84,17 @@ function ImportXml() {
     }
   }, []);
 
-  const handleReprocessClick = async (professor: string) => {
-    setRotatingButtons(prevState => ({ ...prevState, [professor]: true }));
+  const handleReprocessClick = async (xmlId: string) => {
+    // setRotatingButtons(prevState => ({ ...prevState, [xmlId]: true }));
     try {
-      await ImportXmlService.reprocessXML(professor);
-      await loadPaginatedData(1, pageState.pageSize, true);
+      await ImportXmlService.reprocessXML(xmlId);
+      await loadPaginatedData(1, pageState.pageSize);
     } catch (error) {
       toast.error('Não foi possível reprocessar o XML. Tente novamente mais tarde.', {
         containerId: 'page',
       });
     } finally {
-      setRotatingButtons(prevState => ({ ...prevState, [professor]: false }));
+      // setRotatingButtons(prevState => ({ ...prevState, [xmlId]: false }));
     }
   };
 
@@ -154,16 +157,15 @@ function ImportXml() {
       align: 'center',
       flex: 2,
       renderCell: params => {
-        const { professor, status, showIcon } = params.row;
-
-        if (showIcon) {
+        const { status, reprocessFlag, id } = params.row;
+        if (reprocessFlag) {
           return (
             <AnimatedRefreshButton
-              isRotating={rotatingButtons[professor] || status === 'In Progress'}
-              onClick={() => handleReprocessClick(professor)}
+              isrotating={status === 'In Progress' || status === 'Pending'}
+              onClick={() => handleReprocessClick(id)}
               variant='text'
               style={{
-                pointerEvents: rotatingButtons[professor] || status === 'In Progress' ? 'none' : 'auto',
+                pointerEvents: status === 'In Progress' || status === 'Pending' ? 'none' : 'auto',
               }}
               sx={{
                 '&:hover': {
@@ -181,16 +183,6 @@ function ImportXml() {
     },
   ];
 
-  const updateRows = useMemo(() => {
-    const updatedRows = rows.map(xml => ({
-      ...xml,
-      showIcon:
-        firstRowByProfessor[xml.professor]?.includedAt === xml.includedAt &&
-        firstRowByProfessor[xml.professor].importTime === xml.importTime,
-    }));
-    return updatedRows;
-  }, [rows]);
-
   useEffect(() => {
     navbar?.setTitle('Importação de XML');
   }, [navbar]);
@@ -204,7 +196,7 @@ function ImportXml() {
       <DataDiv>
         <DataGrid
           columns={columns}
-          rows={updateRows}
+          rows={rows}
           loading={loading}
           localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
           rowCount={pageState.total}

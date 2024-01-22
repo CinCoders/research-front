@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
 import apiBack from './api';
-import { ImportXmlDto, ImportXmlProps, Pagination } from '../types/Xml.d';
+import { ImportXmlProps, ImportXmlRows, Pagination } from '../types/Xml.d';
 
 export class ImportXmlService {
   static async importXml(
@@ -32,8 +32,8 @@ export class ImportXmlService {
     limit: number,
     page: number,
     offset?: number,
-  ): Promise<AxiosResponse<Pagination<ImportXmlDto[]>>> {
-    const response = await apiBack.get<Pagination<ImportXmlDto[]>>('import-xml', {
+  ): Promise<AxiosResponse<Pagination<ImportXmlRows[]>>> {
+    const response = await apiBack.get<Pagination<ImportXmlRows[]>>('import-xml', {
       validateStatus: status => [200].includes(status),
       params: { limit, page, offset },
     });

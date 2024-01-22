@@ -2,8 +2,9 @@ import { Box, Button, Card } from '@mui/material';
 import styled, { keyframes, css } from 'styled-components';
 
 interface CustomButtonProps {
-  isRotating: boolean; // Define your custom prop
+  isrotating: boolean;
 }
+
 const spin = keyframes`
   from {
     transform: rotate(0deg);
@@ -18,8 +19,8 @@ export const AnimatedRefreshButton = styled(Button)<CustomButtonProps>`
   border: none;
   cursor: pointer;
 
-  ${props =>
-    props.isRotating &&
+  ${(props: CustomButtonProps) =>
+    props.isrotating &&
     css`
       animation: ${spin} 1s linear infinite;
     `}

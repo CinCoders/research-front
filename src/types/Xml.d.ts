@@ -22,8 +22,9 @@ export interface ImportXmlDto {
   status: string;
   includedAt: string;
   importTime: string | undefined;
+  reprocessFlag: boolean;
 }
 
 export interface ImportXmlRows extends ImportXmlDto {
-  id: number;
+  id: string;
 }
