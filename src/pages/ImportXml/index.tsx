@@ -21,8 +21,7 @@ function ImportXml() {
     isLoading: false,
     pageSize: 25,
   });
-  // const [firstRowByProfessor, setFirstRowByProfessor] = useState<{ [professor: string]: ImportXmlRows }>({});
-  // const [rotatingButtons, setRotatingButtons] = useState<{ [professor: string]: boolean }>({});
+  const [rotatingButtons, setRotatingButtons] = useState<{ [xmlId: string]: boolean }>({});
 
   function dateInFull(date: Date) {
     const fullDate = date.toLocaleString(undefined, {
@@ -53,25 +52,6 @@ function ImportXml() {
         user: elem.user,
         reprocessFlag: elem.reprocessFlag,
       }));
-      console.log(xmls);
-      // const reversedXmls = [...xmls].reverse();
-      // setFirstRowByProfessor(prevState => {
-      //   const updatedState = { ...prevState };
-
-      //   reversedXmls.forEach(xml => {
-      //     const { professor } = xml;
-
-      //     if (professor && !(professor in prevState)) {
-      //       updatedState[professor] = xml;
-      //     } else if (professor && professor in prevState && reproc) {
-      //       setPageState(currentValue => ({ ...currentValue, page }));
-
-      //       updatedState[professor] = xml;
-      //     }
-      //   });
-
-      //   return updatedState;
-      // });
 
       setRows(xmls);
       setPageState(currentValue => ({ ...currentValue, total: data.totalElements }));
@@ -85,7 +65,7 @@ function ImportXml() {
   }, []);
 
   const handleReprocessClick = async (xmlId: string) => {
-    // setRotatingButtons(prevState => ({ ...prevState, [xmlId]: true }));
+    setRotatingButtons(prevState => ({ ...prevState, [xmlId]: true }));
     try {
       await ImportXmlService.reprocessXML(xmlId);
       await loadPaginatedData(1, pageState.pageSize);
@@ -94,7 +74,7 @@ function ImportXml() {
         containerId: 'page',
       });
     } finally {
-      // setRotatingButtons(prevState => ({ ...prevState, [xmlId]: false }));
+      setRotatingButtons(prevState => ({ ...prevState, [xmlId]: false }));
     }
   };
 
@@ -161,11 +141,12 @@ function ImportXml() {
         if (reprocessFlag) {
           return (
             <AnimatedRefreshButton
-              isrotating={status === 'In Progress' || status === 'Pending'}
+              isrotating={status === 'In Progress' || status === 'Pending' || rotatingButtons[id]}
               onClick={() => handleReprocessClick(id)}
               variant='text'
               style={{
-                pointerEvents: status === 'In Progress' || status === 'Pending' ? 'none' : 'auto',
+                pointerEvents:
+                  status === 'In Progress' || status === 'Pending' || rotatingButtons[id] ? 'none' : 'auto',
               }}
               sx={{
                 '&:hover': {
