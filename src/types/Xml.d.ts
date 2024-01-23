@@ -22,7 +22,7 @@ export interface ImportXmlDto {
   status: string;
   includedAt: string;
   importTime: string | undefined;
-  reprocessFlag: boolean;
+  storedXml: boolean;
 }
 
 export interface ImportXmlRows extends ImportXmlDto {

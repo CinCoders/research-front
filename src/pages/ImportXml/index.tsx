@@ -50,7 +50,7 @@ function ImportXml() {
         includedAt: dateInFull(new Date(elem.includedAt)),
         importTime: elem.importTime ? `${elem.importTime}s` : '',
         user: elem.user,
-        reprocessFlag: elem.reprocessFlag,
+        storedXml: elem.storedXml,
       }));
 
       setRows(xmls);
@@ -137,8 +137,8 @@ function ImportXml() {
       align: 'center',
       flex: 2,
       renderCell: params => {
-        const { status, reprocessFlag, id } = params.row;
-        if (reprocessFlag) {
+        const { status, storedXml, id } = params.row;
+        if (storedXml) {
           return (
             <AnimatedRefreshButton
               isrotating={status === 'In Progress' || status === 'Pending' || rotatingButtons[id]}
