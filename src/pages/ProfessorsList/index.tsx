@@ -31,11 +31,56 @@ function Table() {
       headerName: 'NOME',
       headerAlign: 'center',
       description: 'Nome do professor',
-      flex: 30,
+      flex: 25,
       renderCell: params => {
         const link = Links.PROFESSOR_INFO.replace(':id', params.row.professorId as unknown as string);
         return <LinkButton title={params.value} route={link} />;
       },
+      renderHeader: renderHeaderTooltip,
+    },
+    {
+      field: 'computerArticles',
+      headerName: 'ARTIGOS',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Nº de artigos de computação do professor',
+      flex: 9,
+      renderHeader: renderHeaderTooltip,
+    },
+    {
+      field: 'computerPublications',
+      headerName: 'PUBLICAÇÕES',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Nº de publicações de computação do professor',
+      flex: 8,
+      renderHeader: renderHeaderTooltip,
+    },
+    {
+      field: 'books',
+      headerName: 'LIVROS',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Nº de livros escritos pelo professor',
+      flex: 8,
+      renderHeader: renderHeaderTooltip,
+    },
+    {
+      field: 'patents',
+      headerName: 'PATENTES',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Nº de patentes feitos pelo professor',
+      flex: 8,
+      renderHeader: renderHeaderTooltip,
+    },
+    {
+      field: 'artisticProductions',
+      headerName: 'PROD. ARTÍSTICAS',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Nº de produções artísticas feitas pelo professor',
+      flex: 8,
       renderHeader: renderHeaderTooltip,
     },
     {
@@ -44,7 +89,7 @@ function Table() {
       headerAlign: 'center',
       align: 'center',
       description: 'Código lattes do professor',
-      flex: 10,
+      flex: 15,
       renderCell: params => <LattesText text={params.row.identifier as string} />,
       renderHeader: renderHeaderTooltip,
     },
@@ -95,7 +140,7 @@ function Table() {
       headerAlign: 'center',
       align: 'center',
       description: 'Excluir Professor',
-      flex: 5,
+      flex: 7,
       minWidth: 10,
       renderCell: params => {
         const professor = params.row;
@@ -124,6 +169,11 @@ function Table() {
           professorId: element.professorId,
           professorName: element.professorName,
           identifier: element.identifier,
+          artisticProductions: element.artisticProductions,
+          books: element.books,
+          computerArticles: element.computerArticles,
+          computerPublications: element.computerPublications,
+          patents: element.patents,
         }));
         setRows(newData);
       } else {
