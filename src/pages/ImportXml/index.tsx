@@ -170,7 +170,7 @@ function ImportXml() {
 
   useEffect(() => {
     loadPaginatedData(pageState.page, pageState.pageSize);
-  }, [pageState.pageSize, pageState.page]);
+  }, [pageState.pageSize, pageState.page, loadPaginatedData]);
 
   return (
     <XMLDiv>

@@ -21,7 +21,9 @@ export class ImportXmlService {
       },
       validateStatus: (status: number) => [201, 500].includes(status),
       onUploadProgress: progressEvent => {
-        const progress: number = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+        const progress: number = progressEvent?.total
+          ? Math.round((progressEvent.loaded / progressEvent.total) * 100)
+          : 0;
         updateProgress(progress);
       },
     });
