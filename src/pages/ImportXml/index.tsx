@@ -2,70 +2,18 @@ import { DataGrid, GridColDef, ptBR } from '@mui/x-data-grid';
 import { toast, useNavbar } from '@cincoders/cinnamon';
 import { useState, useEffect, useCallback } from 'react';
 import { Modal, Grow } from '@mui/material';
-import { XMLDiv, DataDiv, ButtonsDiv, ImportButton, CardType } from './styles';
+import RefreshIcon from '@mui/icons-material/Refresh';
+import { XMLDiv, DataDiv, ButtonsDiv, ImportButton, CardType, AnimatedRefreshButton } from './styles';
 import { ImportXmlService } from '../../services/ImportXmlService';
 import { renderImportStatus } from '../../components/ImportStatus';
-import ImportCard from '../../components/ImportCard';
-import { ImportXmlRows } from '../../types/Xml.d';
 
-const columns: GridColDef[] = [
-  {
-    field: 'name',
-    headerName: 'Arquivo',
-    headerAlign: 'center',
-    align: 'center',
-    description: 'Nome do arquivo',
-    flex: 7,
-  },
-  {
-    field: 'professor',
-    headerName: 'Professor',
-    headerAlign: 'center',
-    align: 'center',
-    description: 'Professor cujo XML foi importado',
-    flex: 11,
-    type: 'string',
-  },
-  {
-    field: 'status',
-    headerName: 'Status',
-    renderCell: renderImportStatus,
-    headerAlign: 'center',
-    align: 'center',
-    description: 'Status da importação',
-    flex: 6,
-  },
-  {
-    field: 'importTime',
-    headerName: 'Tempo da importação',
-    headerAlign: 'center',
-    align: 'center',
-    description: 'Duração de tempo que o XML foi importado',
-    flex: 7,
-    type: 'string',
-  },
-  {
-    field: 'includedAt',
-    headerName: 'Data da importação',
-    headerAlign: 'center',
-    align: 'center',
-    description: 'Data que o XML foi importado',
-    flex: 10,
-  },
-  {
-    field: 'user',
-    headerName: 'Usuário',
-    headerAlign: 'center',
-    align: 'center',
-    description: 'Usuário que realizou a importação',
-    flex: 10,
-  },
-];
+import ImportCard from '../../components/ImportCard';
+import { ImportXmlDto } from '../../types/Xml.d';
 
 function ImportXml() {
   const navbar = useNavbar();
   const [loading, setLoading] = useState<boolean>(true);
-  const [rows, setRows] = useState<ImportXmlRows[]>([]);
+  const [rows, setRows] = useState<ImportXmlDto[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [pageState, setPageState] = useState({
     page: 1,
@@ -73,6 +21,8 @@ function ImportXml() {
     isLoading: false,
     pageSize: 25,
   });
+  const [rotatingButtons, setRotatingButtons] = useState<{ [xmlId: string]: boolean }>({});
+
   function dateInFull(date: Date) {
     const fullDate = date.toLocaleString(undefined, {
       year: 'numeric',
@@ -84,22 +34,27 @@ function ImportXml() {
     });
     return fullDate;
   }
+
   const loadPaginatedData = useCallback(async (page: number, pageSize: number) => {
     setRows([]);
     setLoading(true);
+
     try {
       const { data } = await ImportXmlService.findAllImportedXmls(pageSize, page - 1);
-      const xmls = data.data.map((elem, i) => ({
-        id: i,
+
+      const xmls = data.data.map(elem => ({
+        id: elem.id,
         professor: elem.professor,
         name: elem.name,
         status: elem.status,
         includedAt: dateInFull(new Date(elem.includedAt)),
         importTime: elem.importTime ? `${elem.importTime}s` : '',
         user: elem.user,
+        storedXml: elem.storedXml,
       }));
-      setPageState(currentValue => ({ ...currentValue, total: data.totalElements }));
+
       setRows(xmls);
+      setPageState(currentValue => ({ ...currentValue, total: data.totalElements }));
     } catch {
       toast.error('Não foi possível carregar o histórico de importações. Tente novamente mais tarde.', {
         containerId: 'page',
@@ -109,13 +64,113 @@ function ImportXml() {
     }
   }, []);
 
+  const handleReprocessClick = async (xmlId: string) => {
+    setRotatingButtons(prevState => ({ ...prevState, [xmlId]: true }));
+    try {
+      await ImportXmlService.reprocessXML(xmlId);
+      await loadPaginatedData(1, pageState.pageSize);
+    } catch (error) {
+      toast.error('Não foi possível reprocessar o XML. Tente novamente mais tarde.', {
+        containerId: 'page',
+      });
+    } finally {
+      setRotatingButtons(prevState => ({ ...prevState, [xmlId]: false }));
+    }
+  };
+
+  const columns: GridColDef[] = [
+    {
+      field: 'name',
+      headerName: 'Arquivo',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Nome do arquivo',
+      flex: 7,
+    },
+    {
+      field: 'professor',
+      headerName: 'Professor',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Professor cujo XML foi importado',
+      flex: 11,
+      type: 'string',
+    },
+    {
+      field: 'status',
+      headerName: 'Status',
+      renderCell: renderImportStatus,
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Status da importação',
+      flex: 6,
+    },
+    {
+      field: 'importTime',
+      headerName: 'Tempo da importação',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Duração de tempo que o XML foi importado',
+      flex: 7,
+      type: 'string',
+    },
+    {
+      field: 'includedAt',
+      headerName: 'Data da importação',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Data que o XML foi importado',
+      flex: 10,
+    },
+    {
+      field: 'user',
+      headerName: 'Usuário',
+      headerAlign: 'center',
+      align: 'center',
+      description: 'Usuário que realizou a i  mportação',
+      flex: 10,
+    },
+    {
+      field: 'reload',
+      headerName: '',
+      headerAlign: 'center',
+      align: 'center',
+      flex: 2,
+      renderCell: params => {
+        const { status, storedXml, id } = params.row;
+        if (storedXml) {
+          return (
+            <AnimatedRefreshButton
+              isrotating={status === 'In Progress' || status === 'Pending' || rotatingButtons[id]}
+              onClick={() => handleReprocessClick(id)}
+              variant='text'
+              style={{
+                pointerEvents:
+                  status === 'In Progress' || status === 'Pending' || rotatingButtons[id] ? 'none' : 'auto',
+              }}
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'initial',
+                },
+              }}
+              disableRipple
+            >
+              <RefreshIcon />
+            </AnimatedRefreshButton>
+          );
+        }
+        return null;
+      },
+    },
+  ];
+
   useEffect(() => {
     navbar?.setTitle('Importação de XML');
   }, [navbar]);
 
   useEffect(() => {
     loadPaginatedData(pageState.page, pageState.pageSize);
-  }, [pageState.pageSize, pageState.page, loadPaginatedData]);
+  }, [pageState.pageSize, pageState.page]);
 
   return (
     <XMLDiv>
@@ -147,6 +202,7 @@ function ImportXml() {
               },
             },
           }}
+          key={pageState.page}
         />
       </DataDiv>
       <ButtonsDiv>

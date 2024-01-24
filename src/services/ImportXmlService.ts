@@ -39,4 +39,11 @@ export class ImportXmlService {
     });
     return response;
   }
+
+  static async reprocessXML(id: string): Promise<AxiosResponse> {
+    const response = await apiBack.get(`import-xml/${id}/reprocess`, {
+      validateStatus: (status: number) => [200].includes(status),
+    });
+    return response;
+  }
 }
