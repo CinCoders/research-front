@@ -16,6 +16,7 @@ export interface Pagination<Type> {
 }
 
 export interface ImportXmlDto {
+  id: string;
   name: string;
   professor: string;
   user: string;
@@ -23,8 +24,4 @@ export interface ImportXmlDto {
   includedAt: string;
   importTime: string | undefined;
   storedXml: boolean;
-}
-
-export interface ImportXmlRows extends ImportXmlDto {
-  id: string;
 }

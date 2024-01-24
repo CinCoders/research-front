@@ -8,12 +8,12 @@ import { ImportXmlService } from '../../services/ImportXmlService';
 import { renderImportStatus } from '../../components/ImportStatus';
 
 import ImportCard from '../../components/ImportCard';
-import { ImportXmlRows } from '../../types/Xml.d';
+import { ImportXmlDto } from '../../types/Xml.d';
 
 function ImportXml() {
   const navbar = useNavbar();
   const [loading, setLoading] = useState<boolean>(true);
-  const [rows, setRows] = useState<ImportXmlRows[]>([]);
+  const [rows, setRows] = useState<ImportXmlDto[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [pageState, setPageState] = useState({
     page: 1,
