@@ -1,4 +1,30 @@
-import { Box, Button, Card, styled } from '@mui/material';
+import { Box, Button, Card } from '@mui/material';
+import styled, { keyframes, css } from 'styled-components';
+
+interface CustomButtonProps {
+  isrotating: boolean;
+}
+
+const spin = keyframes`
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+`;
+
+export const AnimatedRefreshButton = styled(Button)<CustomButtonProps>`
+  background: none;
+  border: none;
+  cursor: pointer;
+
+  ${(props: CustomButtonProps) =>
+    props.isrotating &&
+    css`
+      animation: ${spin} 1s linear infinite;
+    `}
+`;
 
 export const XMLDiv = styled(Box)({
   display: 'flex',

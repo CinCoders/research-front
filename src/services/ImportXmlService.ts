@@ -21,7 +21,9 @@ export class ImportXmlService {
       },
       validateStatus: (status: number) => [201, 500].includes(status),
       onUploadProgress: progressEvent => {
-        const progress: number = Math.round((progressEvent.loaded / progressEvent.total) * 100);
+        const progress: number = progressEvent?.total
+          ? Math.round((progressEvent.loaded / progressEvent.total) * 100)
+          : 0;
         updateProgress(progress);
       },
     });
@@ -36,6 +38,13 @@ export class ImportXmlService {
     const response = await apiBack.get<Pagination<ImportXmlDto[]>>('import-xml', {
       validateStatus: status => [200].includes(status),
       params: { limit, page, offset },
+    });
+    return response;
+  }
+
+  static async reprocessXML(id: string): Promise<AxiosResponse> {
+    const response = await apiBack.get(`import-xml/${id}/reprocess`, {
+      validateStatus: (status: number) => [200].includes(status),
     });
     return response;
   }
