@@ -90,7 +90,7 @@ function Table() {
       align: 'center',
       description: 'Código lattes do professor',
       flex: 15,
-      renderCell: params => <LattesText text={params.row.identifier as string} />,
+      renderCell: params => <LattesText text={params.row.identifier} />,
       valueFormatter: params => params.value as string,
       renderHeader: renderHeaderTooltip,
     },
@@ -121,7 +121,7 @@ function Table() {
       description: 'Link para download do Currículo Lattes do professor em formato XML',
       flex: 10,
       renderCell: params => {
-        const xmlLink = params.row.xmlDownloadLink as string;
+        const xmlLink = params.row.xmlDownloadLink;
         return (
           <LinkButton
             iconComponent={<DownloadIcon color='primary' />}
