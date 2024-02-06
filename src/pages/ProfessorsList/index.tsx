@@ -91,7 +91,7 @@ function Table() {
       description: 'Código lattes do professor',
       flex: 15,
       renderCell: params => <LattesText text={params.row.identifier} />,
-      valueFormatter: params => params.value as string,
+      valueFormatter: params => params.value,
       renderHeader: renderHeaderTooltip,
     },
     {
@@ -103,7 +103,7 @@ function Table() {
       flex: 10,
       renderCell: params => (
         <LinkButton
-          route={params.row.linkLattes as string}
+          route={params.row.linkLattes}
           newTab
           image={lattesLogo}
           width='100%'
