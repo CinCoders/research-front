@@ -9,6 +9,7 @@ export enum Links {
   PROFESSOR_STUDENTS = '/research/professors/:id/graduate-students',
   PROJECTS = '/research/professors/research-projects',
   PROFESSOR_PROJECTS = '/research/professors/:id/research-projects',
+  PATENTS = '/research/patents',
   QUALIS = '/research/qualis/',
   IMPORT_XML = '/research/import-xml',
   LATTES = 'http://lattes.cnpq.br/:id',
