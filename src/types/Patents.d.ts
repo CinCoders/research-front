@@ -1,14 +1,17 @@
 export interface PatentsDTO {
-  id: number;
   professorId?: number;
   professorName?: string;
-  title: string;
-  authors: string;
-  year: number;
-  country: string;
-  category: string;
-  patentType: string;
-  registryCode: string;
+
+  year?: number;
+
+  totalInventionPatents: number;
+  totalUtilityModelPatents: number;
+  totalDepositPatents: number;
+  totalGrantPatents: number;
+  totalLicensePatents: number;
+  brazilianPatents: number;
+  internationalPatents: number;
+
   total: number;
 }
 export interface Patents {
