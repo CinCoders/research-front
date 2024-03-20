@@ -2,14 +2,16 @@ import { toast, useNavbar } from '@cincoders/cinnamon';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
 import { Divider, FormControlLabel, Grid } from '@mui/material';
 import { ChangeEvent, useEffect, useState } from 'react';
-import { PatentsDTO } from '../../types/Patents.d';
-import { PatentService } from '../../services/PatentService';
-import { showErrorStatus } from '../../utils/showErrorStatus';
-import { GridContainer, MainGrid, ProfessorsGrid, TableDiv } from '../../components/TableStyles/styles';
-import { ButtonsGrid } from '../../components/ButtonsGrid/styles';
-import { RedSwitch } from '../../components/RedSwitch';
-import { renderHeaderTooltip } from '../../components/HeaderTooltip';
-import { CustomToolbar } from '../../components/CustomToolbar';
+import { PatentsDTO } from '../../../types/Patents.d';
+import { PatentService } from '../../../services/PatentService';
+import { showErrorStatus } from '../../../utils/showErrorStatus';
+import { GridContainer, MainGrid, ProfessorsGrid, TableDiv } from '../../../components/TableStyles/styles';
+import { ButtonsGrid } from '../../../components/ButtonsGrid/styles';
+import { RedSwitch } from '../../../components/RedSwitch';
+import { renderHeaderTooltip } from '../../../components/HeaderTooltip';
+import { CustomToolbar } from '../../../components/CustomToolbar';
+import { Links } from '../../../types/enums';
+import { LinkButton } from '../../../components/LinkButton';
 
 const columns: GridColDef[] = [
   {
@@ -25,13 +27,30 @@ const columns: GridColDef[] = [
   },
   {
     field: 'professorName',
-    headerName: 'PROFESSOR',
+    headerName: 'NOME',
     description: 'Nome do professor',
     headerAlign: 'center',
     flex: 30,
-    renderCell: params => params.value,
+    renderCell: params => {
+      let route = '';
+      if (params.row.professorId) {
+        route = Links.PROFESSOR_PATENTS.replace(':id', (params.row.professorId as number).toString());
+      }
+      return <LinkButton title={params.value} route={route} />;
+    },
     renderHeader: renderHeaderTooltip,
   },
+  {
+    field: 'total',
+    headerName: 'TOTAL',
+    description: 'Total de patentes',
+    headerAlign: 'center',
+    align: 'center',
+    flex: 20,
+    renderHeader: renderHeaderTooltip,
+    type: 'number',
+  },
+
   {
     field: 'totalInventionPatents',
     headerName: 'PATENTES DE INVENÇÃO',
@@ -103,16 +122,6 @@ const columns: GridColDef[] = [
     renderHeader: renderHeaderTooltip,
     type: 'number',
   },
-  {
-    field: 'total',
-    headerName: 'TOTAL',
-    description: 'Total de patentes',
-    headerAlign: 'center',
-    align: 'center',
-    flex: 20,
-    renderHeader: renderHeaderTooltip,
-    type: 'number',
-  },
 ];
 
 function PatentsTable() {
@@ -174,19 +183,6 @@ function PatentsTable() {
     loadData();
   }, [checkedYear, checkedProfessor]);
 
-  // const columns = [
-  //   { field: 'id', headerName: 'ID', width: 70 },
-  //   { field: 'year', headerName: 'Year', width: 130 },
-  //   { field: 'professorId', headerName: 'Professor ID', width: 130 },
-  //   { field: 'professorName', headerName: 'Professor Name', width: 130 },
-  //   { field: 'title', headerName: 'Title', width: 130 },
-  //   { field: 'authors', headerName: 'Authors', width: 130 },
-  //   { field: 'country', headerName: 'Country', width: 130 },
-  //   { field: 'category', headerName: 'Category', width: 130 },
-  //   { field: 'patentType', headerName: 'Patent Type', width: 130 },
-  //   { field: 'registryCode', headerName: 'Registry Code', width: 130 },
-  //   { field: 'total', headerName: 'Total', width: 130 },
-  // ];
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     setCheckedYear(event.target.checked);
   };
