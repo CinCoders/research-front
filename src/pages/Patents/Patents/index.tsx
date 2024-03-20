@@ -47,6 +47,7 @@ const columns: GridColDef[] = [
     headerAlign: 'center',
     align: 'center',
     flex: 20,
+    headerClassName: 'total--header',
     renderHeader: renderHeaderTooltip,
     type: 'number',
   },
@@ -59,6 +60,8 @@ const columns: GridColDef[] = [
     align: 'center',
     flex: 20,
     renderHeader: renderHeaderTooltip,
+    headerClassName: 'category--header',
+
     type: 'number',
   },
   {
@@ -69,36 +72,41 @@ const columns: GridColDef[] = [
     align: 'center',
     flex: 20,
     renderHeader: renderHeaderTooltip,
+    headerClassName: 'category--header',
+
     type: 'number',
   },
 
   {
     field: 'totalDepositPatents',
     headerName: 'DEPÓSITOS',
-    description: 'Total de depósitos',
+    description: 'Total de patentes em situação de depósito',
     headerAlign: 'center',
     align: 'center',
     flex: 20,
     renderHeader: renderHeaderTooltip,
+    headerClassName: 'situation-status--header',
     type: 'number',
   },
   {
     field: 'totalGrantPatents',
     headerName: 'CONCESSÕES',
-    description: 'Total de concessões',
+    description: 'Total de patentes em situação de concessão',
     headerAlign: 'center',
     align: 'center',
     flex: 20,
+    headerClassName: 'situation-status--header',
     renderHeader: renderHeaderTooltip,
     type: 'number',
   },
   {
     field: 'totalLicensePatents',
     headerName: 'LICENÇAS',
-    description: 'Total de licenças',
+    description: 'Total de patentes em situação de licença',
     headerAlign: 'center',
     align: 'center',
     flex: 20,
+    headerClassName: 'situation-status--header',
     renderHeader: renderHeaderTooltip,
     type: 'number',
   },
@@ -109,6 +117,7 @@ const columns: GridColDef[] = [
     headerAlign: 'center',
     align: 'center',
     flex: 20,
+    headerClassName: 'country--header',
     renderHeader: renderHeaderTooltip,
     type: 'number',
   },
@@ -119,6 +128,7 @@ const columns: GridColDef[] = [
     headerAlign: 'center',
     align: 'center',
     flex: 20,
+    headerClassName: 'country--header',
     renderHeader: renderHeaderTooltip,
     type: 'number',
   },
@@ -202,7 +212,22 @@ function PatentsTable() {
           />
         </Grid>
       </ButtonsGrid>
-      <TableDiv>
+      <TableDiv
+        sx={{
+          '& .category--header .iNdfiT': {
+            color: '#83bcff ',
+            // backgroundColor: 'black',
+          },
+          '& .situation-status--header .iNdfiT': {
+            color: '#84dcc6 ',
+            // backgroundColor: 'black',
+          },
+          '& .country--header .iNdfiT': {
+            color: '#f8ad9d',
+            // backgroundColor: 'black',
+          },
+        }}
+      >
         <MainGrid
           rows={rows}
           columns={columns}

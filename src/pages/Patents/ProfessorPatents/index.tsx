@@ -22,7 +22,7 @@ const columns: GridColDef[] = [
     headerAlign: 'center',
     align: 'center',
     description: 'Ano de desenvolvimento do projeto',
-    flex: 10,
+    flex: 5,
     renderHeader: renderHeaderTooltip,
     type: 'number',
     renderCell: params => params.value,
@@ -70,6 +70,7 @@ const columns: GridColDef[] = [
     field: 'patentType',
     headerName: 'TIPO DE PATENTE',
     headerAlign: 'center',
+    align: 'center',
     description: 'Tipo de patente',
     flex: 10,
     renderHeader: renderHeaderTooltip,
@@ -90,7 +91,15 @@ const columns: GridColDef[] = [
 export function ProfessorPatentsTable({ paramId }: ParamsProps) {
   const [rows, setRows] = useState<ProfessorPatents[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
-
+  function formatString(input: string) {
+    let formatted = '';
+    if (input === 'PRIVILEGIO_DE_INOVACAO_PI') {
+      formatted = 'Privilégio de Inovação';
+    } else if (input === 'MODELO_DE_UTILIDADE_MU') {
+      formatted = 'Modelo de Utilidade';
+    }
+    return formatted;
+  }
   useEffect(() => {
     async function loadData() {
       setRows([]);
@@ -107,7 +116,7 @@ export function ProfessorPatentsTable({ paramId }: ParamsProps) {
             developmentYear: patent.developmentYear,
             country: patent.country,
             category: patent.category,
-            patentType: patent.patentType,
+            patentType: formatString(patent.patentType),
             registryCode: patent.registryCode,
           }));
           setRows(newData);
