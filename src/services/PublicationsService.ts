@@ -22,9 +22,12 @@ export class PublicationsService {
     professor: boolean,
     articles: boolean,
     conferences: boolean,
+    startYear: number,
+    endYear: number,
   ): Promise<AxiosResponse<PublicationsDTO[]>> {
     const response = await apiBack.get(
-      `/publications?groupByYear=${year}&groupByProfessor=${professor}&articles=${articles}&conferences=${conferences}`,
+      `/publications?groupByYear=${year}&groupByProfessor=${professor}&articles=${articles}&conferences=${conferences}
+      &startYear=${startYear}&endYear=${endYear}`,
       {
         validateStatus: (status: number) => [200, 401, 403, 404, 500].includes(status),
       },
