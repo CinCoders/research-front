@@ -55,25 +55,23 @@ const columns: GridColDef[] = [
   {
     field: 'totalInventionPatents',
     headerName: 'PATENTES DE INVENÇÃO',
-    description: 'Total de patentes de invenção',
+    description: 'Tipo: Total de patentes de invenção',
     headerAlign: 'center',
     align: 'center',
     flex: 20,
     renderHeader: renderHeaderTooltip,
     headerClassName: 'category--header',
-
     type: 'number',
   },
   {
     field: 'totalUtilityModelPatents',
     headerName: 'MODELOS DE UTILIDADE',
-    description: 'Total de modelos de utilidade',
+    description: 'Tipo: total de modelos de utilidade',
     headerAlign: 'center',
     align: 'center',
     flex: 20,
     renderHeader: renderHeaderTooltip,
     headerClassName: 'category--header',
-
     type: 'number',
   },
 
@@ -216,15 +214,12 @@ function PatentsTable() {
         sx={{
           '& .category--header .iNdfiT': {
             color: '#83bcff ',
-            // backgroundColor: 'black',
           },
           '& .situation-status--header .iNdfiT': {
-            color: '#84dcc6 ',
-            // backgroundColor: 'black',
+            color: '#7fd8be ',
           },
           '& .country--header .iNdfiT': {
-            color: '#f8ad9d',
-            // backgroundColor: 'black',
+            color: '#ff70a6',
           },
         }}
       >
@@ -242,7 +237,6 @@ function PatentsTable() {
           localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
         />
       </TableDiv>
-      {/* <h1>Patents Table</h1> */}
     </GridContainer>
   );
 }
