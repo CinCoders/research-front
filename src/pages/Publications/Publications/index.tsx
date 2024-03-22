@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { Divider, FormControl, FormControlLabel, Grid, Input } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid, TextField } from '@mui/material';
 import { toast, useNavbar } from '@cincoders/cinnamon';
 import { showErrorStatus } from '../../../utils/showErrorStatus';
 import { CustomToolbar } from '../../../components/CustomToolbar';
@@ -249,7 +249,7 @@ function Table() {
       }
     }
     loadData();
-  }, [checkedYear, checkedProfessor, checkedArticles, checkedConferences]);
+  }, [checkedYear, checkedProfessor, checkedArticles, checkedConferences, startYear, endYear]);
 
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     setCheckedYear(event.target.checked);
@@ -286,14 +286,16 @@ function Table() {
             label='Professor'
           />
         </Grid>
-        <Grid sx={{ marginLeft: '5%', display: 'inline-block' }}>
+        <Grid sx={{ paddingX: '5%', display: 'inline-block' }}>
           <Divider> Filtrar </Divider>
-          <Grid container spacing={2} sx={{ width: '100%', marginX: 0 }}>
-            <Grid item xs={12} md={6} container>
+          <Grid container spacing={3} sx={{ width: '100%', marginX: 0 }}>
+            <Grid item xs={12} md={5} container>
               <Grid item xs={8} md={6}>
                 <FormControlLabel
                   control={<RedSwitch checked={checkedArticles} onChange={handleChangeArticles} />}
                   label='Periódicos'
+                  sx={{ padding: '5px' }}
+
                   // sx={{ width: '100px' }}
                 />
               </Grid>
@@ -301,39 +303,42 @@ function Table() {
                 <FormControlLabel
                   control={<RedSwitch checked={checkedConferences} onChange={handleChangeConferences} />}
                   label='Conferências'
+                  sx={{ padding: '5px' }}
                 />
               </Grid>
             </Grid>
-            <Grid item container xs={12} md={6} spacing={2}>
-              <Grid item xs={8} md={6}>
+            <Grid item container xs={12} md={7} spacing={2}>
+              <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <div style={{ display: 'flex', alignItems: 'center', paddingTop: '4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', paddingTop: '0px' }}>
                     <span style={{ display: 'block', width: '100px' }}>Ano Inicial:</span>
-                    <Input
+                    <TextField
                       id='start-year'
                       value={startYear}
                       onChange={handleStartYearChange}
-                      // variant='outlined'
+                      variant='outlined'
                       type='number'
                       size='small'
-                      inputProps={{ min: 1950, max: new Date().getFullYear(), variant: 'outlined' }}
-                      // sx={{ marginLeft: '10px' }}
-                      // fullWidth
+                      inputProps={{ min: 1950, max: new Date().getFullYear() }}
+                      sx={{ padding: '5px' }}
                     />
                   </div>
                 </FormControl>
               </Grid>
-              <Grid item xs={8} md={6}>
+              <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <div style={{ display: 'flex', alignItems: 'center', paddingTop: '4px' }}>
-                    <span style={{ display: 'block', width: '120px' }}>Ano Final:</span>
-                    <Input
+                  <div style={{ display: 'flex', alignItems: 'center', paddingTop: '0px' }}>
+                    <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
+                    <TextField
                       id='end-year'
                       value={endYear}
                       onChange={handleEndYearChange}
                       size='small'
+                      variant='outlined'
                       type='number'
                       inputProps={{ min: 1950, max: new Date().getFullYear() }}
+                      sx={{ padding: '5px' }}
+
                       // sx={{ marginLeft: '10px' }}
                       // fullWidth
                     />
