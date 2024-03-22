@@ -280,10 +280,15 @@ function Table() {
       <ButtonsGrid>
         <Grid>
           <Divider> Agrupar </Divider>
-          <FormControlLabel control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />} label='Ano' />
+          <FormControlLabel
+            control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />}
+            label='Ano'
+            sx={{ padding: '5px' }}
+          />
           <FormControlLabel
             control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
             label='Professor'
+            sx={{ padding: '5px' }}
           />
         </Grid>
         <Grid sx={{ paddingX: '5%', display: 'inline-block' }}>
@@ -295,8 +300,6 @@ function Table() {
                   control={<RedSwitch checked={checkedArticles} onChange={handleChangeArticles} />}
                   label='Periódicos'
                   sx={{ padding: '5px' }}
-
-                  // sx={{ width: '100px' }}
                 />
               </Grid>
               <Grid item xs={8} md={6}>
@@ -310,7 +313,7 @@ function Table() {
             <Grid item container xs={12} md={7} spacing={2}>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <div style={{ display: 'flex', alignItems: 'center', paddingTop: '0px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ display: 'block', width: '100px' }}>Ano Inicial:</span>
                     <TextField
                       id='start-year'
@@ -327,7 +330,7 @@ function Table() {
               </Grid>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
-                  <div style={{ display: 'flex', alignItems: 'center', paddingTop: '0px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
                     <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
                     <TextField
                       id='end-year'
@@ -338,9 +341,6 @@ function Table() {
                       type='number'
                       inputProps={{ min: 1950, max: new Date().getFullYear() }}
                       sx={{ padding: '5px' }}
-
-                      // sx={{ marginLeft: '10px' }}
-                      // fullWidth
                     />
                   </div>
                 </FormControl>
