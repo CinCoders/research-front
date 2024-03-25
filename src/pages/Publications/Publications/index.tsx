@@ -263,7 +263,11 @@ function Table() {
     return () => {
       clearTimeout(timeoutId);
     };
-  }, [checkedYear, checkedProfessor, checkedArticles, checkedConferences, startYear, endYear]);
+  }, [startYear, endYear]);
+
+  useEffect(() => {
+    loadData();
+  }, [checkedYear, checkedProfessor, checkedArticles, checkedConferences]);
 
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     setCheckedYear(event.target.checked);
