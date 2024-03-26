@@ -240,7 +240,7 @@ function Table() {
         </Grid>
         <Grid sx={{ paddingX: '5%', display: 'inline-block' }}>
           <Divider> Filtrar </Divider>
-          <Grid container spacing={3} sx={{ width: '100%', marginX: 0 }}>
+          <Grid container spacing={2} sx={{ width: '100%', marginX: 0 }}>
             {/* <Grid item xs={12} md={5} container>
               <Grid item xs={8} md={6}>
                 <FormControlLabel
@@ -257,10 +257,10 @@ function Table() {
                 />
               </Grid>
             </Grid> */}
-            {/* <Grid item container xs={12} md={7} spacing={2}> */}
+            {/* <Grid item container spacing={2}> */}
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ display: 'block', width: '100px' }}>Ano Inicial:</span>
                   <TextField
                     id='start-year'
@@ -277,7 +277,7 @@ function Table() {
             </Grid>
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <div style={{ display: 'flex', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
                   <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
                   <TextField
                     id='end-year'
@@ -287,7 +287,6 @@ function Table() {
                     variant='outlined'
                     type='number'
                     inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                    sx={{ paddingBottom: '5px' }}
                   />
                 </div>
               </FormControl>
