@@ -1,6 +1,6 @@
 import { Divider, FormControl, FormControlLabel, Grid, TextField } from '@mui/material';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { toast, useNavbar } from '@cincoders/cinnamon';
 import { CustomToolbar } from '../../../components/CustomToolbar';
 import { MainGrid, TableDiv, GridContainer, ProfessorsGrid } from '../../../components/TableStyles/styles';
@@ -129,13 +129,24 @@ function Table() {
   const [loading, setLoading] = useState<boolean>(true);
   const [checkedYear, setCheckedYear] = useState<boolean>(true);
   const [checkedProfessor, setCheckedProfessor] = useState<boolean>(false);
+  const [startYear, setStartYear] = useState<number>();
+  const [debouncedStartYear, setDebouncedStartYear] = useState<number | null>(null);
+  const [debouncedEndYear, setDebouncedEndYear] = useState<number | null>(null);
+  const [endYear, setEndYear] = useState<number>();
+  const timeoutStartRef = useRef<number | null>(null);
+  const timeoutEndRef = useRef<number | null>(null);
 
   useEffect(() => {
     async function loadData() {
       setRows([]);
       setLoading(true);
       try {
-        const response = await ProjectsService.getProjects(checkedYear, checkedProfessor);
+        const response = await ProjectsService.getProjects(
+          checkedYear,
+          checkedProfessor,
+          debouncedStartYear || 1950,
+          debouncedEndYear || new Date().getFullYear(),
+        );
         if (response.status === 200) {
           const { data } = response;
 
@@ -180,7 +191,7 @@ function Table() {
       }
     }
     loadData();
-  }, [checkedYear, checkedProfessor]);
+  }, [checkedYear, checkedProfessor, debouncedEndYear, debouncedStartYear]);
 
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     setCheckedYear(event.target.checked);
@@ -190,6 +201,32 @@ function Table() {
     setCheckedProfessor(event.target.checked);
   };
 
+  const handleStartYearChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newStartYear = Number(event.target.value);
+
+    setStartYear(newStartYear);
+
+    if (timeoutStartRef.current) {
+      clearTimeout(timeoutStartRef.current);
+    }
+    timeoutStartRef.current = window.setTimeout(() => {
+      setDebouncedStartYear(newStartYear);
+    }, 2000);
+  };
+
+  const handleEndYearChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newEndYear = Number(event.target.value);
+
+    setEndYear(newEndYear);
+
+    if (timeoutEndRef.current) {
+      clearTimeout(timeoutEndRef.current);
+    }
+
+    timeoutEndRef.current = window.setTimeout(() => {
+      setDebouncedEndYear(newEndYear);
+    }, 2000);
+  };
   return (
     <GridContainer>
       <ButtonsGrid>
@@ -227,8 +264,8 @@ function Table() {
                   <span style={{ display: 'block', width: '100px' }}>Ano Inicial:</span>
                   <TextField
                     id='start-year'
-                    // value={startYear}
-                    // onChange={handleStartYearChange}
+                    value={startYear}
+                    onChange={handleStartYearChange}
                     variant='outlined'
                     type='number'
                     size='small'
@@ -244,8 +281,8 @@ function Table() {
                   <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
                   <TextField
                     id='end-year'
-                    // value={endYear}
-                    // onChange={handleEndYearChange}
+                    value={endYear}
+                    onChange={handleEndYearChange}
                     size='small'
                     variant='outlined'
                     type='number'
