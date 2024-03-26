@@ -84,17 +84,18 @@ function Table() {
       renderHeader: renderHeaderTooltip,
     },
     {
-      field: 'idLattes',
+      field: 'identifier',
       headerName: 'CÓDIGO LATTES',
       headerAlign: 'center',
       align: 'center',
       description: 'Código lattes do professor',
       flex: 15,
-      renderCell: params => <LattesText text={params.row.identifier as string} />,
+      renderCell: params => <LattesText text={params.row.identifier} />,
+      valueFormatter: params => params.value,
       renderHeader: renderHeaderTooltip,
     },
     {
-      field: 'identifier',
+      field: 'linkLattes',
       headerName: 'LATTES',
       headerAlign: 'center',
       align: 'center',
@@ -102,7 +103,7 @@ function Table() {
       flex: 10,
       renderCell: params => (
         <LinkButton
-          route={Links.LATTES.replace(':id', params.row.identifier as string)}
+          route={params.row.linkLattes}
           newTab
           image={lattesLogo}
           width='100%'
@@ -120,7 +121,7 @@ function Table() {
       description: 'Link para download do Currículo Lattes do professor em formato XML',
       flex: 10,
       renderCell: params => {
-        const xmlLink = Links.PROFESSOR_XML.replace(':id', params.row.identifier as unknown as string);
+        const xmlLink = params.row.xmlDownloadLink;
         return (
           <LinkButton
             iconComponent={<DownloadIcon color='primary' />}
@@ -132,10 +133,12 @@ function Table() {
           />
         );
       },
+
       renderHeader: renderHeaderTooltip,
     },
     {
       field: 'excluir',
+      disableExport: true,
       headerName: 'EXCLUIR',
       headerAlign: 'center',
       align: 'center',
@@ -174,6 +177,8 @@ function Table() {
           computerArticles: element.computerArticles,
           computerPublications: element.computerPublications,
           patents: element.patents,
+          linkLattes: Links.LATTES.replace(':id', element.identifier),
+          xmlDownloadLink: Links.PROFESSOR_XML.replace(':id', element.identifier),
         }));
         setRows(newData);
       } else {

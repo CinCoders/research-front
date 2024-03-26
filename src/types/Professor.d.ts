@@ -14,4 +14,6 @@ export interface ProfessorDetails {
   computerArticles: number;
   computerPublications: number;
   patents: number;
+  linkLattes: string;
+  xmlDownloadLink: string;
 }
