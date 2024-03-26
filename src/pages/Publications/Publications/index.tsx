@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
 import { Divider, FormControl, FormControlLabel, Grid, TextField } from '@mui/material';
 import { toast, useNavbar } from '@cincoders/cinnamon';
@@ -179,95 +179,93 @@ function Table() {
   const [checkedArticles, setCheckedArticles] = useState<boolean>(true);
   const [checkedConferences, setCheckedConferences] = useState<boolean>(true);
   const [startYear, setStartYear] = useState<number>();
+  const [debouncedStartYear, setDebouncedStartYear] = useState<number | null>(null);
+  const [debouncedEndYear, setDebouncedEndYear] = useState<number | null>(null);
   const [endYear, setEndYear] = useState<number>();
-  let timeoutId: ReturnType<typeof setTimeout>;
+  const timeoutStartRef = useRef<number | null>(null);
+  const timeoutEndRef = useRef<number | null>(null);
 
-  async function loadData() {
-    setRows([]);
-    setLoading(true);
-    try {
-      const response = await PublicationsService.getPublications(
-        checkedYear,
-        checkedProfessor,
-        checkedArticles,
-        checkedConferences,
-        startYear || 1950,
-        endYear || new Date().getFullYear(),
-      );
-      if (response.status === 200) {
-        const { data } = response;
-        if (checkedProfessor) {
-          const newData: Publications[] = data.map((element, index) => ({
-            id: index,
-            professorId: element.professorId,
-            professorName: element.professorName,
-            year: element.year,
-            total: element.total,
-            top: element.top,
-            a1: element.a1,
-            a2: element.a2,
-            a3: element.a3,
-            a4: element.a4,
-            b1: element.b1,
-            b2: element.b2,
-            b3: element.b3,
-            b4: element.b4,
-            b5: element.b5,
-            c: element.c,
-            noQualis: element.noQualis,
-          }));
-          setRows(newData);
-        } else {
-          const newData: Publications[] = data.map((element, index) => ({
-            id: index,
-            professorId: element.professorId,
-            professorName: element.professorName,
-            year: element.year,
-            total: element.total,
-            top: element.top,
-            a1: element.a1,
-            a2: element.a2,
-            a3: element.a3,
-            a4: element.a4,
-            b1: element.b1,
-            b2: element.b2,
-            b3: element.b3,
-            b4: element.b4,
-            b5: element.b5,
-            c: element.c,
-            noQualis: element.noQualis,
-          }));
-          setRows(newData);
-        }
-      } else {
-        showErrorStatus(response.status);
+  useEffect(
+    () => () => {
+      if (timeoutStartRef.current) {
+        clearTimeout(timeoutStartRef.current);
       }
-    } catch {
-      toast.error('Não foi possível carregar as publicações. Tente novamente mais tarde.', { containerId: 'page' });
-    } finally {
-      setLoading(false);
+      if (timeoutEndRef.current) {
+        clearTimeout(timeoutEndRef.current);
+      }
+    },
+    [],
+  );
+
+  useEffect(() => {
+    async function loadData() {
+      setRows([]);
+      setLoading(true);
+      try {
+        const response = await PublicationsService.getPublications(
+          checkedYear,
+          checkedProfessor,
+          checkedArticles,
+          checkedConferences,
+          debouncedStartYear || 1950,
+          debouncedEndYear || new Date().getFullYear(),
+        );
+        if (response.status === 200) {
+          const { data } = response;
+          if (checkedProfessor) {
+            const newData: Publications[] = data.map((element, index) => ({
+              id: index,
+              professorId: element.professorId,
+              professorName: element.professorName,
+              year: element.year,
+              total: element.total,
+              top: element.top,
+              a1: element.a1,
+              a2: element.a2,
+              a3: element.a3,
+              a4: element.a4,
+              b1: element.b1,
+              b2: element.b2,
+              b3: element.b3,
+              b4: element.b4,
+              b5: element.b5,
+              c: element.c,
+              noQualis: element.noQualis,
+            }));
+            setRows(newData);
+          } else {
+            const newData: Publications[] = data.map((element, index) => ({
+              id: index,
+              professorId: element.professorId,
+              professorName: element.professorName,
+              year: element.year,
+              total: element.total,
+              top: element.top,
+              a1: element.a1,
+              a2: element.a2,
+              a3: element.a3,
+              a4: element.a4,
+              b1: element.b1,
+              b2: element.b2,
+              b3: element.b3,
+              b4: element.b4,
+              b5: element.b5,
+              c: element.c,
+              noQualis: element.noQualis,
+            }));
+            setRows(newData);
+          }
+        } else {
+          showErrorStatus(response.status);
+        }
+      } catch {
+        toast.error('Não foi possível carregar as publicações. Tente novamente mais tarde.', { containerId: 'page' });
+      } finally {
+        setLoading(false);
+      }
     }
-  }
-
-  function debouncedLoadData() {
-    clearTimeout(timeoutId);
-
-    timeoutId = setTimeout(() => {
-      loadData();
-    }, 2000);
-  }
-
-  useEffect(() => {
-    debouncedLoadData();
-
-    return () => {
-      clearTimeout(timeoutId);
-    };
-  }, [startYear, endYear]);
-
-  useEffect(() => {
     loadData();
-  }, [checkedYear, checkedProfessor, checkedArticles, checkedConferences]);
+  }, [checkedYear, checkedProfessor, checkedArticles, checkedConferences, debouncedEndYear, debouncedStartYear]);
 
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     setCheckedYear(event.target.checked);
@@ -286,11 +284,30 @@ function Table() {
   };
 
   const handleStartYearChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setStartYear(Number(event.target.value));
+    const newStartYear = Number(event.target.value);
+
+    setStartYear(newStartYear);
+
+    if (timeoutStartRef.current) {
+      clearTimeout(timeoutStartRef.current);
+    }
+    timeoutStartRef.current = window.setTimeout(() => {
+      setDebouncedStartYear(newStartYear);
+    }, 2000);
   };
 
   const handleEndYearChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setEndYear(Number(event.target.value));
+    const newEndYear = Number(event.target.value);
+
+    setEndYear(newEndYear);
+
+    if (timeoutEndRef.current) {
+      clearTimeout(timeoutEndRef.current);
+    }
+
+    timeoutEndRef.current = window.setTimeout(() => {
+      setDebouncedEndYear(newEndYear);
+    }, 2000);
   };
 
   return (
