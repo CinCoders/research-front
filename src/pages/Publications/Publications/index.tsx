@@ -345,7 +345,7 @@ function Table() {
                 />
               </Grid>
             </Grid>
-            <Grid item container xs={12} md={7} spacing={2}>
+            <Grid item container xs={12} md={7} spacing={1}>
               <Grid item xs={12} md={6}>
                 <FormControl fullWidth>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -358,7 +358,7 @@ function Table() {
                       type='number'
                       size='small'
                       inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                      sx={{ padding: '5px' }}
+                      sx={{ paddingBottom: '5px' }}
                     />
                   </div>
                 </FormControl>
@@ -375,7 +375,7 @@ function Table() {
                       variant='outlined'
                       type='number'
                       inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                      sx={{ padding: '5px' }}
+                      sx={{ paddingBottom: '5px' }}
                     />
                   </div>
                 </FormControl>

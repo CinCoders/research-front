@@ -1,4 +1,4 @@
-import { Divider, FormControlLabel, Grid } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid, TextField } from '@mui/material';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
 import { ChangeEvent, useEffect, useState } from 'react';
 import { toast, useNavbar } from '@cincoders/cinnamon';
@@ -200,6 +200,63 @@ function Table() {
             control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
             label='Professor'
           />
+        </Grid>
+        <Grid sx={{ paddingX: '5%', display: 'inline-block' }}>
+          <Divider> Filtrar </Divider>
+          <Grid container spacing={3} sx={{ width: '100%', marginX: 0 }}>
+            {/* <Grid item xs={12} md={5} container>
+              <Grid item xs={8} md={6}>
+                <FormControlLabel
+                  control={<RedSwitch checked={checkedArticles} onChange={handleChangeArticles} />}
+                  label='Periódicos'
+                  sx={{ padding: '5px' }}
+                />
+              </Grid>
+              <Grid item xs={8} md={6}>
+                <FormControlLabel
+                  control={<RedSwitch checked={checkedConferences} onChange={handleChangeConferences} />}
+                  label='Conferências'
+                  sx={{ padding: '5px' }}
+                />
+              </Grid>
+            </Grid> */}
+            {/* <Grid item container xs={12} md={7} spacing={2}> */}
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ display: 'block', width: '100px' }}>Ano Inicial:</span>
+                  <TextField
+                    id='start-year'
+                    // value={startYear}
+                    // onChange={handleStartYearChange}
+                    variant='outlined'
+                    type='number'
+                    size='small'
+                    inputProps={{ min: 1950, max: new Date().getFullYear() }}
+                    sx={{ paddingBottom: '5px' }}
+                  />
+                </div>
+              </FormControl>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <FormControl fullWidth>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                  <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
+                  <TextField
+                    id='end-year'
+                    // value={endYear}
+                    // onChange={handleEndYearChange}
+                    size='small'
+                    variant='outlined'
+                    type='number'
+                    inputProps={{ min: 1950, max: new Date().getFullYear() }}
+                    sx={{ paddingBottom: '5px' }}
+                  />
+                </div>
+              </FormControl>
+            </Grid>
+            {/* </Grid> */}
+          </Grid>
         </Grid>
       </ButtonsGrid>
       <TableDiv>
