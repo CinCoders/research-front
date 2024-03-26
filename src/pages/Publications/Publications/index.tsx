@@ -352,9 +352,6 @@ function Table() {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      // justifyContent: 'center',
-
-                      // justifyContent: smFlex ? 'center' : 'space-between',
                     }}
                   >
                     <span style={{ display: 'block', width: '90px' }}>Ano Inicial:</span>
@@ -377,7 +374,6 @@ function Table() {
                     style={{
                       display: 'flex',
                       alignItems: 'center',
-                      // justifyContent: 'center',
                     }}
                   >
                     <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>

@@ -240,28 +240,11 @@ function Table() {
         </Grid>
         <Grid sx={{ paddingX: '5%', display: 'inline-block' }}>
           <Divider> Filtrar </Divider>
-          <Grid container spacing={2} sx={{ width: '100%', marginX: 0 }}>
-            {/* <Grid item xs={12} md={5} container>
-              <Grid item xs={8} md={6}>
-                <FormControlLabel
-                  control={<RedSwitch checked={checkedArticles} onChange={handleChangeArticles} />}
-                  label='Periódicos'
-                  sx={{ padding: '5px' }}
-                />
-              </Grid>
-              <Grid item xs={8} md={6}>
-                <FormControlLabel
-                  control={<RedSwitch checked={checkedConferences} onChange={handleChangeConferences} />}
-                  label='Conferências'
-                  sx={{ padding: '5px' }}
-                />
-              </Grid>
-            </Grid> */}
-            {/* <Grid item container spacing={2}> */}
+          <Grid container spacing={1} sx={{ width: '100%', marginX: 0, marginBottom: '5px' }}>
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <span style={{ display: 'block', width: '100px' }}>Ano Inicial:</span>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                  <span style={{ display: 'block', width: '90px' }}>Ano Inicial:</span>
                   <TextField
                     id='start-year'
                     value={startYear}
@@ -277,7 +260,7 @@ function Table() {
             </Grid>
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
-                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                   <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
                   <TextField
                     id='end-year'
@@ -291,7 +274,6 @@ function Table() {
                 </div>
               </FormControl>
             </Grid>
-            {/* </Grid> */}
           </Grid>
         </Grid>
       </ButtonsGrid>
