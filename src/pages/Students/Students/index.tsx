@@ -1,6 +1,6 @@
-import { ChangeEvent, useEffect, useState } from 'react';
+import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { Divider, FormControlLabel, Grid } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid, TextField } from '@mui/material';
 import { toast, useNavbar } from '@cincoders/cinnamon';
 import { CustomToolbar } from '../../../components/CustomToolbar';
 import { MainGrid, TableDiv, GridContainer, ProfessorsGrid } from '../../../components/TableStyles/styles';
@@ -119,13 +119,36 @@ function Table() {
   const [checkedProfessor, setCheckedProfessor] = useState<boolean>(false);
   const [checkedYear, setCheckedYear] = useState<boolean>(true);
   const [checkedCurrentStudents, setCheckedCurrentStudents] = useState<boolean>(true);
+  const [startYear, setStartYear] = useState<number>();
+  const [debouncedStartYear, setDebouncedStartYear] = useState<number | null>(null);
+  const [debouncedEndYear, setDebouncedEndYear] = useState<number | null>(null);
+  const [endYear, setEndYear] = useState<number>();
+  const timeoutStartRef = useRef<number | null>(null);
+  const timeoutEndRef = useRef<number | null>(null);
 
+  useEffect(
+    () => () => {
+      if (timeoutStartRef.current) {
+        clearTimeout(timeoutStartRef.current);
+      }
+      if (timeoutEndRef.current) {
+        clearTimeout(timeoutEndRef.current);
+      }
+    },
+    [],
+  );
   useEffect(() => {
     async function loadData() {
       setRows([]);
       setLoading(true);
       try {
-        const response = await StudentsService.getStudents(checkedYear, checkedProfessor, checkedCurrentStudents);
+        const response = await StudentsService.getStudents(
+          checkedYear,
+          checkedProfessor,
+          checkedCurrentStudents,
+          debouncedStartYear || 1950,
+          debouncedEndYear || new Date().getFullYear(),
+        );
         if (response.status === 200) {
           const { data } = response;
           const newData: Students[] = data.map((element, index) => ({
@@ -152,7 +175,7 @@ function Table() {
       }
     }
     loadData();
-  }, [checkedYear, checkedProfessor, checkedCurrentStudents]);
+  }, [checkedYear, checkedProfessor, checkedCurrentStudents, debouncedStartYear, debouncedEndYear]);
 
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     setCheckedYear(event.target.checked);
@@ -164,6 +187,33 @@ function Table() {
 
   const handleChangeCurrentStudents = () => {
     setCheckedCurrentStudents(checked => !checked);
+  };
+
+  const handleStartYearChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newStartYear = Number(event.target.value);
+
+    setStartYear(newStartYear);
+
+    if (timeoutStartRef.current) {
+      clearTimeout(timeoutStartRef.current);
+    }
+    timeoutStartRef.current = window.setTimeout(() => {
+      setDebouncedStartYear(newStartYear);
+    }, 2000);
+  };
+
+  const handleEndYearChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const newEndYear = Number(event.target.value);
+
+    setEndYear(newEndYear);
+
+    if (timeoutEndRef.current) {
+      clearTimeout(timeoutEndRef.current);
+    }
+
+    timeoutEndRef.current = window.setTimeout(() => {
+      setDebouncedEndYear(newEndYear);
+    }, 2000);
   };
 
   return (
@@ -187,6 +237,50 @@ function Table() {
             control={<RedSwitch checked={checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
             label='Orientandos'
           />
+          <Grid item xs={12} lg={6}>
+            <FormControl fullWidth>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span style={{ display: 'block', width: '90px' }}>Ano Inicial:</span>
+                <TextField
+                  id='start-year'
+                  value={startYear}
+                  onChange={handleStartYearChange}
+                  variant='outlined'
+                  type='number'
+                  size='small'
+                  inputProps={{ min: 1950, max: new Date().getFullYear() }}
+                  sx={{ paddingBottom: '5px' }}
+                />
+              </div>
+            </FormControl>
+          </Grid>
+          <Grid item xs={12} lg={6}>
+            <FormControl fullWidth>
+              <div
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                }}
+              >
+                <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
+                <TextField
+                  id='end-year'
+                  value={endYear}
+                  onChange={handleEndYearChange}
+                  size='small'
+                  variant='outlined'
+                  type='number'
+                  inputProps={{ min: 1950, max: new Date().getFullYear() }}
+                  sx={{ paddingBottom: '5px' }}
+                />
+              </div>
+            </FormControl>
+          </Grid>
         </Grid>
       </ButtonsGrid>
       <TableDiv>
