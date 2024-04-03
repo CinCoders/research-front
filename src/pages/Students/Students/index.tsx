@@ -225,61 +225,74 @@ function Table() {
           <FormControlLabel
             control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
             label='Professor'
+            sx={{ padding: '5px' }}
           />
         </Grid>
-        <Grid sx={{ marginLeft: '5%' }}>
+        <Grid sx={{ marginLeft: '5%', marginBottom: '0.5rem' }}>
           <Divider> Filtrar </Divider>
-          <FormControlLabel
-            control={<RedSwitch checked={!checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
-            label='Orientados'
-          />
-          <FormControlLabel
-            control={<RedSwitch checked={checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
-            label='Orientandos'
-          />
-          <Grid item xs={12} lg={6}>
-            <FormControl fullWidth>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <span style={{ display: 'block', width: '90px' }}>Ano Inicial:</span>
-                <TextField
-                  id='start-year'
-                  value={startYear}
-                  onChange={handleStartYearChange}
-                  variant='outlined'
-                  type='number'
-                  size='small'
-                  inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                  sx={{ paddingBottom: '5px' }}
+          <Grid container spacing={3} sx={{ width: '100%', marginX: 0 }}>
+            <Grid item xs={12} sm={6} lg={5} container>
+              <Grid item xs={12} lg={6}>
+                <FormControlLabel
+                  control={<RedSwitch checked={!checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
+                  label='Orientados'
+                  sx={{ padding: '5px' }}
                 />
-              </div>
-            </FormControl>
-          </Grid>
-          <Grid item xs={12} lg={6}>
-            <FormControl fullWidth>
-              <div
-                style={{
-                  display: 'flex',
-                  alignItems: 'center',
-                }}
-              >
-                <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
-                <TextField
-                  id='end-year'
-                  value={endYear}
-                  onChange={handleEndYearChange}
-                  size='small'
-                  variant='outlined'
-                  type='number'
-                  inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                  sx={{ paddingBottom: '5px' }}
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <FormControlLabel
+                  control={<RedSwitch checked={checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
+                  label='Orientandos'
+                  sx={{ padding: '5px' }}
                 />
-              </div>
-            </FormControl>
+              </Grid>
+            </Grid>
+            <Grid item container xs={12} sm={6} lg={7} spacing={1}>
+              <Grid item xs={12} lg={6}>
+                <FormControl fullWidth>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ display: 'block', width: '90px' }}>Ano Inicial:</span>
+                    <TextField
+                      id='start-year'
+                      value={startYear}
+                      onChange={handleStartYearChange}
+                      variant='outlined'
+                      type='number'
+                      size='small'
+                      inputProps={{ min: 1950, max: new Date().getFullYear() }}
+                      sx={{ paddingBottom: '5px' }}
+                    />
+                  </div>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <FormControl fullWidth>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
+                    <TextField
+                      id='end-year'
+                      value={endYear}
+                      onChange={handleEndYearChange}
+                      size='small'
+                      variant='outlined'
+                      type='number'
+                      inputProps={{ min: 1950, max: new Date().getFullYear() }}
+                      sx={{ paddingBottom: '5px' }}
+                    />
+                  </div>
+                </FormControl>
+              </Grid>
+            </Grid>
           </Grid>
         </Grid>
       </ButtonsGrid>

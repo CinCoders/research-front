@@ -236,6 +236,7 @@ function Table() {
           <FormControlLabel
             control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
             label='Professor'
+            sx={{ padding: '5px' }}
           />
         </Grid>
         <Grid sx={{ paddingX: '5%', display: 'inline-block' }}>

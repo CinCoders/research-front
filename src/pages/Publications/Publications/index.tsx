@@ -326,7 +326,7 @@ function Table() {
             sx={{ padding: '5px' }}
           />
         </Grid>
-        <Grid sx={{ paddingX: '5%', display: 'inline-block' }}>
+        <Grid sx={{ paddingX: '5%', display: 'inline-block', marginBottom: '0.5rem' }}>
           <Divider> Filtrar </Divider>
           <Grid container spacing={3} sx={{ width: '100%', marginX: 0 }}>
             <Grid item xs={12} sm={6} lg={5} container>
