@@ -144,7 +144,6 @@ function PatentsTable() {
       setLoading(true);
       try {
         const response = await PatentService.getPatents(checkedYear, checkedProfessor);
-        console.log(response.data);
         if (response.status === 200) {
           const { data } = response;
 
