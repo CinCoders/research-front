@@ -236,12 +236,12 @@ function Table() {
           <FormControlLabel
             control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
             label='Professor'
-            sx={{ padding: '5px' }}
+            sx={{ padding: '7px' }}
           />
         </Grid>
         <Grid sx={{ paddingX: '5%', display: 'inline-block' }}>
           <Divider> Filtrar </Divider>
-          <Grid container spacing={1} sx={{ width: '100%', marginX: 0, marginBottom: '5px' }}>
+          <Grid container spacing={1} sx={{ width: '100%', marginX: 0, marginBottom: '5px', padding: '7px' }}>
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
@@ -254,7 +254,6 @@ function Table() {
                     type='number'
                     size='small'
                     inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                    sx={{ paddingBottom: '5px' }}
                   />
                 </div>
               </FormControl>

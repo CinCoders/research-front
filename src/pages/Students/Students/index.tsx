@@ -219,16 +219,15 @@ function Table() {
   return (
     <GridContainer>
       <ButtonsGrid>
-        <Grid>
+        <Grid sx={{ padding: '7px' }}>
           <Divider> Agrupar </Divider>
           <FormControlLabel control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />} label='Ano' />
           <FormControlLabel
             control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
             label='Professor'
-            sx={{ padding: '5px' }}
           />
         </Grid>
-        <Grid sx={{ marginLeft: '5%', marginBottom: '0.5rem' }}>
+        <Grid sx={{ marginLeft: '5%', marginBottom: '0.5rem', padding: '7px' }}>
           <Divider> Filtrar </Divider>
           <Grid container spacing={3} sx={{ width: '100%', marginX: 0 }}>
             <Grid item xs={12} sm={6} lg={5} container>
@@ -236,14 +235,12 @@ function Table() {
                 <FormControlLabel
                   control={<RedSwitch checked={!checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
                   label='Orientados'
-                  sx={{ padding: '5px' }}
                 />
               </Grid>
               <Grid item xs={12} lg={6}>
                 <FormControlLabel
                   control={<RedSwitch checked={checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
                   label='Orientandos'
-                  sx={{ padding: '5px' }}
                 />
               </Grid>
             </Grid>
@@ -265,7 +262,6 @@ function Table() {
                       type='number'
                       size='small'
                       inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                      sx={{ paddingBottom: '5px' }}
                     />
                   </div>
                 </FormControl>
@@ -287,7 +283,6 @@ function Table() {
                       variant='outlined'
                       type='number'
                       inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                      sx={{ paddingBottom: '5px' }}
                     />
                   </div>
                 </FormControl>
