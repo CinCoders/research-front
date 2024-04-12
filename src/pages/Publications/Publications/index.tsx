@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { Divider, FormControl, FormControlLabel, Grid, TextField } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid } from '@mui/material';
 import { toast, useNavbar } from '@cincoders/cinnamon';
 import { showErrorStatus } from '../../../utils/showErrorStatus';
 import { CustomToolbar } from '../../../components/CustomToolbar';
@@ -12,6 +12,7 @@ import { RedSwitch } from '../../../components/RedSwitch';
 import { Publications } from '../../../types/Publications.d';
 import { ButtonsGrid } from '../../../components/ButtonsGrid/styles';
 import { Links } from '../../../types/enums';
+import { TextInput, TextInputWrapper } from '../../../components/InputYear/styles';
 
 const columns: GridColDef[] = [
   {
@@ -313,37 +314,34 @@ function Table() {
   return (
     <GridContainer>
       <ButtonsGrid>
-        <Grid>
+        <Grid marginBottom={{ xs: '90px', sm: '0.5rem' }}>
           <Divider> Agrupar </Divider>
-          <FormControlLabel
-            control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />}
-            label='Ano'
-            // sx={{ padding: '5px' }}
-          />
-          <FormControlLabel
-            control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
-            label='Professor'
-            // sx={{ padding: '5px' }}
-          />
-        </Grid>
-        <Grid sx={{ paddingX: '5%', display: 'inline-block', marginBottom: '0.5rem' }}>
-          <Divider> Filtrar </Divider>
-          <Grid container spacing={3} sx={{ width: '100%', marginX: 0 }}>
-            <Grid item xs={12} sm={6} lg={5} container sx={{ padding: '7px' }}>
-              <Grid item xs={12} lg={6}>
-                <FormControlLabel
-                  control={<RedSwitch checked={checkedArticles} onChange={handleChangeArticles} />}
-                  label='Periódicos'
-                />
-              </Grid>
-              <Grid item xs={12} lg={6}>
-                <FormControlLabel
-                  control={<RedSwitch checked={checkedConferences} onChange={handleChangeConferences} />}
-                  label='Conferências'
-                />
-              </Grid>
+          <Grid container sx={{ width: '100%' }}>
+            <Grid item xs={12} lg={5} sx={{ padding: '2px' }}>
+              <FormControlLabel control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />} label='Ano' />
             </Grid>
-            <Grid item container xs={12} sm={6} lg={7} spacing={1} sx={{ padding: '7px' }}>
+            <Grid item xs={12} lg={7}>
+              <FormControlLabel
+                control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
+                label='Professor'
+              />
+            </Grid>
+          </Grid>
+        </Grid>
+        <Grid sx={{ marginX: '5%' }}>
+          <Divider> Filtrar </Divider>
+          <Grid container sx={{ width: '100%', marginX: 0 }}>
+            <Grid item container columnSpacing={1} xs={12} sm={6} sx={{}}>
+              <FormControlLabel
+                control={<RedSwitch checked={checkedArticles} onChange={handleChangeArticles} />}
+                label='Periódicos'
+              />
+              <FormControlLabel
+                control={<RedSwitch checked={checkedConferences} onChange={handleChangeConferences} />}
+                label='Conferências'
+              />
+            </Grid>
+            <Grid rowSpacing={1} item container columnSpacing={1} xs={12} sm={6} sx={{}}>
               <Grid item xs={12} lg={6}>
                 <FormControl fullWidth>
                   <div
@@ -352,16 +350,17 @@ function Table() {
                       alignItems: 'center',
                     }}
                   >
-                    <span style={{ display: 'block', width: '90px' }}>Ano Inicial:</span>
-                    <TextField
-                      id='start-year'
-                      value={startYear}
-                      onChange={handleStartYearChange}
-                      variant='outlined'
-                      type='number'
-                      size='small'
-                      inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                    />
+                    <span style={{ display: 'block', width: '100px' }}>Ano Inicial:</span>
+                    <TextInputWrapper>
+                      <TextInput
+                        id='start-year'
+                        value={startYear}
+                        onChange={handleStartYearChange}
+                        type='number'
+                        min='1950'
+                        max={new Date().getFullYear()}
+                      />
+                    </TextInputWrapper>
                   </div>
                 </FormControl>
               </Grid>
@@ -373,16 +372,17 @@ function Table() {
                       alignItems: 'center',
                     }}
                   >
-                    <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
-                    <TextField
-                      id='end-year'
-                      value={endYear}
-                      onChange={handleEndYearChange}
-                      size='small'
-                      variant='outlined'
-                      type='number'
-                      inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                    />
+                    <span style={{ display: 'block', width: '100px' }}>Ano Final:</span>
+                    <TextInputWrapper>
+                      <TextInput
+                        id='end-year'
+                        value={endYear}
+                        onChange={handleEndYearChange}
+                        type='number'
+                        min='1950'
+                        max={new Date().getFullYear()}
+                      />
+                    </TextInputWrapper>
                   </div>
                 </FormControl>
               </Grid>
