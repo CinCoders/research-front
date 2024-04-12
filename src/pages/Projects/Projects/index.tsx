@@ -1,4 +1,4 @@
-import { Box, Divider, FormControl, FormControlLabel, Grid } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid } from '@mui/material';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { toast, useNavbar } from '@cincoders/cinnamon';
@@ -230,28 +230,24 @@ function Table() {
   };
   return (
     <GridContainer>
-      <ButtonsGrid>
+      <ButtonsGrid marginBottom={{ xs: '8px', sm: '0.5rem' }}>
         <Grid sx={{ width: '260px' }}>
           <Divider> Agrupar </Divider>
-          <Box sx={{ padding: '5%', display: 'inline-block' }}>
-            <div
-              style={{
-                display: 'flex',
-                alignItems: 'center',
-                flexWrap: 'wrap',
-              }}
-            >
+          <Grid container sx={{ width: '100%' }}>
+            <Grid item xs={12} lg={5} sx={{ paddingY: '' }}>
               <FormControlLabel control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />} label='Ano' />
+            </Grid>
+            <Grid item xs={12} lg={5} paddingY={{ xs: '5px', md: '0' }}>
               <FormControlLabel
                 control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
                 label='Professor'
               />
-            </div>
-          </Box>
+            </Grid>
+          </Grid>
         </Grid>
         <Grid sx={{ paddingX: '5%', display: 'inline-block' }}>
           <Divider> Filtrar </Divider>
-          <Grid container spacing={1} sx={{ width: '100%', marginX: 0, marginBottom: '5px' }}>
+          <Grid container columnSpacing={2} rowSpacing={1} sx={{ width: '100%', marginX: '-10px' }}>
             <Grid item xs={12} md={6}>
               <FormControl fullWidth>
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
