@@ -1,6 +1,6 @@
 import { Divider, FormControl, FormControlLabel, Grid } from '@mui/material';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { ChangeEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, useEffect, useState } from 'react';
 import { toast, useNavbar } from '@cincoders/cinnamon';
 import { CustomToolbar } from '../../../components/CustomToolbar';
 import { MainGrid, TableDiv, GridContainer, ProfessorsGrid } from '../../../components/TableStyles/styles';
@@ -13,6 +13,7 @@ import { Links } from '../../../types/enums';
 import { ButtonsGrid } from '../../../components/ButtonsGrid/styles';
 import { showErrorStatus } from '../../../utils/showErrorStatus';
 import { TextInput, TextInputWrapper } from '../../../components/InputYear/styles';
+import useDebouncedState from '../../../utils/useDebouncedState';
 
 const columns: GridColDef[] = [
   {
@@ -130,12 +131,8 @@ function Table() {
   const [loading, setLoading] = useState<boolean>(true);
   const [checkedYear, setCheckedYear] = useState<boolean>(true);
   const [checkedProfessor, setCheckedProfessor] = useState<boolean>(false);
-  const [startYear, setStartYear] = useState<number>();
-  const [debouncedStartYear, setDebouncedStartYear] = useState<number | null>(null);
-  const [debouncedEndYear, setDebouncedEndYear] = useState<number | null>(null);
-  const [endYear, setEndYear] = useState<number>();
-  const timeoutStartRef = useRef<number | null>(null);
-  const timeoutEndRef = useRef<number | null>(null);
+  const [startYear, debouncedStartYear, handleStartYearChange] = useDebouncedState();
+  const [endYear, debouncedEndYear, handleEndYearChange] = useDebouncedState();
 
   useEffect(() => {
     async function loadData() {
@@ -202,32 +199,6 @@ function Table() {
     setCheckedProfessor(event.target.checked);
   };
 
-  const handleStartYearChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newStartYear = Number(event.target.value);
-
-    setStartYear(newStartYear);
-
-    if (timeoutStartRef.current) {
-      clearTimeout(timeoutStartRef.current);
-    }
-    timeoutStartRef.current = window.setTimeout(() => {
-      setDebouncedStartYear(newStartYear);
-    }, 2000);
-  };
-
-  const handleEndYearChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const newEndYear = Number(event.target.value);
-
-    setEndYear(newEndYear);
-
-    if (timeoutEndRef.current) {
-      clearTimeout(timeoutEndRef.current);
-    }
-
-    timeoutEndRef.current = window.setTimeout(() => {
-      setDebouncedEndYear(newEndYear);
-    }, 2000);
-  };
   return (
     <GridContainer>
       <ButtonsGrid marginBottom={{ xs: '8px', sm: '0.5rem' }}>
