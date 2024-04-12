@@ -317,7 +317,7 @@ function Table() {
         <Grid marginBottom={{ xs: '90px', sm: '0.5rem' }}>
           <Divider> Agrupar </Divider>
           <Grid container sx={{ width: '100%' }}>
-            <Grid item xs={12} lg={5} sx={{ padding: '2px' }}>
+            <Grid item xs={12} lg={5} padding={{ sm: '2px', md: '0' }}>
               <FormControlLabel control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />} label='Ano' />
             </Grid>
             <Grid item xs={12} lg={7}>
@@ -331,7 +331,7 @@ function Table() {
         <Grid sx={{ marginX: '5%' }}>
           <Divider> Filtrar </Divider>
           <Grid container sx={{ width: '100%', marginX: 0 }}>
-            <Grid item container columnSpacing={1} xs={12} sm={6} sx={{}}>
+            <Grid item container columnSpacing={1} xs={12} sm={6}>
               <FormControlLabel
                 control={<RedSwitch checked={checkedArticles} onChange={handleChangeArticles} />}
                 label='Periódicos'
@@ -341,7 +341,16 @@ function Table() {
                 label='Conferências'
               />
             </Grid>
-            <Grid rowSpacing={1} item container columnSpacing={1} xs={12} sm={6} sx={{}}>
+            <Grid
+              rowSpacing={1}
+              item
+              container
+              columnSpacing={1}
+              alignItems='center'
+              justifyContent='center'
+              xs={12}
+              sm={6}
+            >
               <Grid item xs={12} lg={6}>
                 <FormControl fullWidth>
                   <div

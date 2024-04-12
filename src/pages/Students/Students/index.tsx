@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useRef, useState } from 'react';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { Divider, FormControl, FormControlLabel, Grid, TextField } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid } from '@mui/material';
 import { toast, useNavbar } from '@cincoders/cinnamon';
 import { CustomToolbar } from '../../../components/CustomToolbar';
 import { MainGrid, TableDiv, GridContainer, ProfessorsGrid } from '../../../components/TableStyles/styles';
@@ -12,6 +12,7 @@ import { Links } from '../../../types/enums';
 import { ButtonsGrid } from '../../../components/ButtonsGrid/styles';
 import { LinkButton } from '../../../components/LinkButton';
 import { showErrorStatus } from '../../../utils/showErrorStatus';
+import { TextInput, TextInputWrapper } from '../../../components/InputYear/styles';
 
 const columns: GridColDef[] = [
   {
@@ -254,15 +255,16 @@ function Table() {
                     }}
                   >
                     <span style={{ display: 'block', width: '90px' }}>Ano Inicial:</span>
-                    <TextField
-                      id='start-year'
-                      value={startYear}
-                      onChange={handleStartYearChange}
-                      variant='outlined'
-                      type='number'
-                      size='small'
-                      inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                    />
+                    <TextInputWrapper>
+                      <TextInput
+                        id='start-year'
+                        value={startYear}
+                        onChange={handleStartYearChange}
+                        type='number'
+                        min='1950'
+                        max={new Date().getFullYear()}
+                      />
+                    </TextInputWrapper>
                   </div>
                 </FormControl>
               </Grid>
@@ -275,15 +277,16 @@ function Table() {
                     }}
                   >
                     <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
-                    <TextField
-                      id='end-year'
-                      value={endYear}
-                      onChange={handleEndYearChange}
-                      size='small'
-                      variant='outlined'
-                      type='number'
-                      inputProps={{ min: 1950, max: new Date().getFullYear() }}
-                    />
+                    <TextInputWrapper>
+                      <TextInput
+                        id='end-year'
+                        value={endYear}
+                        onChange={handleEndYearChange}
+                        type='number'
+                        min='1950'
+                        max={new Date().getFullYear()}
+                      />
+                    </TextInputWrapper>
                   </div>
                 </FormControl>
               </Grid>
