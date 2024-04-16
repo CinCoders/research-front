@@ -135,7 +135,7 @@ export function ModalForm(props: ModalFormProps) {
         <ModalStyled display='grid' gap={2}>
           <FooterStyled>
             <h2>{title}</h2>
-            <hr />
+            <hr style={{ marginLeft: '8px' }} />
           </FooterStyled>
           <TextField label='Nome' value={newQualis.name || ''} fullWidth id='Nome' onChange={handleChangeName} />
           <Box display='flex' gap={1}>
@@ -205,7 +205,7 @@ export function ModalForm(props: ModalFormProps) {
             autoHighlight
           />
           <FooterStyled>
-            <hr />
+            <hr style={{ marginLeft: '8px' }} />
             <Button
               sx={{ marginRight: '4em', float: 'right' }}
               variant='contained'
