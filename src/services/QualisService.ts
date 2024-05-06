@@ -58,4 +58,14 @@ export class QualisService {
     const response = await apiBack.post('qualis/journals/', journalQualisDTO);
     return response;
   }
+
+  static async refreshConferences(): Promise<AxiosResponse<ConferencesQualis[]>> {
+    const response = await apiBack.post('qualis/conferences/refresh');
+    return response;
+  }
+
+  static async refreshJournals(): Promise<AxiosResponse<JournalQualis[]>> {
+    const response = await apiBack.post('qualis/journals/refresh');
+    return response;
+  }
 }

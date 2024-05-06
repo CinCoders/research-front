@@ -4,29 +4,69 @@ import {
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
   GridToolbarExport,
+  GridToolbarColumnsButton,
 } from '@mui/x-data-grid';
 import { AuthUtils } from '@cincoders/cinnamon';
 import { useAuth } from 'react-oidc-context';
-import AddIcon from '../../assets/icons/AddIcon.svg';
+import { useState } from 'react';
+import AddIcon from '@mui/icons-material/Add';
+import { RotatingIcon } from './styles';
 import { Roles } from '../../types/enums';
+// import { RotatingIcon } from './styles';
 
 interface CustomToolbarProps {
   onCreateClick: () => void;
+  onUpdateClick: () => Promise<void>;
+}
+interface CreateButtonProps {
+  onCreateClick: () => void;
 }
 
-export function CreateButton({ onCreateClick }: CustomToolbarProps) {
+interface UpdateButtonProps {
+  onUpdateClick: () => Promise<void>;
+}
+
+export function UpdateButton({ onUpdateClick }: UpdateButtonProps) {
+  const [isRotating, setIsRotating] = useState(false);
+
+  const handleClick = () => {
+    setIsRotating(true);
+    onUpdateClick().then(() => setIsRotating(false));
+  };
+
+  return (
+    <Button type='button' onClick={handleClick}>
+      <RotatingIcon
+        sx={{
+          animation: isRotating ? 'rotation 1s infinite linear' : 'none',
+          '@keyframes rotation': {
+            from: {
+              transform: 'rotate(0deg)',
+            },
+            to: {
+              transform: 'rotate(359deg)',
+            },
+          },
+          fontSize: '24px',
+        }}
+      />
+      Atualizar
+      <span className='css-8je8zh-MuiTouchRipple-root' />
+    </Button>
+  );
+}
+
+export function CreateButton({ onCreateClick }: CreateButtonProps) {
   return (
     <Button type='button' onClick={onCreateClick}>
-      <span className='MuiButton-startIcon MuiButton-iconSizeSmall css-y6rp3m-MuiButton-startIcon'>
-        <img src={AddIcon} alt='Icone criar' style={{ width: '18px', height: '18px', marginBottom: 1 }} />
-      </span>
+      <AddIcon style={{ color: '#DC412F', fontSize: '24px' }} />
       Criar
       <span className='css-8je8zh-MuiTouchRipple-root' />
     </Button>
   );
 }
 
-export function CustomToolbar({ onCreateClick }: CustomToolbarProps) {
+export function CustomToolbar({ onCreateClick, onUpdateClick }: CustomToolbarProps) {
   const auth = useAuth();
   return (
     <GridToolbarContainer>
@@ -34,12 +74,12 @@ export function CustomToolbar({ onCreateClick }: CustomToolbarProps) {
         <GridToolbarFilterButton />
         <GridToolbarDensitySelector />
         <GridToolbarExport />
+        <GridToolbarColumnsButton />
       </Grid>
-      {onCreateClick && AuthUtils.hasAccess(auth, [Roles.ADMIN]) && (
-        <Grid sx={{ marginLeft: 'auto' }}>
-          <CreateButton onCreateClick={onCreateClick} />
-        </Grid>
-      )}
+      <Grid sx={{ marginLeft: 'auto' }}>
+        {onCreateClick && AuthUtils.hasAccess(auth, [Roles.ADMIN]) && <CreateButton onCreateClick={onCreateClick} />}
+        {onUpdateClick && AuthUtils.hasAccess(auth, [Roles.ADMIN]) && <UpdateButton onUpdateClick={onUpdateClick} />}
+      </Grid>
     </GridToolbarContainer>
   );
 }
