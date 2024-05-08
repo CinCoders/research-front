@@ -139,10 +139,15 @@ function Table() {
       QualisService.refreshJournals(),
     ]);
     if (conferencesResp.status === 201 && journalsResp.status === 201) {
-      toast.success('Conferências e Periódicos atualizados com sucesso!', { containerId: 'page' });
+      toast.success('Conferências e periódicos atualizados com sucesso!', {
+        containerId: 'page',
+        position: 'top-right',
+      });
     } else {
-      showErrorStatus(conferencesResp.status);
-      showErrorStatus(journalsResp.status);
+      toast.error('Ocorreu um erro ao atualizar as conferências e periódicos. Tente novamente mais tarde.', {
+        containerId: 'page',
+        position: 'top-right',
+      });
     }
   };
 

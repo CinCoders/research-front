@@ -10,7 +10,7 @@ import { AuthUtils } from '@cincoders/cinnamon';
 import { useAuth } from 'react-oidc-context';
 import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
-import { RotatingIcon } from './styles';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import { Roles } from '../../types/enums';
 // import { RotatingIcon } from './styles';
 
@@ -36,9 +36,9 @@ export function UpdateButton({ onUpdateClick }: UpdateButtonProps) {
 
   return (
     <Button type='button' onClick={handleClick}>
-      <RotatingIcon
+      <RefreshIcon
         sx={{
-          animation: isRotating ? 'rotation 1s infinite linear' : 'none',
+          animation: isRotating ? 'rotation 1s linear infinite' : 'none',
           '@keyframes rotation': {
             from: {
               transform: 'rotate(0deg)',
@@ -47,7 +47,9 @@ export function UpdateButton({ onUpdateClick }: UpdateButtonProps) {
               transform: 'rotate(359deg)',
             },
           },
-          fontSize: '24px',
+          fontSize: '28px',
+          color: '#DC412F',
+          marginRight: '2px',
         }}
       />
       Atualizar
@@ -59,7 +61,7 @@ export function UpdateButton({ onUpdateClick }: UpdateButtonProps) {
 export function CreateButton({ onCreateClick }: CreateButtonProps) {
   return (
     <Button type='button' onClick={onCreateClick}>
-      <AddIcon style={{ color: '#DC412F', fontSize: '24px' }} />
+      <AddIcon sx={{ color: '#DC412F', fontSize: '32px', marginRight: '2px' }} />
       Criar
       <span className='css-8je8zh-MuiTouchRipple-root' />
     </Button>
