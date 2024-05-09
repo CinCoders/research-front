@@ -4,7 +4,6 @@ import {
   GridToolbarFilterButton,
   GridToolbarDensitySelector,
   GridToolbarExport,
-  GridToolbarColumnsButton,
 } from '@mui/x-data-grid';
 import { AuthUtils } from '@cincoders/cinnamon';
 import { useAuth } from 'react-oidc-context';
@@ -75,7 +74,6 @@ export function CustomToolbar({ onCreateClick, onUpdateClick }: CustomToolbarPro
         <GridToolbarFilterButton />
         <GridToolbarDensitySelector />
         <GridToolbarExport />
-        <GridToolbarColumnsButton />
       </Grid>
       <Grid sx={{ marginLeft: 'auto' }}>
         {onCreateClick && AuthUtils.hasAccess(auth, [Roles.ADMIN]) && <CreateButton onCreateClick={onCreateClick} />}
