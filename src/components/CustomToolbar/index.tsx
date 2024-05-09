@@ -12,7 +12,6 @@ import { useState } from 'react';
 import AddIcon from '@mui/icons-material/Add';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { Roles } from '../../types/enums';
-// import { RotatingIcon } from './styles';
 
 interface CustomToolbarProps {
   onCreateClick: () => void;
