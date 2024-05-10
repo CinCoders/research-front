@@ -134,17 +134,22 @@ function Table() {
   const handleCreateClick = () => setOpen(true);
 
   const handleUpdateClick = async () => {
-    const [conferencesResp, journalsResp] = await Promise.all([
-      QualisService.refreshConferences(),
-      QualisService.refreshJournals(),
-    ]);
-    if (conferencesResp.status === 201 && journalsResp.status === 201) {
+    try {
+      const [conferencesResp, journalsResp] = await Promise.all([
+        QualisService.refreshConferences(),
+        QualisService.refreshJournals(),
+      ]);
+
+      if (conferencesResp.status !== 201 || journalsResp.status !== 201) {
+        throw new Error('Erro ao atualizar conferências e periódicos.');
+      }
+
       toast.success('Conferências e periódicos atualizados com sucesso!', {
         containerId: 'page',
         position: 'top-right',
       });
-    } else {
-      toast.error('Ocorreu um erro ao atualizar as conferências e periódicos. Tente novamente mais tarde.', {
+    } catch (error) {
+      toast.error('Ocorreu um erro ao atualizar conferências e periódicos. Tente novamente mais tarde.', {
         containerId: 'page',
         position: 'top-right',
       });
