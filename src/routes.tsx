@@ -15,6 +15,8 @@ import QualisPage from './pages/Qualis';
 import ImportXml from './pages/ImportXml';
 import ProfessorInfo from './pages/Professor';
 import PageCin from './components/PageCin';
+import PatentsPage from './pages/Patents/Patents';
+import ProfessorPatentsPage from './pages/Patents/ProfessorPatents';
 
 function RoutesApp() {
   const auth = useAuth();
@@ -87,6 +89,22 @@ function RoutesApp() {
           element={
             <PageCin auth={auth} permittedRoles={[Roles.USERS]}>
               <ProfessorProjectsPage />
+            </PageCin>
+          }
+        />
+        <Route
+          path={Links.PATENTS}
+          element={
+            <PageCin auth={auth} permittedRoles={[Roles.USERS]}>
+              <PatentsPage />
+            </PageCin>
+          }
+        />
+        <Route
+          path={Links.PROFESSOR_PATENTS}
+          element={
+            <PageCin auth={auth} permittedRoles={[Roles.USERS]}>
+              <ProfessorPatentsPage />
             </PageCin>
           }
         />
