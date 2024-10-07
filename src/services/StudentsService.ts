@@ -7,13 +7,16 @@ export class StudentsService {
     year: boolean,
     professor: boolean,
     currentStudents: boolean,
+    startYear: number,
+    endYear: number,
   ): Promise<AxiosResponse<Students[]>> {
     let filter = 'current';
     if (!currentStudents) {
       filter = 'concluded';
     }
     const response = await apiBack.get(
-      `/post-graduation?groupByProfessor=${professor}&groupByYear=${year}&filter=${filter}`,
+      `/post-graduation?groupByProfessor=${professor}&groupByYear=${year}&filter=${filter}` +
+        `&startYear=${startYear}&endYear=${endYear}`,
       {
         validateStatus: (status: number) => [200, 401, 403, 404, 500].includes(status),
       },

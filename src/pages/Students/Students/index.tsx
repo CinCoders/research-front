@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { Divider, FormControlLabel, Grid } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid } from '@mui/material';
 import { toast, useNavbar } from '@cincoders/cinnamon';
 import { CustomToolbar } from '../../../components/CustomToolbar';
 import { MainGrid, TableDiv, GridContainer, ProfessorsGrid } from '../../../components/TableStyles/styles';
@@ -12,6 +12,8 @@ import { Links } from '../../../types/enums';
 import { ButtonsGrid } from '../../../components/ButtonsGrid/styles';
 import { LinkButton } from '../../../components/LinkButton';
 import { showErrorStatus } from '../../../utils/showErrorStatus';
+import { TextInput, TextInputWrapper } from '../../../components/InputYear/styles';
+import useDebouncedState from '../../../utils/useDebouncedState';
 
 const columns: GridColDef[] = [
   {
@@ -119,13 +121,21 @@ function Table() {
   const [checkedProfessor, setCheckedProfessor] = useState<boolean>(false);
   const [checkedYear, setCheckedYear] = useState<boolean>(true);
   const [checkedCurrentStudents, setCheckedCurrentStudents] = useState<boolean>(true);
+  const [startYear, debouncedStartYear, handleStartYearChange] = useDebouncedState();
+  const [endYear, debouncedEndYear, handleEndYearChange] = useDebouncedState();
 
   useEffect(() => {
     async function loadData() {
       setRows([]);
       setLoading(true);
       try {
-        const response = await StudentsService.getStudents(checkedYear, checkedProfessor, checkedCurrentStudents);
+        const response = await StudentsService.getStudents(
+          checkedYear,
+          checkedProfessor,
+          checkedCurrentStudents,
+          debouncedStartYear || 1950,
+          debouncedEndYear || new Date().getFullYear(),
+        );
         if (response.status === 200) {
           const { data } = response;
           const newData: Students[] = data.map((element, index) => ({
@@ -152,7 +162,7 @@ function Table() {
       }
     }
     loadData();
-  }, [checkedYear, checkedProfessor, checkedCurrentStudents]);
+  }, [checkedYear, checkedProfessor, checkedCurrentStudents, debouncedStartYear, debouncedEndYear]);
 
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     setCheckedYear(event.target.checked);
@@ -169,7 +179,7 @@ function Table() {
   return (
     <GridContainer>
       <ButtonsGrid>
-        <Grid>
+        <Grid sx={{ padding: '7px' }}>
           <Divider> Agrupar </Divider>
           <FormControlLabel control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />} label='Ano' />
           <FormControlLabel
@@ -177,16 +187,70 @@ function Table() {
             label='Professor'
           />
         </Grid>
-        <Grid sx={{ marginLeft: '5%' }}>
+        <Grid sx={{ marginLeft: '5%', marginBottom: '0.5rem', padding: '7px' }}>
           <Divider> Filtrar </Divider>
-          <FormControlLabel
-            control={<RedSwitch checked={!checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
-            label='Orientados'
-          />
-          <FormControlLabel
-            control={<RedSwitch checked={checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
-            label='Orientandos'
-          />
+          <Grid container spacing={3} sx={{ width: '100%', marginX: 0 }}>
+            <Grid item xs={12} sm={6} lg={5} container>
+              <Grid item xs={12} lg={6}>
+                <FormControlLabel
+                  control={<RedSwitch checked={!checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
+                  label='Orientados'
+                />
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <FormControlLabel
+                  control={<RedSwitch checked={checkedCurrentStudents} onChange={handleChangeCurrentStudents} />}
+                  label='Orientandos'
+                />
+              </Grid>
+            </Grid>
+            <Grid item container xs={12} sm={6} lg={7} spacing={1}>
+              <Grid item xs={12} lg={6}>
+                <FormControl fullWidth>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ display: 'block', width: '90px' }}>Ano Inicial:</span>
+                    <TextInputWrapper>
+                      <TextInput
+                        id='start-year'
+                        value={startYear}
+                        onChange={handleStartYearChange}
+                        type='number'
+                        min='1950'
+                        max={new Date().getFullYear()}
+                      />
+                    </TextInputWrapper>
+                  </div>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <FormControl fullWidth>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ display: 'block', width: '90px' }}>Ano Final:</span>
+                    <TextInputWrapper>
+                      <TextInput
+                        id='end-year'
+                        value={endYear}
+                        onChange={handleEndYearChange}
+                        type='number'
+                        min='1950'
+                        max={new Date().getFullYear()}
+                      />
+                    </TextInputWrapper>
+                  </div>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
       </ButtonsGrid>
       <TableDiv>
