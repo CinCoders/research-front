@@ -10,6 +10,7 @@ import { ProfessorStudentsTable } from '../Students/ProfessorStudents';
 import { Professor } from '../../types/Professor.d';
 import ProfessorData from '../../components/ProfessorData';
 import { ProfessorGrid } from '../../components/TableStyles/styles';
+import { ProfessorPatentsTable } from '../Patents/ProfessorPatents';
 
 interface TabPanelProps {
   children: ReactNode;
@@ -96,6 +97,7 @@ function ProfessorInfo() {
               <Tab label='Publicações' id='datagridTab-0' />
               <Tab label='Projetos' id='datagridTab-1' />
               <Tab label='Orientações' id='datagridTab-2' />
+              <Tab label='Patentes' id='datagridTab-3' />
             </Tabs>
           </Box>
           <TabPanel value={value} index={0}>
@@ -111,6 +113,11 @@ function ProfessorInfo() {
           <TabPanel value={value} index={2}>
             <ProfessorGrid>
               <ProfessorStudentsTable paramId={Number(id)} />
+            </ProfessorGrid>
+          </TabPanel>
+          <TabPanel value={value} index={3}>
+            <ProfessorGrid>
+              <ProfessorPatentsTable paramId={Number(id)} />
             </ProfessorGrid>
           </TabPanel>
         </Box>
