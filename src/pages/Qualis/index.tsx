@@ -133,6 +133,29 @@ function Table() {
 
   const handleCreateClick = () => setOpen(true);
 
+  const handleUpdateClick = async () => {
+    try {
+      const [conferencesResp, journalsResp] = await Promise.all([
+        QualisService.refreshConferences(),
+        QualisService.refreshJournals(),
+      ]);
+
+      if (conferencesResp.status !== 201 || journalsResp.status !== 201) {
+        throw new Error('Erro ao atualizar conferências e periódicos.');
+      }
+
+      toast.success('Conferências e periódicos atualizados com sucesso!', {
+        containerId: 'page',
+        position: 'top-right',
+      });
+    } catch (error) {
+      toast.error('Ocorreu um erro ao atualizar conferências e periódicos. Tente novamente mais tarde.', {
+        containerId: 'page',
+        position: 'top-right',
+      });
+    }
+  };
+
   const handleCellEditCommit = React.useCallback(
     async params => {
       const { id, field, value } = params;
@@ -171,7 +194,7 @@ function Table() {
     [checkedConferences],
   );
 
-  const toolbarClick = () => <CustomToolbar onCreateClick={handleCreateClick} />;
+  const toolbarClick = () => <CustomToolbar onCreateClick={handleCreateClick} onUpdateClick={handleUpdateClick} />;
 
   useEffect(() => {
     async function loadData() {
