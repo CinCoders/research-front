@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect, useState } from 'react';
 import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { Divider, FormControlLabel, Grid } from '@mui/material';
+import { Divider, FormControl, FormControlLabel, Grid } from '@mui/material';
 import { toast, useNavbar } from '@cincoders/cinnamon';
 import { showErrorStatus } from '../../../utils/showErrorStatus';
 import { CustomToolbar } from '../../../components/CustomToolbar';
@@ -12,6 +12,8 @@ import { RedSwitch } from '../../../components/RedSwitch';
 import { Publications } from '../../../types/Publications.d';
 import { ButtonsGrid } from '../../../components/ButtonsGrid/styles';
 import { Links } from '../../../types/enums';
+import { TextInput, TextInputWrapper } from '../../../components/InputYear/styles';
+import useDebouncedState from '../../../utils/useDebouncedState';
 
 const columns: GridColDef[] = [
   {
@@ -179,6 +181,9 @@ function Table() {
   const [checkedArticles, setCheckedArticles] = useState<boolean>(true);
   const [checkedConferences, setCheckedConferences] = useState<boolean>(true);
 
+  const [startYear, debouncedStartYear, handleStartYearChange] = useDebouncedState();
+  const [endYear, debouncedEndYear, handleEndYearChange] = useDebouncedState();
+
   useEffect(() => {
     async function loadData() {
       setRows([]);
@@ -189,6 +194,8 @@ function Table() {
           checkedProfessor,
           checkedArticles,
           checkedConferences,
+          debouncedStartYear || 1950,
+          debouncedEndYear || new Date().getFullYear(),
         );
         if (response.status === 200) {
           const { data } = response;
@@ -245,7 +252,7 @@ function Table() {
       }
     }
     loadData();
-  }, [checkedYear, checkedProfessor, checkedArticles, checkedConferences]);
+  }, [checkedYear, checkedProfessor, checkedArticles, checkedConferences, debouncedEndYear, debouncedStartYear]);
 
   const handleChangeYear = (event: ChangeEvent<HTMLInputElement>) => {
     setCheckedYear(event.target.checked);
@@ -266,24 +273,89 @@ function Table() {
   return (
     <GridContainer>
       <ButtonsGrid>
-        <Grid>
+        <Grid marginBottom={{ xs: '90px', sm: '0.5rem' }}>
           <Divider> Agrupar </Divider>
-          <FormControlLabel control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />} label='Ano' />
-          <FormControlLabel
-            control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
-            label='Professor'
-          />
+          <Grid container sx={{ width: '100%' }}>
+            <Grid item xs={12} lg={5} padding={{ sm: '2px', md: '0' }}>
+              <FormControlLabel control={<RedSwitch checked={checkedYear} onChange={handleChangeYear} />} label='Ano' />
+            </Grid>
+            <Grid item xs={12} lg={7}>
+              <FormControlLabel
+                control={<RedSwitch checked={checkedProfessor} onChange={handleChangeProfessor} />}
+                label='Professor'
+              />
+            </Grid>
+          </Grid>
         </Grid>
-        <Grid sx={{ marginLeft: '5%' }}>
+        <Grid sx={{ marginX: '5%' }}>
           <Divider> Filtrar </Divider>
-          <FormControlLabel
-            control={<RedSwitch checked={checkedArticles} onChange={handleChangeArticles} />}
-            label='Periódicos'
-          />
-          <FormControlLabel
-            control={<RedSwitch checked={checkedConferences} onChange={handleChangeConferences} />}
-            label='Conferências'
-          />
+          <Grid container sx={{ width: '100%', marginX: 0 }}>
+            <Grid item container columnSpacing={1} xs={12} sm={6}>
+              <FormControlLabel
+                control={<RedSwitch checked={checkedArticles} onChange={handleChangeArticles} />}
+                label='Periódicos'
+              />
+              <FormControlLabel
+                control={<RedSwitch checked={checkedConferences} onChange={handleChangeConferences} />}
+                label='Conferências'
+              />
+            </Grid>
+            <Grid
+              rowSpacing={1}
+              item
+              container
+              columnSpacing={1}
+              alignItems='center'
+              justifyContent='center'
+              xs={12}
+              sm={6}
+            >
+              <Grid item xs={12} lg={6}>
+                <FormControl fullWidth>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ display: 'block', width: '100px' }}>Ano Inicial:</span>
+                    <TextInputWrapper>
+                      <TextInput
+                        id='start-year'
+                        value={startYear}
+                        onChange={handleStartYearChange}
+                        type='number'
+                        min='1950'
+                        max={new Date().getFullYear()}
+                      />
+                    </TextInputWrapper>
+                  </div>
+                </FormControl>
+              </Grid>
+              <Grid item xs={12} lg={6}>
+                <FormControl fullWidth>
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    <span style={{ display: 'block', width: '100px' }}>Ano Final:</span>
+                    <TextInputWrapper>
+                      <TextInput
+                        id='end-year'
+                        value={endYear}
+                        onChange={handleEndYearChange}
+                        type='number'
+                        min='1950'
+                        max={new Date().getFullYear()}
+                      />
+                    </TextInputWrapper>
+                  </div>
+                </FormControl>
+              </Grid>
+            </Grid>
+          </Grid>
         </Grid>
       </ButtonsGrid>
       <TableDiv>

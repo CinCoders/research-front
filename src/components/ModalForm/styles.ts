@@ -8,7 +8,7 @@ export const ModalStyled = styled(Box)({
   left: '50%',
   transform: 'translate(-50%, -50%)',
   width: 600,
-  maxHeight: 420,
+  maxHeight: 453,
   backgroundColor: 'white',
   padding: '0px 32px 32px 32px',
 });
