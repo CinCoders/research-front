@@ -3,8 +3,8 @@ import { CircularProgress, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useParams } from 'react-router-dom';
-import { MenuItemProps } from '../../components/NewProfessor/MenuItem';
-import SideMenu from '../../components/NewProfessor/SideMenu';
+import { MenuItemProps } from '../../components/PublicProfessor/MenuItem';
+import SideMenu from '../../components/PublicProfessor/SideMenu';
 import HumanResourcesService from '../../services/HumanResourcesService';
 import { ProfessorService } from '../../services/ProfessorService';
 import { Links } from '../../types/enums';
