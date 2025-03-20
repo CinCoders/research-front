@@ -1,19 +1,19 @@
-import { ChangeEvent, useEffect, useState } from 'react';
-import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { Divider, FormControlLabel, Grid } from '@mui/material';
-import { useParams } from 'react-router-dom';
 import { toast, useNavbar } from '@cincoders/cinnamon';
-import { showErrorStatus } from '../../../utils/showErrorStatus';
-import { CustomToolbar } from '../../../components/CustomToolbar';
-import { MainGrid, TableDiv, GridContainer, ProfessorGrid, ProfessorDiv } from '../../../components/TableStyles/styles';
-import { renderHeaderTooltip } from '../../../components/HeaderTooltip';
-import { PublicationsService } from '../../../services/PublicationsService';
-import { RedSwitch } from '../../../components/RedSwitch';
-import { renderCellExpand } from '../../../components/EllipsisText';
-import { renderCheckIcon } from '../../../components/CheckIcon';
-import { ProfessorPublications } from '../../../types/Publications.d';
+import { Divider, FormControlLabel, Grid } from '@mui/material';
+import { GridColDef, ptBR } from '@mui/x-data-grid';
+import { ChangeEvent, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { ButtonsGrid } from '../../../components/ButtonsGrid/styles';
+import { renderCheckIcon } from '../../../components/CheckIcon';
+import { CustomToolbar } from '../../../components/CustomToolbar';
+import { renderCellExpand } from '../../../components/EllipsisText';
+import { renderHeaderTooltip } from '../../../components/HeaderTooltip';
 import ProfessorInfo from '../../../components/ProfessorInfo';
+import { RedSwitch } from '../../../components/RedSwitch';
+import { GridContainer, MainGrid, ProfessorDiv, ProfessorGrid, TableDiv } from '../../../components/TableStyles/styles';
+import { PublicationsService } from '../../../services/PublicationsService';
+import { ProfessorPublications } from '../../../types/Publications.d';
+import { showErrorStatus } from '../../../utils/showErrorStatus';
 
 interface ParamsProps {
   paramId: number;
@@ -104,12 +104,7 @@ export function ProfessorPublicationsTable({ paramId }: ParamsProps) {
           const { data } = response;
           const newData = data.map((element, index) => ({
             id: index,
-            year: element.year,
-            title: element.title,
-            eventJournal: element.eventJournal,
-            acronymIssn: element.acronymIssn,
-            qualis: element.qualis,
-            isTop: element.isTop,
+            ...element,
           }));
           setRows(newData);
         } else {
