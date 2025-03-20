@@ -40,7 +40,10 @@ export interface ProfessorPublications {
   title: string;
   year: number;
   eventJournal?: string;
+  isEvent: boolean;
   acronymIssn: string;
   qualis: string;
   isTop: boolean;
+  authors: string;
+  doi?: string;
 }
