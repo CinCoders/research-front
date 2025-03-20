@@ -1,19 +1,19 @@
-import { PageWithAuth, ToastContainer } from '@cincoders/cinnamon';
+import { PageWithAuth } from '@cincoders/cinnamon';
 import AccountBalance from '@mui/icons-material/AccountBalance';
 import { useCallback } from 'react';
 import { AuthContextProps } from 'react-oidc-context';
-import { links } from '../Navbar';
+import { Outlet } from 'react-router-dom';
 import logoCin from '../../assets/icons/cin-logo.svg';
-import { listSystem } from '../../utils/systemsList';
 import { Links } from '../../types/enums';
+import { listSystem } from '../../utils/systemsList';
+import { links } from '../Navbar';
 
 interface PageCinProps {
   auth: AuthContextProps;
-  children: JSX.Element | JSX.Element[];
   permittedRoles: string[];
 }
 
-export default function PageCin({ children, auth, permittedRoles }: PageCinProps) {
+export default function PageCin({ auth, permittedRoles }: PageCinProps) {
   const AccountBalanceComponent = useCallback(
     () => <AccountBalance sx={{ display: 'center', marginLeft: '2rem' }} fontSize='large' htmlColor='#DB1E2F' />,
     [],
@@ -43,20 +43,8 @@ export default function PageCin({ children, auth, permittedRoles }: PageCinProps
       haveToast
       createNavbarContext
       centralized
-      components={{
-        toastContainer: (
-          <ToastContainer
-            toastProps={{
-              position: 'top-right',
-              enableMultiContainer: true,
-              containerId: 'page',
-            }}
-            topInitialPosition={64}
-          />
-        ),
-      }}
     >
-      {children}
+      <Outlet />
     </PageWithAuth>
   );
 }
