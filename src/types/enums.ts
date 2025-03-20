@@ -17,11 +17,11 @@ export enum Links {
   PROFESSORS_LIST = '/research/professors/list',
   PROFESSOR_INFO = '/research/professor/:id',
   PROFESSOR_XML = 'http://buscatextual.cnpq.br/buscatextual/download.do?idcnpq=:id',
-  PUBLIC_PROFESSOR_PUBLICATIONS = '/research/new-professor/:id',
-  PUBLIC_PROFESSOR_PROJECTS = '/research/new-professor/:id/projects',
-  PUBLIC_PROFESSOR_SUPERVISIONS = '/research/new-professor/:id/supervisions',
-  PUBLIC_PROFESSOR_PATENTS = '/research/new-professor/:id/patents',
-  PUBLIC_PROFESSOR_LINKS = '/research/new-professor/:id/links',
+  PUBLIC_PROFESSOR_PUBLICATIONS = '/research/public-professor/:id',
+  PUBLIC_PROFESSOR_PROJECTS = '/research/public-professor/:id/projects',
+  PUBLIC_PROFESSOR_SUPERVISIONS = '/research/public-professor/:id/supervisions',
+  PUBLIC_PROFESSOR_PATENTS = '/research/public-professor/:id/patents',
+  PUBLIC_PROFESSOR_LINKS = '/research/public-professor/:id/links',
 }
 
 export enum Roles {
