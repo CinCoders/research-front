@@ -1,8 +1,7 @@
-import { Email, GitHub, Instagram, LinkedIn, Twitter, YouTube } from '@mui/icons-material';
-import LanguageOutlinedIcon from '@mui/icons-material/LanguageOutlined';
 import { Avatar, Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import { ProfessorHr } from '../../types/HRProfessor.d';
+import { getProfessorLinks } from '../../utils/getProfessorLinks';
 import LinkItem from './LinkItem';
 import MenuItem, { MenuItemProps } from './MenuItem';
 
@@ -15,19 +14,11 @@ interface SideMenuProps {
 export default function SideMenu({ professor, id, menuOptions }: SideMenuProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  const links: { href: string; icon: JSX.Element }[] = [
-    { href: '', icon: <GitHub /> },
-    { href: '', icon: <LinkedIn /> },
-    { href: '', icon: <Twitter /> },
-    { href: '', icon: <YouTube /> },
-    { href: '', icon: <Instagram /> },
-    { href: professor ? `mailto:${professor.email}` : '', icon: <Email /> },
-    { href: professor?.website ?? '', icon: <LanguageOutlinedIcon /> },
-  ];
-
   if (!professor) {
     return null;
   }
+
+  const professorLinks = getProfessorLinks(professor);
 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -50,7 +41,7 @@ export default function SideMenu({ professor, id, menuOptions }: SideMenuProps) 
       </Typography>
 
       <Box display='flex' gap={1}>
-        {links.map(link => (
+        {professorLinks.map(link => (
           <LinkItem to={link.href} key={link.href}>
             {link.icon}
           </LinkItem>

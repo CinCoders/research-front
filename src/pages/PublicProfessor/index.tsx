@@ -15,7 +15,6 @@ const menuOptions: MenuItemProps[] = [
   { href: Links.PUBLIC_PROFESSOR_PROJECTS, title: 'Projetos' },
   { href: Links.PUBLIC_PROFESSOR_PATENTS, title: 'Patentes' },
   { href: Links.PUBLIC_PROFESSOR_SUPERVISIONS, title: 'Orientações Acadêmicas' },
-  { href: Links.PUBLIC_PROFESSOR_LINKS, title: 'Links' },
 ];
 
 export default function PublicProfessor() {
@@ -54,6 +53,7 @@ export default function PublicProfessor() {
           positionName: professorData.data[0].position.name,
           researchAreasName: professorData.data[0].researchAreas.map(area => area.name),
           rolesDescription: professorData.data[0].employeeRoles.map(role => role.description),
+          links: professorData.data[0].employeeLinks.map(link => link.url),
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : null;
