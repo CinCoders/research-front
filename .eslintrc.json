@@ -29,7 +29,6 @@
   },
   "plugins": ["react", "prettier", "@typescript-eslint", "jest", "react-hooks", "import"],
   "rules": {
-    "react/require-default-props": "off",
     "react/jsx-wrap-multilines": ["error", { "prop": "ignore" }],
     "react/jsx-props-no-spreading": "off",
     "object-curly-newline": ["off"],
