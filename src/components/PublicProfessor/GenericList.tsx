@@ -1,11 +1,13 @@
 import { toast } from '@cincoders/cinnamon';
 import { Box, CircularProgress, Typography } from '@mui/material';
+import { AxiosResponse } from 'axios';
 import { ReactNode, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { showErrorStatus } from '../../utils/showErrorStatus';
 import { getUserLattes } from '../../utils/storeUserLattes';
 
 interface GenericListProps<T> {
-  fetchData: (lattes: string) => Promise<T[]>;
+  fetchData: (lattes: string) => Promise<AxiosResponse<T[]>>;
   renderItem: (item: T) => JSX.Element;
   emptyMessage: string;
   defaultErrorMessage: string;
@@ -64,12 +66,17 @@ export default function GenericList<T>({
           throw new Error('Professor nao encontrado');
         }
 
-        const data = await fetchData(lattes);
-        setItems(data);
+        const response = await fetchData(lattes);
+
+        if (response.status !== 200) {
+          showErrorStatus(response.status);
+        }
+
+        setItems(response.data);
       } catch (error) {
-        const errorMessage = error instanceof Error ? error.message : '';
-        toast.error(`${defaultErrorMessage}. ${errorMessage}`, {
+        toast.error(defaultErrorMessage, {
           autoClose: 3000,
+          containerId: 'page',
         });
       } finally {
         setLoading(false);
@@ -77,7 +84,7 @@ export default function GenericList<T>({
     };
 
     loadItems();
-  }, [fetchData]);
+  }, [defaultErrorMessage, fetchData, user]);
 
   if (loading) {
     return (

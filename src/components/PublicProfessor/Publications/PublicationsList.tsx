@@ -3,10 +3,7 @@ import GenericList from '../GenericList';
 import PublicationItem from './PublicationItem';
 
 export default function PublicationList() {
-  const fetchPublications = async (lattes: string) => {
-    const { data } = await PublicationsService.getProfessorPublications(null, lattes, true, true);
-    return data;
-  };
+  const fetchPublications = (lattes: string) => PublicationsService.getProfessorPublications(null, lattes, true, true);
 
   return (
     <GenericList

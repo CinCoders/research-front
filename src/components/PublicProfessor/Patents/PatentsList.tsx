@@ -3,10 +3,7 @@ import GenericList from '../GenericList';
 import PatentItem from './PatentItem';
 
 export default function PatentsList() {
-  const fetchPatents = async (lattes: string) => {
-    const { data } = await PatentService.getProfessorPatents(undefined, lattes);
-    return data;
-  };
+  const fetchPatents = async (lattes: string) => PatentService.getProfessorPatents(undefined, lattes);
 
   return (
     <GenericList

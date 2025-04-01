@@ -3,10 +3,7 @@ import GenericList from '../GenericList';
 import SupervisionItem from './SupervisionItem';
 
 export default function SupervisionsList() {
-  const fetchSupervisions = async (lattes: string) => {
-    const { data } = await StudentsService.getProfessorStudents(true, undefined, lattes);
-    return data;
-  };
+  const fetchSupervisions = async (lattes: string) => StudentsService.getProfessorStudents(true, undefined, lattes);
 
   return (
     <GenericList
