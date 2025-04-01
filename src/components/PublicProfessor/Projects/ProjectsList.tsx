@@ -3,8 +3,8 @@ import GenericList from '../GenericList';
 import ProjectItem from './ProjectItem';
 
 export default function ProjectsList() {
-  const fetchProjects = async (id: string | number) => {
-    const { data } = await ProjectsService.getProfessorProjects(Number(id));
+  const fetchProjects = async (lattes: string) => {
+    const { data } = await ProjectsService.getProfessorProjects(undefined, lattes);
     return data;
   };
 

@@ -84,6 +84,7 @@ function ProfessorData({ id, name, lattesCode }: ProfessorDataProps) {
               links: professorHrResponse.employeeLinks.map(link => link.url),
             };
           });
+
           setProfessorHr(professorResponse[0]);
         } catch {
           toast.error('Não foi possível obter as informações do professor', { containerId: 'page' });

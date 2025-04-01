@@ -1,14 +1,15 @@
 import { toast } from '@cincoders/cinnamon';
-import { CircularProgress, Typography } from '@mui/material';
+import { ArrowLeftOutlined } from '@mui/icons-material';
+import { Button, CircularProgress, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation, useParams } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { MenuItemProps } from '../../components/PublicProfessor/MenuItem';
 import SideMenu from '../../components/PublicProfessor/SideMenu';
 import HumanResourcesService from '../../services/HumanResourcesService';
-import { ProfessorService } from '../../services/ProfessorService';
 import { Links } from '../../types/enums';
 import { ProfessorHr } from '../../types/HRProfessor.d';
+import { storeUserLattes } from '../../utils/storeUserLattes';
 
 const menuOptions: MenuItemProps[] = [
   { href: Links.PUBLIC_PROFESSOR_PUBLICATIONS, title: 'Publicações' },
@@ -18,8 +19,9 @@ const menuOptions: MenuItemProps[] = [
 ];
 
 export default function PublicProfessor() {
+  const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { id } = useParams();
+  const { user } = useParams();
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
   const [loading, setLoading] = useState(true);
@@ -27,33 +29,24 @@ export default function PublicProfessor() {
   useEffect(() => {
     const fetchProfessor = async () => {
       try {
-        if (!id) {
+        if (!user) {
           throw new Error('Professor não específicado');
         }
 
-        const response = await ProfessorService.getProfessor(Number(id));
-        const professorData = await HumanResourcesService.getProfessors(response.data.identifier);
+        const { data: professorHr } = await HumanResourcesService.getProfessorByUser(user);
 
-        if (!professorData) {
+        if (!professorHr) {
           throw new Error('Professor não encontrado');
         }
 
+        storeUserLattes(user, professorHr[0].lattesCode);
+
         setProfessor({
-          id: professorData.data[0].id,
-          name: professorData.data[0].name,
-          imageUrl: professorData.data[0].imageUrl,
-          website: professorData.data[0].website,
-          email: professorData.data[0].email,
-          phone: professorData.data[0].phone,
-          fax: professorData.data[0].fax,
-          room: professorData.data[0].room,
-          lattes: professorData.data[0].lattes,
-          status: professorData.data[0].status,
-          workRegime: professorData.data[0].workRegime,
-          positionName: professorData.data[0].position.name,
-          researchAreasName: professorData.data[0].researchAreas.map(area => area.name),
-          rolesDescription: professorData.data[0].employeeRoles.map(role => role.description),
-          links: professorData.data[0].employeeLinks.map(link => link.url),
+          ...professorHr[0],
+          positionName: professorHr[0].position.name,
+          researchAreasName: professorHr[0].researchAreas.map(area => area.name),
+          rolesDescription: professorHr[0].employeeRoles.map(role => role.description),
+          links: professorHr[0].employeeLinks.map(link => link.url),
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : null;
@@ -66,7 +59,7 @@ export default function PublicProfessor() {
     };
 
     fetchProfessor();
-  }, [id]);
+  }, [user]);
 
   if (loading) {
     return (
@@ -83,7 +76,7 @@ export default function PublicProfessor() {
     );
   }
 
-  if (!id) {
+  if (!user) {
     return (
       <div
         style={{
@@ -91,24 +84,27 @@ export default function PublicProfessor() {
         }}
       >
         <h1>Nenhum professor informado</h1>
-        <span>Voltar</span>
+        <Button
+          variant='outlined'
+          startIcon={<ArrowLeftOutlined />}
+          onClick={() => navigate(-1)}
+          style={{ marginBottom: 20, borderColor: 'red', color: 'red' }}
+        >
+          Voltar
+        </Button>
       </div>
     );
   }
 
-  if (!id) {
-    return null;
-  }
-
   const currentTitle = menuOptions.find(option => {
     const normalizedPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-    return option.href.replace(':id', id) === normalizedPathname;
+    return option.href.replace(':user', user) === normalizedPathname;
   })?.title;
 
   return (
     <Grid container spacing={2} columnGap={2} width='100%' maxWidth='1200px' height='100%' minHeight='100vh' mt={4}>
       <Grid xs={3}>
-        <SideMenu menuOptions={menuOptions} professor={professor} id={id} />
+        <SideMenu menuOptions={menuOptions} professor={professor} id={user} />
       </Grid>
       <Grid xs={8} display='flex' flexDirection='column' gap={4}>
         <Typography variant='h4' fontWeight={500}>

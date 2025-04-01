@@ -25,11 +25,11 @@ export enum Links {
   PROFESSORS_LIST = '/research/professors/list',
   PROFESSOR_INFO = '/research/professor/:id',
   PROFESSOR_XML = 'http://buscatextual.cnpq.br/buscatextual/download.do?idcnpq=:id',
-  PUBLIC_PROFESSOR_PUBLICATIONS = '/research/public-professor/:id',
-  PUBLIC_PROFESSOR_PROJECTS = '/research/public-professor/:id/projects',
-  PUBLIC_PROFESSOR_SUPERVISIONS = '/research/public-professor/:id/supervisions',
-  PUBLIC_PROFESSOR_PATENTS = '/research/public-professor/:id/patents',
-  PUBLIC_PROFESSOR_LINKS = '/research/public-professor/:id/links',
+  PUBLIC_PROFESSOR_PUBLICATIONS = '/research/public-professor/:user',
+  PUBLIC_PROFESSOR_PROJECTS = '/research/public-professor/:user/projects',
+  PUBLIC_PROFESSOR_SUPERVISIONS = '/research/public-professor/:user/supervisions',
+  PUBLIC_PROFESSOR_PATENTS = '/research/public-professor/:user/patents',
+  PUBLIC_PROFESSOR_LINKS = '/research/public-professor/:user/links',
 }
 
 export enum Roles {
@@ -62,4 +62,11 @@ export const LinksIcons: Record<CommonLinkTypes, string> = {
   [CommonLinkTypes.SCHOLAR]: scholar,
   [CommonLinkTypes.LINKEDIN]: linkedin,
   [CommonLinkTypes.LATTES]: lattes,
+} as const;
+
+export const RomanNumbers = {
+  1: 'I',
+  2: 'II',
+  3: 'III',
+  4: 'IV',
 } as const;

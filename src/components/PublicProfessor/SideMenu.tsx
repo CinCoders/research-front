@@ -1,5 +1,6 @@
 import { Avatar, Box, Typography } from '@mui/material';
 import { useState } from 'react';
+import { RomanNumbers } from '../../types/enums';
 import { ProfessorHr } from '../../types/HRProfessor.d';
 import { getProfessorLinks } from '../../utils/getProfessorLinks';
 import LinkItem from './LinkItem';
@@ -19,6 +20,10 @@ export default function SideMenu({ professor, id, menuOptions }: SideMenuProps) 
   }
 
   const professorLinks = getProfessorLinks(professor);
+  const positionLevel = Number(professor.positionName.split(' ').pop()) ?? null;
+  const positionName = positionLevel
+    ? professor.positionName.replace(positionLevel.toString(), RomanNumbers[positionLevel as keyof typeof RomanNumbers])
+    : professor.positionName;
 
   return (
     <Box sx={{ width: '100%', height: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
@@ -33,8 +38,8 @@ export default function SideMenu({ professor, id, menuOptions }: SideMenuProps) 
       <Typography variant='subtitle1' fontWeight={500}>
         {professor.name}
       </Typography>
-      <Typography variant='subtitle2' color='gray'>
-        {professor.positionName}
+      <Typography variant='subtitle2' color={professor.rolesDescription.length > 0 ? 'gray' : '#e7000b'}>
+        {positionName}
       </Typography>
       <Typography variant='subtitle2' color='#e7000b'>
         {professor.rolesDescription[0]}

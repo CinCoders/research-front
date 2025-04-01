@@ -7,18 +7,18 @@ export interface MenuItemProps {
   href: Links;
 }
 export default function MenuItem({ title, href }: MenuItemProps) {
-  const { id } = useParams();
+  const { user } = useParams();
   const isActive = !!useMatch(href);
   const navigate = useNavigate();
 
-  if (!id) {
+  if (!user) {
     return null;
   }
 
   return (
     <Typography
       component='button'
-      onClick={() => navigate(href.replace(':id', id?.toString()))}
+      onClick={() => navigate(href.replace(':user', user))}
       sx={{
         background: 'transparent',
         margin: 0,

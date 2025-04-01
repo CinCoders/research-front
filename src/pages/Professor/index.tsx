@@ -1,16 +1,16 @@
-import { Box, Tabs, Tab } from '@mui/material';
-import { useParams } from 'react-router-dom';
-import { useState, ReactNode, SyntheticEvent, useEffect } from 'react';
 import { useNavbar } from '@cincoders/cinnamon';
-import { TitleBox } from '../../components/ProfessorData/styles';
-import { ProfessorService } from '../../services/ProfessorService';
-import { ProfessorPublicationsTable } from '../Publications/ProfessorPublications';
-import { ProfessorProjectsTable } from '../Projects/ProfessorProjects';
-import { ProfessorStudentsTable } from '../Students/ProfessorStudents';
-import { Professor } from '../../types/Professor.d';
+import { Box, Tab, Tabs } from '@mui/material';
+import { ReactNode, SyntheticEvent, useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import ProfessorData from '../../components/ProfessorData';
+import { TitleBox } from '../../components/ProfessorData/styles';
 import { ProfessorGrid } from '../../components/TableStyles/styles';
+import { ProfessorService } from '../../services/ProfessorService';
+import { Professor } from '../../types/Professor.d';
 import { ProfessorPatentsTable } from '../Patents/ProfessorPatents';
+import { ProfessorProjectsTable } from '../Projects/ProfessorProjects';
+import { ProfessorPublicationsTable } from '../Publications/ProfessorPublications';
+import { ProfessorStudentsTable } from '../Students/ProfessorStudents';
 
 interface TabPanelProps {
   children: ReactNode;

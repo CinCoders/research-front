@@ -25,15 +25,21 @@ export class StudentsService {
   }
 
   static async getProfessorStudents(
-    paramId: number,
     currentStudents: boolean,
+    id?: number,
+    lattes?: string,
   ): Promise<AxiosResponse<ProfessorStudents[]>> {
     let filter = 'current';
     if (!currentStudents) {
       filter = 'concluded';
     }
-    const response = await apiBack.get(`/professors/${paramId}/students?filter=${filter}`, {
+    const response = await apiBack.get('/professors/students', {
       validateStatus: (status: number) => [200, 401, 403, 404, 500].includes(status),
+      params: {
+        id,
+        lattes,
+        filter,
+      },
     });
     return response;
   }

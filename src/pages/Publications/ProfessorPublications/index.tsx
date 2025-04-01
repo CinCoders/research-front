@@ -97,6 +97,7 @@ export function ProfessorPublicationsTable({ paramId }: ParamsProps) {
       try {
         const response = await PublicationsService.getProfessorPublications(
           paramId.toString(),
+          null,
           checkedArticles,
           checkedConferences,
         );

@@ -2,9 +2,10 @@ import { toast } from '@cincoders/cinnamon';
 import { Box, CircularProgress, Typography } from '@mui/material';
 import { ReactNode, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import { getUserLattes } from '../../utils/storeUserLattes';
 
 interface GenericListProps<T> {
-  fetchData: (id: string | number) => Promise<T[]>;
+  fetchData: (lattes: string) => Promise<T[]>;
   renderItem: (item: T) => JSX.Element;
   emptyMessage: string;
   defaultErrorMessage: string;
@@ -33,6 +34,11 @@ function StateContainer({ children, message }: { children?: ReactNode; message?:
   );
 }
 
+StateContainer.defaultProps = {
+  children: null,
+  message: '',
+};
+
 export default function GenericList<T>({
   fetchData,
   renderItem,
@@ -40,7 +46,7 @@ export default function GenericList<T>({
   defaultErrorMessage,
   sortFunction,
 }: GenericListProps<T>) {
-  const { id } = useParams();
+  const { user } = useParams();
   const [items, setItems] = useState<T[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -48,12 +54,17 @@ export default function GenericList<T>({
     const loadItems = async () => {
       setLoading(true);
       try {
-        console.log('IS LOADING: ', loading);
-        if (!id) {
+        if (!user) {
           throw new Error('Professor não informado');
         }
 
-        const data = await fetchData(id);
+        const lattes = getUserLattes(user);
+
+        if (!lattes) {
+          throw new Error('Professor nao encontrado');
+        }
+
+        const data = await fetchData(lattes);
         setItems(data);
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : '';
@@ -84,3 +95,7 @@ export default function GenericList<T>({
     </Box>
   );
 }
+
+GenericList.defaultProps = {
+  sortFunction: undefined,
+};
