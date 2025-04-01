@@ -13,9 +13,8 @@ export default function SupervisionItem({ degree, name, type, yearEnd, yearStart
           {type}
         </Typography>
         <Typography variant='overline' fontSize='0.75rem'>
-          {/* // eslint-disable-next-line react/jsx-one-expression-per-line */}
-          {yearStart && `Iniciou em ${yearStart}`}
-          {yearEnd && `Terminou em ${yearEnd}`}
+          <span>{yearStart && `Iniciou em ${yearStart}`}</span>
+          <span>{yearEnd && `Terminou em ${yearEnd}`}</span>
         </Typography>
       </Box>
     </Box>

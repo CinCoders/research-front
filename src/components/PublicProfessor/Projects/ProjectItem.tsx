@@ -35,11 +35,12 @@ export default function ProjectItem({
       <Typography variant='h6'>{name}</Typography>
       {financiers.length > 0 && (
         <Typography variant='overline' fontSize='0.75rem'>
-          {/* eslint-disable-next-line react/jsx-one-expression-per-line */}
-          Apoio -{' '}
-          {financiers.length === 1
-            ? financiers[0]
-            : `${financiers.slice(0, -1).join(', ')} e ${financiers[financiers.length - 1]}`}
+          <span>Apoio - </span>
+          <span>
+            {financiers.length === 1
+              ? financiers[0]
+              : `${financiers.slice(0, -1).join(', ')} e ${financiers[financiers.length - 1]}`}
+          </span>
         </Typography>
       )}
     </Box>
