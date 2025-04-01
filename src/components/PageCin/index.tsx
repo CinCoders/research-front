@@ -1,4 +1,4 @@
-import { PageWithAuth } from '@cincoders/cinnamon';
+import { PageWithAuth, ToastContainer } from '@cincoders/cinnamon';
 import AccountBalance from '@mui/icons-material/AccountBalance';
 import { useCallback } from 'react';
 import { AuthContextProps } from 'react-oidc-context';
@@ -43,6 +43,18 @@ export default function PageCin({ auth, permittedRoles }: PageCinProps) {
       haveToast
       createNavbarContext
       centralized
+      components={{
+        toastContainer: (
+          <ToastContainer
+            toastProps={{
+              position: 'top-right',
+              enableMultiContainer: true,
+              containerId: 'page',
+            }}
+            topInitialPosition={64}
+          />
+        ),
+      }}
     >
       <Outlet />
     </PageWithAuth>
