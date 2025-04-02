@@ -15,25 +15,38 @@ export function getProfessorLinks(professor: ProfessorHr): { href: string; icon:
   const links = [];
   if (professor?.email) {
     links.push(
-      createCommonLink(`mailto:${professor.email}`, <img src={LinksIcons.EMAIL} width={24} height={24} alt='email' />),
+      createCommonLink(
+        `mailto:${professor.email}`,
+        <img src={LinksIcons.EMAIL} width={24} height={24} alt='Link para o e-mail' />,
+      ),
     );
   }
 
   if (professor?.website) {
     links.push(
-      createCommonLink(professor.website, <img src={LinksIcons.WEBSITE} width={24} height={24} alt='site pessoal' />),
+      createCommonLink(
+        professor.website,
+        <img src={LinksIcons.WEBSITE} width={24} height={24} alt='Link para o site pessoal' />,
+      ),
     );
   }
 
   if (professor?.lattes) {
-    links.push(createCommonLink(professor.lattes, <img src={LinksIcons.LATTES} width={24} height={24} alt='lattes' />));
+    links.push(
+      createCommonLink(
+        professor.lattes,
+        <img src={LinksIcons.LATTES} width={24} height={24} alt='Link para o currículo lattes' />,
+      ),
+    );
   }
 
   professor.links.forEach(link => {
     const linkType = getLinkTypeByUrl(link);
 
     if (linkType) {
-      links.push(createCommonLink(link, <img src={LinksIcons[linkType]} width={24} height={24} alt={linkType} />));
+      links.push(
+        createCommonLink(link, <img src={LinksIcons[linkType]} width={24} height={24} alt={`Link para ${linkType}`} />),
+      );
     }
   });
 

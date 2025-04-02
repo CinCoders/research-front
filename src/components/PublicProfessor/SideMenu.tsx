@@ -9,10 +9,10 @@ import MenuItem, { MenuItemProps } from './MenuItem';
 interface SideMenuProps {
   menuOptions: MenuItemProps[];
   professor: ProfessorHr | null;
-  id: string;
+  alias: string;
 }
 
-export default function SideMenu({ professor, id, menuOptions }: SideMenuProps) {
+export default function SideMenu({ professor, alias, menuOptions }: SideMenuProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   if (!professor) {
@@ -33,7 +33,7 @@ export default function SideMenu({ professor, id, menuOptions }: SideMenuProps) 
         alt={`Foto de perfil de ${professor.name}`}
         sx={{ width: '7rem', height: '7rem', borderRadius: '0.5rem', backgroundcolor: 'gray', color: 'white' }}
       >
-        {!imageLoaded && id}
+        {!imageLoaded && alias}
       </Avatar>
       <Typography variant='subtitle1' fontWeight={500}>
         {professor.name}

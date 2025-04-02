@@ -4,7 +4,7 @@ import { AxiosResponse } from 'axios';
 import { ReactNode, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import { showErrorStatus } from '../../utils/showErrorStatus';
-import { getUserLattes } from '../../utils/storeUserLattes';
+import { getAliasLattes } from '../../utils/storeAliasLattes';
 
 interface GenericListProps<T> {
   fetchData: (lattes: string) => Promise<AxiosResponse<T[]>>;
@@ -48,7 +48,7 @@ export default function GenericList<T>({
   defaultErrorMessage,
   sortFunction,
 }: GenericListProps<T>) {
-  const { user } = useParams();
+  const { alias } = useParams();
   const [items, setItems] = useState<T[] | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -56,11 +56,11 @@ export default function GenericList<T>({
     const loadItems = async () => {
       setLoading(true);
       try {
-        if (!user) {
+        if (!alias) {
           throw new Error('Professor não informado');
         }
 
-        const lattes = getUserLattes(user);
+        const lattes = getAliasLattes(alias);
 
         if (!lattes) {
           throw new Error('Professor nao encontrado');
@@ -84,7 +84,7 @@ export default function GenericList<T>({
     };
 
     loadItems();
-  }, [defaultErrorMessage, fetchData, user]);
+  }, [defaultErrorMessage, fetchData, alias]);
 
   if (loading) {
     return (

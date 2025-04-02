@@ -14,11 +14,11 @@ export default class HumanResourcesService {
     throw new Error('Não conectado com a API');
   }
 
-  static async getProfessorByUser(user: string): Promise<AxiosResponse<ProfessorHrResponse[]>> {
+  static async getProfessorByAlias(alias: string): Promise<AxiosResponse<ProfessorHrResponse[]>> {
     if (apiHr) {
       const response = await apiHr.get<ProfessorHrResponse[]>('/employee', {
         validateStatus: status => [200].includes(status),
-        params: { user },
+        params: { alias },
       });
 
       return response;

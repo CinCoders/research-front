@@ -9,7 +9,7 @@ import SideMenu from '../../components/PublicProfessor/SideMenu';
 import HumanResourcesService from '../../services/HumanResourcesService';
 import { Links } from '../../types/enums';
 import { ProfessorHr } from '../../types/HRProfessor.d';
-import { storeUserLattes } from '../../utils/storeUserLattes';
+import { storeAliasLattes } from '../../utils/storeAliasLattes';
 
 const menuOptions: MenuItemProps[] = [
   { href: Links.PUBLIC_PROFESSOR_PUBLICATIONS, title: 'Publicações' },
@@ -21,7 +21,7 @@ const menuOptions: MenuItemProps[] = [
 export default function PublicProfessor() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
-  const { user } = useParams();
+  const { alias } = useParams();
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
   const [loading, setLoading] = useState(true);
@@ -29,17 +29,17 @@ export default function PublicProfessor() {
   useEffect(() => {
     const fetchProfessor = async () => {
       try {
-        if (!user) {
-          throw new Error('Professor não específicado');
+        if (!alias) {
+          throw new Error('Professor não especificado');
         }
 
-        const { data: professorHr } = await HumanResourcesService.getProfessorByUser(user);
+        const { data: professorHr } = await HumanResourcesService.getProfessorByAlias(alias);
 
         if (!professorHr) {
           throw new Error('Professor não encontrado');
         }
 
-        storeUserLattes(user, professorHr[0].lattesCode);
+        storeAliasLattes(alias, professorHr[0].lattesCode);
 
         setProfessor({
           ...professorHr[0],
@@ -59,7 +59,7 @@ export default function PublicProfessor() {
     };
 
     fetchProfessor();
-  }, [user]);
+  }, [alias]);
 
   if (loading) {
     return (
@@ -76,7 +76,7 @@ export default function PublicProfessor() {
     );
   }
 
-  if (!user) {
+  if (!alias) {
     return (
       <div
         style={{
@@ -98,13 +98,13 @@ export default function PublicProfessor() {
 
   const currentTitle = menuOptions.find(option => {
     const normalizedPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-    return option.href.replace(':user', user) === normalizedPathname;
+    return option.href.replace(':alias', alias) === normalizedPathname;
   })?.title;
 
   return (
     <Grid container spacing={2} columnGap={2} width='100%' maxWidth='1200px' height='100%' minHeight='100vh' mt={4}>
       <Grid xs={3}>
-        <SideMenu menuOptions={menuOptions} professor={professor} id={user} />
+        <SideMenu menuOptions={menuOptions} professor={professor} alias={alias} />
       </Grid>
       <Grid xs={8} display='flex' flexDirection='column' gap={4}>
         <Typography variant='h4' fontWeight={500}>
