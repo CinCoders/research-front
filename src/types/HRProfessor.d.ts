@@ -23,6 +23,19 @@ interface EmployeeRoles {
   roleId: number;
 }
 
+interface LinkType {
+  id: number;
+  name: string;
+  urlDomain: string;
+}
+
+interface EmployeeLink {
+  id: number;
+  identifier: string;
+  url: string;
+  linkType: LinkType;
+}
+
 export interface ProfessorHrResponse {
   id: number;
   name: string;
@@ -42,6 +55,7 @@ export interface ProfessorHrResponse {
   position: Position;
   researchAreas: ResearchArea[];
   employeeRoles: EmployeeRoles[];
+  employeeLinks: EmployeeLink[];
 }
 
 export interface ProfessorHr {
@@ -59,4 +73,5 @@ export interface ProfessorHr {
   positionName: string;
   researchAreasName: string[];
   rolesDescription: string[];
+  links: string[];
 }
