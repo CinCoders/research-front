@@ -1,30 +1,30 @@
-import { Box, Avatar, CircularProgress, Alert } from '@mui/material';
-import { useState, useEffect } from 'react';
-import DownloadIcon from '@mui/icons-material/Download';
 import { toast } from '@cincoders/cinnamon';
+import DownloadIcon from '@mui/icons-material/Download';
+import { Alert, Avatar, Box, CircularProgress } from '@mui/material';
+import { useEffect, useState } from 'react';
+import lattesLogo from '../../assets/icons/lattesLogo.svg';
+import { apiHr } from '../../services/api';
 import HumanResourcesService from '../../services/HumanResourcesService';
+import { Links } from '../../types/enums';
 import { ProfessorHr } from '../../types/HRProfessor.d';
+import { LattesText } from '../LattesText';
+import { LinkButton } from '../LinkButton';
 import {
-  Field,
-  FieldValue,
-  LattesValues,
-  LabelBox1,
-  LabelBox2,
-  TitleBox,
-  Name,
   CustomName,
   Email,
-  MainField,
-  ProfessorDataBox,
-  ProfessorInfoHolder,
-  ProfessorInfoHeader,
+  Field,
+  FieldValue,
+  LabelBox1,
+  LabelBox2,
+  LattesValues,
   LinksWrapper,
+  MainField,
+  Name,
+  ProfessorDataBox,
+  ProfessorInfoHeader,
+  ProfessorInfoHolder,
+  TitleBox,
 } from './styles';
-import { LinkButton } from '../LinkButton';
-import { Links } from '../../types/enums';
-import lattesLogo from '../../assets/icons/lattesLogo.svg';
-import { LattesText } from '../LattesText';
-import { apiHr } from '../../services/api';
 
 interface ProfessorDataProps {
   id: number;
@@ -47,6 +47,7 @@ function ProfessorData({ id, name, lattesCode }: ProfessorDataProps) {
     positionName: '-',
     researchAreasName: ['-'],
     rolesDescription: ['-'],
+    links: [],
   });
   const [loadingProgress, setLoadingProgress] = useState<boolean>(true);
   const [alert, setAlert] = useState<boolean>(false);
@@ -80,8 +81,10 @@ function ProfessorData({ id, name, lattesCode }: ProfessorDataProps) {
               workRegime: professorHrResponse.workRegime,
               rolesDescription,
               researchAreasName,
+              links: professorHrResponse.employeeLinks.map(link => link.url),
             };
           });
+
           setProfessorHr(professorResponse[0]);
         } catch {
           toast.error('Não foi possível obter as informações do professor', { containerId: 'page' });

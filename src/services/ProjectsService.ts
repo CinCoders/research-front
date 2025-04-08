@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
+import { ProfessorProjects, ProjectsDTO } from '../types/Projects.d';
 import apiBack from './api';
-import { ProjectsDTO, ProfessorProjects } from '../types/Projects.d';
 
 export class ProjectsService {
   static async getProjects(
@@ -18,9 +18,13 @@ export class ProjectsService {
     return response;
   }
 
-  static async getProfessorProjects(paramId: number): Promise<AxiosResponse<ProfessorProjects[]>> {
-    const response = await apiBack.get(`/professors/${paramId}/projects`, {
+  static async getProfessorProjects(id?: number, lattes?: string): Promise<AxiosResponse<ProfessorProjects[]>> {
+    const response = await apiBack.get('/professors/projects', {
       validateStatus: (status: number) => [200, 401, 403, 404, 500].includes(status),
+      params: {
+        id,
+        lattes,
+      },
     });
     return response;
   }

@@ -1,16 +1,16 @@
-import { useEffect, useState } from 'react';
-import { GridColDef, ptBR } from '@mui/x-data-grid';
-import { Divider, FormControlLabel, Grid } from '@mui/material';
-import { useParams } from 'react-router-dom';
 import { toast, useNavbar } from '@cincoders/cinnamon';
-import { CustomToolbar } from '../../../components/CustomToolbar';
-import { MainGrid, TableDiv, GridContainer, ProfessorGrid, ProfessorDiv } from '../../../components/TableStyles/styles';
-import { renderHeaderTooltip } from '../../../components/HeaderTooltip';
-import { RedSwitch } from '../../../components/RedSwitch';
-import { ProfessorStudents } from '../../../types/Students.d';
-import { StudentsService } from '../../../services/StudentsService';
+import { Divider, FormControlLabel, Grid } from '@mui/material';
+import { GridColDef, ptBR } from '@mui/x-data-grid';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { ButtonsGrid } from '../../../components/ButtonsGrid/styles';
+import { CustomToolbar } from '../../../components/CustomToolbar';
+import { renderHeaderTooltip } from '../../../components/HeaderTooltip';
 import ProfessorInfo from '../../../components/ProfessorInfo';
+import { RedSwitch } from '../../../components/RedSwitch';
+import { GridContainer, MainGrid, ProfessorDiv, ProfessorGrid, TableDiv } from '../../../components/TableStyles/styles';
+import { StudentsService } from '../../../services/StudentsService';
+import { ProfessorStudents } from '../../../types/Students.d';
 import { showErrorStatus } from '../../../utils/showErrorStatus';
 
 interface ParamsProps {
@@ -78,7 +78,7 @@ export function ProfessorStudentsTable({ paramId }: ParamsProps) {
       setRows([]);
       setLoading(true);
       try {
-        const response = await StudentsService.getProfessorStudents(paramId, checkedCurrentStudents);
+        const response = await StudentsService.getProfessorStudents(checkedCurrentStudents, paramId, undefined);
         if (response.status === 200) {
           const { data } = response;
           const newData: ProfessorStudents[] = data.map((element, index) => ({
