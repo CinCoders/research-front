@@ -7,15 +7,23 @@ import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { MenuItemProps } from '../../components/PublicProfessor/MenuItem';
 import SideMenu from '../../components/PublicProfessor/SideMenu/SideMenu';
 import HumanResourcesService from '../../services/HumanResourcesService';
+import { PatentService } from '../../services/PatentService';
+import { ProjectsService } from '../../services/ProjectsService';
+import { PublicationsService } from '../../services/PublicationsService';
+import { StudentsService } from '../../services/StudentsService';
 import { Links } from '../../types/enums';
 import { ProfessorHr } from '../../types/HRProfessor.d';
+import { ProfessorPatents } from '../../types/Patents.d';
+import { ProfessorProjects } from '../../types/Projects.d';
+import { ProfessorPublications } from '../../types/Publications.d';
+import { ProfessorStudents } from '../../types/Students.d';
 
-const menuOptions: MenuItemProps[] = [
-  { href: Links.PUBLIC_PROFESSOR_PUBLICATIONS, title: 'Publicações' },
-  { href: Links.PUBLIC_PROFESSOR_PROJECTS, title: 'Projetos' },
-  { href: Links.PUBLIC_PROFESSOR_PATENTS, title: 'Patentes' },
-  { href: Links.PUBLIC_PROFESSOR_SUPERVISIONS, title: 'Orientações Acadêmicas' },
-];
+export type PublicProfessorOutlet = {
+  publications?: ProfessorPublications[];
+  projects?: ProfessorProjects[];
+  patents?: ProfessorPatents[];
+  supervisions?: ProfessorStudents[];
+};
 
 export default function PublicProfessor() {
   const navigate = useNavigate();
@@ -23,9 +31,13 @@ export default function PublicProfessor() {
   const { alias } = useParams();
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
-  const [lattesCode, setLattesCode] = useState<string | null>(null);
   const [professorIsLoading, setProfessorIsLoading] = useState(true);
   const [professorNotFound, setProfessorNotFound] = useState(false);
+  const [professorPublications, setProfessorPublications] = useState<ProfessorPublications[] | null>(null);
+  const [professorProjects, setProfessorProjects] = useState<ProfessorProjects[] | null>(null);
+  const [lattesCode, setLattesCode] = useState<string | null>(null);
+  const [professorPatents, setProfessorPatents] = useState<ProfessorPatents[] | null>(null);
+  const [professorStudents, setProfessorStudents] = useState<ProfessorStudents[] | null>(null);
 
   useEffect(() => {
     const fetchProfessor = async () => {
@@ -62,6 +74,41 @@ export default function PublicProfessor() {
     fetchProfessor();
   }, [alias]);
 
+  useEffect(() => {
+    if (professor && lattesCode) {
+      const fetchProfessorContributions = async () => {
+        try {
+          const publicationsPromise = PublicationsService.getProfessorPublications(null, lattesCode, true, true);
+          const projectsPromise = ProjectsService.getProfessorProjects(undefined, lattesCode);
+          const patentsPromise = PatentService.getProfessorPatents(undefined, lattesCode);
+          const studentsPromise = StudentsService.getProfessorStudents(false, undefined, lattesCode);
+
+          publicationsPromise.then(({ data }) => {
+            setProfessorPublications(data);
+          });
+
+          projectsPromise.then(({ data }) => {
+            setProfessorProjects(data);
+          });
+
+          patentsPromise.then(({ data }) => {
+            setProfessorPatents(data);
+          });
+
+          studentsPromise.then(({ data }) => {
+            setProfessorStudents(data);
+          });
+        } catch (error) {
+          toast.error('Ocorreu um erro ao carregar as contribuições. Tente novamente mais tarde.', {
+            autoClose: 2000,
+          });
+        }
+      };
+
+      fetchProfessorContributions();
+    }
+  }, [professor]);
+
   if (professorNotFound) {
     return (
       <div
@@ -94,6 +141,33 @@ export default function PublicProfessor() {
     );
   }
 
+  const menuOptions: MenuItemProps[] = [
+    {
+      href: Links.PUBLIC_PROFESSOR_PUBLICATIONS,
+      title: 'Publicações',
+      active: !!professorPublications && professorPublications.length > 0,
+      isLoading: professorPublications == null,
+    },
+    {
+      href: Links.PUBLIC_PROFESSOR_PROJECTS,
+      title: 'Projetos',
+      active: !!professorProjects && professorProjects.length > 0,
+      isLoading: professorProjects == null,
+    },
+    {
+      href: Links.PUBLIC_PROFESSOR_PATENTS,
+      title: 'Patentes',
+      active: !!professorPatents && professorPatents.length > 0,
+      isLoading: professorPatents == null,
+    },
+    {
+      href: Links.PUBLIC_PROFESSOR_SUPERVISIONS,
+      title: 'Orientações Acadêmicas',
+      active: !!professorStudents && professorStudents.length > 0,
+      isLoading: professorStudents == null,
+    },
+  ];
+
   const currentTitle = menuOptions.find(option => {
     const normalizedPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
     return option.href.replace(':alias', alias || '') === normalizedPathname;
@@ -121,14 +195,23 @@ export default function PublicProfessor() {
         mt={4}
         marginX='auto'
       >
-        <Grid xs={3}>
+        <Grid xs={12} md={3}>
           <SideMenu isLoading={professorIsLoading} menuOptions={menuOptions} professor={professor} alias={alias} />
         </Grid>
-        <Grid xs={8} display='flex' flexDirection='column' gap={4}>
+        <Grid xs={12} md={8} display='flex' flexDirection='column' gap={4}>
           <Typography variant='h4' fontWeight={500}>
             {currentTitle}
           </Typography>
-          <Outlet context={{ lattes: lattesCode, professorIsLoading }} />
+          <Outlet
+            context={
+              {
+                publications: professorPublications,
+                projects: professorProjects,
+                patents: professorPatents,
+                supervisions: professorStudents,
+              } as PublicProfessorOutlet
+            }
+          />
         </Grid>
       </Grid>
     </>

@@ -1,6 +1,6 @@
 import { Box, Skeleton } from '@mui/material';
 
-export default function ListItemsSkeleton() {
+export default function GenericListSkeleton() {
   return (
     <>
       {[1, 2, 3, 4, 5, 6, 7, 8, 9].map(v => (

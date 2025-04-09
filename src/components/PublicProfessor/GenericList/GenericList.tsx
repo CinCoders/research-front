@@ -1,18 +1,7 @@
-import { toast } from '@cincoders/cinnamon';
 import { Box, Typography } from '@mui/material';
-import { AxiosResponse } from 'axios';
-import { ReactNode, useEffect, useState } from 'react';
-import { useOutletContext, useParams } from 'react-router-dom';
-import { showErrorStatus } from '../../../utils/showErrorStatus';
-import ListItemsSkeleton from './ListItemsSkeleton';
-
-interface GenericListProps<T> {
-  fetchData: (lattes: string) => Promise<AxiosResponse<T[]>>;
-  renderItem: (item: T) => JSX.Element;
-  emptyMessage: string;
-  defaultErrorMessage: string;
-  sortFunction?: (a: T, b: T) => number;
-}
+import { ReactNode } from 'react';
+import { useOutletContext } from 'react-router-dom';
+import { PublicProfessorOutlet } from '../../../pages/PublicProfessor';
 
 function StateContainer({ children, message }: { children?: ReactNode; message?: string }) {
   return (
@@ -40,62 +29,40 @@ StateContainer.defaultProps = {
   children: null,
   message: '',
 };
+export type PublicProfessorOutletKey = keyof PublicProfessorOutlet;
+export type PublicProfessorOutletValue<K extends PublicProfessorOutletKey> = PublicProfessorOutlet[K] extends Array<
+  infer T
+>
+  ? T
+  : never;
 
-export default function GenericList<T>({
-  fetchData,
+interface GenericListProps<K extends PublicProfessorOutletKey> {
+  itemsKey: K;
+  renderItem: (item: PublicProfessorOutletValue<K>) => JSX.Element;
+  // sortFunction?: (a: PublicProfessorOutletValue<K>, b: PublicProfessorOutletValue<K>) => number;
+}
+
+export default function GenericList<K extends PublicProfessorOutletKey>({
   renderItem,
-  emptyMessage,
-  defaultErrorMessage,
-  sortFunction,
-}: GenericListProps<T>) {
-  const { alias } = useParams();
-  const [items, setItems] = useState<T[] | null>(null);
-  const [loading, setLoading] = useState(true);
-  const { lattes, professorIsLoading } = useOutletContext<{ lattes?: string; professorIsLoading: boolean }>();
+  itemsKey,
+}: // sortFunction,
+GenericListProps<K>) {
+  const context = useOutletContext<PublicProfessorOutlet>();
+  const items = context[itemsKey] as PublicProfessorOutletValue<K>[] | undefined;
 
-  useEffect(() => {
-    const loadItems = async () => {
-      setLoading(true);
-      if (!lattes) {
-        return;
-      }
-
-      try {
-        if (!alias) {
-          throw new Error('Professor não informado');
-        }
-
-        const response = await fetchData(lattes);
-
-        if (response.status !== 200) {
-          showErrorStatus(response.status);
-        }
-
-        setItems(response.data);
-      } catch (error) {
-        toast.error(defaultErrorMessage, {
-          autoClose: 3000,
-          containerId: 'page',
-        });
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadItems();
-  }, [defaultErrorMessage, fetchData, alias, lattes]);
-
-  if (loading || professorIsLoading) return <ListItemsSkeleton />;
-
-  if (!items || items.length === 0) return <StateContainer message={emptyMessage} />;
+  if (!items) {
+    return (
+      <StateContainer message='Nenhum dado encontrado'>
+        <Typography variant='h5' fontSize={20}>
+          Ocorreu um erro durante a busca. Tente novamente mais tarde.
+        </Typography>
+      </StateContainer>
+    );
+  }
 
   return (
     <Box display='flex' flexDirection='column' gap={4}>
-      {items.sort(sortFunction ?? (() => 0)).map(renderItem)}
+      {items.map(renderItem)}
     </Box>
   );
 }
-
-GenericList.defaultProps = {
-  sortFunction: undefined,
-};
