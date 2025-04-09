@@ -1,4 +1,4 @@
-import { toast } from '@cincoders/cinnamon';
+import { toast, ToastContainer } from '@cincoders/cinnamon';
 import { ArrowLeftOutlined } from '@mui/icons-material';
 import { Button, CircularProgress, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
@@ -102,16 +102,37 @@ export default function PublicProfessor() {
   })?.title;
 
   return (
-    <Grid container spacing={2} columnGap={2} width='100%' maxWidth='1200px' height='100%' minHeight='100vh' mt={4}>
-      <Grid xs={3}>
-        <SideMenu menuOptions={menuOptions} professor={professor} alias={alias} />
+    <>
+      <ToastContainer
+        toastProps={{
+          position: 'top-right',
+          enableMultiContainer: true,
+          containerId: 'page',
+        }}
+        topInitialPosition={64}
+      />
+
+      <Grid
+        container
+        spacing={2}
+        columnGap={2}
+        width='100vw'
+        maxWidth='1200px'
+        height='100%'
+        minHeight='100vh'
+        mt={4}
+        marginX='auto'
+      >
+        <Grid xs={3}>
+          <SideMenu menuOptions={menuOptions} professor={professor} alias={alias} />
+        </Grid>
+        <Grid xs={8} display='flex' flexDirection='column' gap={4}>
+          <Typography variant='h4' fontWeight={500}>
+            {currentTitle}
+          </Typography>
+          <Outlet />
+        </Grid>
       </Grid>
-      <Grid xs={8} display='flex' flexDirection='column' gap={4}>
-        <Typography variant='h4' fontWeight={500}>
-          {currentTitle}
-        </Typography>
-        <Outlet />
-      </Grid>
-    </Grid>
+    </>
   );
 }
