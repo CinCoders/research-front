@@ -1,11 +1,11 @@
-import { toast } from '@cincoders/cinnamon';
-import { ArrowLeftOutlined } from '@mui/icons-material';
-import { Button, CircularProgress, Typography } from '@mui/material';
+import { toast, ToastContainer } from '@cincoders/cinnamon';
+import { ArrowLeftOutlined, PersonOff } from '@mui/icons-material';
+import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
 import { MenuItemProps } from '../../components/PublicProfessor/MenuItem';
-import SideMenu from '../../components/PublicProfessor/SideMenu';
+import SideMenu from '../../components/PublicProfessor/SideMenu/SideMenu';
 import HumanResourcesService from '../../services/HumanResourcesService';
 import { Links } from '../../types/enums';
 import { ProfessorHr } from '../../types/HRProfessor.d';
@@ -24,7 +24,8 @@ export default function PublicProfessor() {
   const { alias } = useParams();
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [professorIsLoading, setProfessorIsLoading] = useState(true);
+  const [professorNotFound, setProfessorNotFound] = useState(false);
 
   useEffect(() => {
     const fetchProfessor = async () => {
@@ -35,8 +36,8 @@ export default function PublicProfessor() {
 
         const { data: professorHr } = await HumanResourcesService.getProfessorByAlias(alias);
 
-        if (!professorHr) {
-          throw new Error('Professor não encontrado');
+        if (!professorHr || professorHr.length === 0) {
+          setProfessorNotFound(true);
         }
 
         storeAliasLattes(alias, professorHr[0].lattesCode);
@@ -54,41 +55,38 @@ export default function PublicProfessor() {
           autoClose: 3000,
         });
       } finally {
-        setLoading(false);
+        setProfessorIsLoading(false);
       }
     };
 
     fetchProfessor();
   }, [alias]);
 
-  if (loading) {
+  if (professorNotFound) {
     return (
       <div
         style={{
+          height: '100vh',
           display: 'flex',
+          flexDirection: 'column',
           justifyContent: 'center',
           alignItems: 'center',
-          height: '100vh',
-        }}
-      >
-        <CircularProgress />
-      </div>
-    );
-  }
-
-  if (!alias) {
-    return (
-      <div
-        style={{
           textAlign: 'center',
+          padding: '20px',
         }}
       >
-        <h1>Nenhum professor informado</h1>
+        <PersonOff sx={{ fontSize: 80, color: 'grey.500', mb: 2 }} />
+        <Typography variant='h4' gutterBottom>
+          Nenhum professor encontrado
+        </Typography>
+        <Typography variant='body1' color='text.secondary' sx={{ mb: 3 }}>
+          Não foi possível encontrar informações para o professor solicitado.
+        </Typography>
         <Button
           variant='outlined'
           startIcon={<ArrowLeftOutlined />}
           onClick={() => navigate(-1)}
-          style={{ marginBottom: 20, borderColor: 'red', color: 'red' }}
+          sx={{ borderColor: 'error.main', color: 'error.main' }}
         >
           Voltar
         </Button>
@@ -98,20 +96,41 @@ export default function PublicProfessor() {
 
   const currentTitle = menuOptions.find(option => {
     const normalizedPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-    return option.href.replace(':alias', alias) === normalizedPathname;
+    return option.href.replace(':alias', alias!) === normalizedPathname;
   })?.title;
 
   return (
-    <Grid container spacing={2} columnGap={2} width='100%' maxWidth='1200px' height='100%' minHeight='100vh' mt={4}>
-      <Grid xs={3}>
-        <SideMenu menuOptions={menuOptions} professor={professor} alias={alias} />
+    <>
+      <ToastContainer
+        toastProps={{
+          position: 'top-right',
+          enableMultiContainer: true,
+          containerId: 'page',
+        }}
+        topInitialPosition={64}
+      />
+
+      <Grid
+        container
+        spacing={2}
+        columnGap={2}
+        width='100vw'
+        maxWidth='1200px'
+        height='100%'
+        minHeight='100vh'
+        mt={4}
+        marginX='auto'
+      >
+        <Grid xs={3}>
+          <SideMenu isLoading={professorIsLoading} menuOptions={menuOptions} professor={professor} alias={alias!} />
+        </Grid>
+        <Grid xs={8} display='flex' flexDirection='column' gap={4}>
+          <Typography variant='h4' fontWeight={500}>
+            {currentTitle}
+          </Typography>
+          <Outlet />
+        </Grid>
       </Grid>
-      <Grid xs={8} display='flex' flexDirection='column' gap={4}>
-        <Typography variant='h4' fontWeight={500}>
-          {currentTitle}
-        </Typography>
-        <Outlet />
-      </Grid>
-    </Grid>
+    </>
   );
 }

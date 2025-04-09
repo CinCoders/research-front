@@ -36,14 +36,14 @@ function RoutesApp() {
       <Routes>
         <Route element={<PageCin auth={auth} permittedRoles={['*']} />}>
           <Route path={Links.FORBIDDEN} element={<ForbiddenPage auth={auth} />} />
+        </Route>
 
-          <Route element={<PublicProfessor />}>
-            <Route path={Links.PUBLIC_PROFESSOR_PUBLICATIONS} element={<PublicationList />} />
-            <Route path={Links.PUBLIC_PROFESSOR_PROJECTS} element={<ProjectsList />} />
-            <Route path={Links.PUBLIC_PROFESSOR_SUPERVISIONS} element={<SupervisionsList />} />
-            <Route path={Links.PUBLIC_PROFESSOR_PATENTS} element={<PatentsList />} />
-            <Route path={Links.PUBLIC_PROFESSOR_LINKS} element={<LinksList />} />
-          </Route>
+        <Route element={<PublicProfessor />}>
+          <Route path={Links.PUBLIC_PROFESSOR_PUBLICATIONS} element={<PublicationList />} />
+          <Route path={Links.PUBLIC_PROFESSOR_PROJECTS} element={<ProjectsList />} />
+          <Route path={Links.PUBLIC_PROFESSOR_SUPERVISIONS} element={<SupervisionsList />} />
+          <Route path={Links.PUBLIC_PROFESSOR_PATENTS} element={<PatentsList />} />
+          <Route path={Links.PUBLIC_PROFESSOR_LINKS} element={<LinksList />} />
         </Route>
 
         <Route element={<PageCin auth={auth} permittedRoles={[Roles.USERS]} />}>

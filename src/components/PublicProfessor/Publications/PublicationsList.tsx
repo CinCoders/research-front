@@ -1,5 +1,5 @@
 import { PublicationsService } from '../../../services/PublicationsService';
-import GenericList from '../GenericList';
+import GenericList from '../GenericList/GenericList';
 import PublicationItem from './PublicationItem';
 
 export default function PublicationList() {
