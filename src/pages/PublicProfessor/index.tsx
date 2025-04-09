@@ -22,7 +22,6 @@ export default function PublicProfessor() {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const { alias } = useParams();
-  console.log('PATH: ', pathname, alias);
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
   const [professorIsLoading, setProfessorIsLoading] = useState(true);
