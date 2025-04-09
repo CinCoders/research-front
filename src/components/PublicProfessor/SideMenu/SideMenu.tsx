@@ -58,7 +58,7 @@ export default function SideMenu({ professor, alias, menuOptions, isLoading }: S
       </Box>
 
       {menuOptions.map(option => (
-        <MenuItem href={option.href} title={option.title} key={option.href} />
+        <MenuItem {...option} key={option.href} />
       ))}
     </Box>
   );
