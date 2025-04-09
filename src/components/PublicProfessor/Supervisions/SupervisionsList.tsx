@@ -1,5 +1,5 @@
 import { StudentsService } from '../../../services/StudentsService';
-import GenericList from '../GenericList';
+import GenericList from '../GenericList/GenericList';
 import SupervisionItem from './SupervisionItem';
 
 export default function SupervisionsList() {

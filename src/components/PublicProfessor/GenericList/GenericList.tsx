@@ -1,10 +1,11 @@
 import { toast } from '@cincoders/cinnamon';
-import { Box, CircularProgress, Typography } from '@mui/material';
+import { Box, Typography } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import { ReactNode, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import { showErrorStatus } from '../../utils/showErrorStatus';
-import { getAliasLattes } from '../../utils/storeAliasLattes';
+import { showErrorStatus } from '../../../utils/showErrorStatus';
+import { getAliasLattes } from '../../../utils/storeAliasLattes';
+import ListItemsSkeleton from './ListItemsSkeleton';
 
 interface GenericListProps<T> {
   fetchData: (lattes: string) => Promise<AxiosResponse<T[]>>;
@@ -86,13 +87,7 @@ export default function GenericList<T>({
     loadItems();
   }, [defaultErrorMessage, fetchData, alias]);
 
-  if (loading) {
-    return (
-      <StateContainer message='Carregando...'>
-        <CircularProgress />
-      </StateContainer>
-    );
-  }
+  if (loading) return <ListItemsSkeleton />;
 
   if (!items || items.length === 0) return <StateContainer message={emptyMessage} />;
 

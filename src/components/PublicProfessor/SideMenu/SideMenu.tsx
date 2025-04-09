@@ -1,19 +1,23 @@
 import { Avatar, Box, Typography } from '@mui/material';
 import { useState } from 'react';
-import { RomanNumbers } from '../../types/enums';
-import { ProfessorHr } from '../../types/HRProfessor.d';
-import { getProfessorLinks } from '../../utils/getProfessorLinks';
-import LinkItem from './LinkItem';
-import MenuItem, { MenuItemProps } from './MenuItem';
+import { RomanNumbers } from '../../../types/enums';
+import { ProfessorHr } from '../../../types/HRProfessor.d';
+import { getProfessorLinks } from '../../../utils/getProfessorLinks';
+import LinkItem from '../LinkItem';
+import MenuItem, { MenuItemProps } from '../MenuItem';
+import { SideMenuSkeleton } from './SideMenuSkeleton';
 
 interface SideMenuProps {
   menuOptions: MenuItemProps[];
   professor: ProfessorHr | null;
+  isLoading: boolean;
   alias: string;
 }
 
-export default function SideMenu({ professor, alias, menuOptions }: SideMenuProps) {
+export default function SideMenu({ professor, alias, menuOptions, isLoading }: SideMenuProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  if (isLoading) return <SideMenuSkeleton />;
 
   if (!professor) {
     return null;

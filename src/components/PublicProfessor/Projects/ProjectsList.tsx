@@ -1,5 +1,5 @@
 import { ProjectsService } from '../../../services/ProjectsService';
-import GenericList from '../GenericList';
+import GenericList from '../GenericList/GenericList';
 import ProjectItem from './ProjectItem';
 
 export default function ProjectsList() {

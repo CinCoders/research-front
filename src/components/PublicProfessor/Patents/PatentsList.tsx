@@ -1,5 +1,5 @@
 import { PatentService } from '../../../services/PatentService';
-import GenericList from '../GenericList';
+import GenericList from '../GenericList/GenericList';
 import PatentItem from './PatentItem';
 
 export default function PatentsList() {
