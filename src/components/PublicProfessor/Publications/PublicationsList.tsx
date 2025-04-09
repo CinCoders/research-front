@@ -8,7 +8,9 @@ export default function PublicationList() {
   return (
     <GenericList
       fetchData={fetchPublications}
-      renderItem={props => <PublicationItem {...props} key={props.doi ? props.doi : props.title} />}
+      renderItem={props => (
+        <PublicationItem {...props} key={props.doi || `${props.title}-${props.year}-${props.eventJournal}`} />
+      )}
       emptyMessage='Nenhuma publicação encontrada'
       sortFunction={(a, b) => b.year - a.year}
       defaultErrorMessage='Ocorreu um erro ao buscar as publicações'

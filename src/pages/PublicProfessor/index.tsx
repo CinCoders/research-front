@@ -9,7 +9,6 @@ import SideMenu from '../../components/PublicProfessor/SideMenu/SideMenu';
 import HumanResourcesService from '../../services/HumanResourcesService';
 import { Links } from '../../types/enums';
 import { ProfessorHr } from '../../types/HRProfessor.d';
-import { storeAliasLattes } from '../../utils/storeAliasLattes';
 
 const menuOptions: MenuItemProps[] = [
   { href: Links.PUBLIC_PROFESSOR_PUBLICATIONS, title: 'Publicações' },
@@ -24,6 +23,7 @@ export default function PublicProfessor() {
   const { alias } = useParams();
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
+  const [lattesCode, setLattesCode] = useState<string | null>(null);
   const [professorIsLoading, setProfessorIsLoading] = useState(true);
   const [professorNotFound, setProfessorNotFound] = useState(false);
 
@@ -40,7 +40,7 @@ export default function PublicProfessor() {
           setProfessorNotFound(true);
         }
 
-        storeAliasLattes(alias, professorHr[0].lattesCode);
+        setLattesCode(professorHr[0].lattesCode);
 
         setProfessor({
           ...professorHr[0],
@@ -96,7 +96,7 @@ export default function PublicProfessor() {
 
   const currentTitle = menuOptions.find(option => {
     const normalizedPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-    return option.href.replace(':alias', alias!) === normalizedPathname;
+    return option.href.replace(':alias', alias || '') === normalizedPathname;
   })?.title;
 
   return (
@@ -122,13 +122,13 @@ export default function PublicProfessor() {
         marginX='auto'
       >
         <Grid xs={3}>
-          <SideMenu isLoading={professorIsLoading} menuOptions={menuOptions} professor={professor} alias={alias!} />
+          <SideMenu isLoading={professorIsLoading} menuOptions={menuOptions} professor={professor} alias={alias} />
         </Grid>
         <Grid xs={8} display='flex' flexDirection='column' gap={4}>
           <Typography variant='h4' fontWeight={500}>
             {currentTitle}
           </Typography>
-          <Outlet />
+          <Outlet context={{ lattes: lattesCode, professorIsLoading }} />
         </Grid>
       </Grid>
     </>

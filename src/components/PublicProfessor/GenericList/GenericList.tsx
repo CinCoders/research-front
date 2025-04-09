@@ -2,9 +2,8 @@ import { toast } from '@cincoders/cinnamon';
 import { Box, Typography } from '@mui/material';
 import { AxiosResponse } from 'axios';
 import { ReactNode, useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useOutletContext, useParams } from 'react-router-dom';
 import { showErrorStatus } from '../../../utils/showErrorStatus';
-import { getAliasLattes } from '../../../utils/storeAliasLattes';
 import ListItemsSkeleton from './ListItemsSkeleton';
 
 interface GenericListProps<T> {
@@ -52,19 +51,18 @@ export default function GenericList<T>({
   const { alias } = useParams();
   const [items, setItems] = useState<T[] | null>(null);
   const [loading, setLoading] = useState(true);
+  const { lattes, professorIsLoading } = useOutletContext<{ lattes?: string; professorIsLoading: boolean }>();
 
   useEffect(() => {
     const loadItems = async () => {
       setLoading(true);
+      if (!lattes) {
+        return;
+      }
+
       try {
         if (!alias) {
           throw new Error('Professor não informado');
-        }
-
-        const lattes = getAliasLattes(alias);
-
-        if (!lattes) {
-          throw new Error('Professor nao encontrado');
         }
 
         const response = await fetchData(lattes);
@@ -85,9 +83,9 @@ export default function GenericList<T>({
     };
 
     loadItems();
-  }, [defaultErrorMessage, fetchData, alias]);
+  }, [defaultErrorMessage, fetchData, alias, lattes]);
 
-  if (loading) return <ListItemsSkeleton />;
+  if (loading || professorIsLoading) return <ListItemsSkeleton />;
 
   if (!items || items.length === 0) return <StateContainer message={emptyMessage} />;
 

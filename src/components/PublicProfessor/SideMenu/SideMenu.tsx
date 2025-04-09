@@ -11,13 +11,13 @@ interface SideMenuProps {
   menuOptions: MenuItemProps[];
   professor: ProfessorHr | null;
   isLoading: boolean;
-  alias: string;
+  alias: string | undefined;
 }
 
 export default function SideMenu({ professor, alias, menuOptions, isLoading }: SideMenuProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
-  if (isLoading) return <SideMenuSkeleton />;
+  if (isLoading || !alias) return <SideMenuSkeleton />;
 
   if (!professor) {
     return null;
