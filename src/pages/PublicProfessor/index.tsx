@@ -3,31 +3,26 @@ import { ArrowLeftOutlined, PersonOff } from '@mui/icons-material';
 import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { MenuItemProps } from '../../components/PublicProfessor/MenuItem';
+import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import MobileMenu from '../../components/PublicProfessor/MobileMenu';
+import PublicationItem from '../../components/PublicProfessor/Publications/PublicationItem';
 import SideMenu from '../../components/PublicProfessor/SideMenu/SideMenu';
 import HumanResourcesService from '../../services/HumanResourcesService';
 import { PatentService } from '../../services/PatentService';
 import { ProjectsService } from '../../services/ProjectsService';
 import { PublicationsService } from '../../services/PublicationsService';
 import { StudentsService } from '../../services/StudentsService';
-import { Links } from '../../types/enums';
 import { ProfessorHr } from '../../types/HRProfessor.d';
 import { ProfessorPatents } from '../../types/Patents.d';
 import { ProfessorProjects } from '../../types/Projects.d';
 import { ProfessorPublications } from '../../types/Publications.d';
+import { PublicProfessorContext } from '../../types/PublicProfessor.d';
 import { ProfessorStudents } from '../../types/Students.d';
-
-export type PublicProfessorOutlet = {
-  publications?: ProfessorPublications[];
-  projects?: ProfessorProjects[];
-  patents?: ProfessorPatents[];
-  supervisions?: ProfessorStudents[];
-};
+import ScrollButtons from '../../utils/ScrollButtons';
 
 export default function PublicProfessor() {
   const navigate = useNavigate();
-  const { pathname } = useLocation();
+  // const { pathname } = useLocation();
   const { alias } = useParams();
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
@@ -141,37 +136,17 @@ export default function PublicProfessor() {
     );
   }
 
-  const menuOptions: MenuItemProps[] = [
-    {
-      href: Links.PUBLIC_PROFESSOR_PUBLICATIONS,
-      title: 'Publicações',
-      active: !!professorPublications && professorPublications.length > 0,
-      isLoading: professorPublications == null,
-    },
-    {
-      href: Links.PUBLIC_PROFESSOR_PROJECTS,
-      title: 'Projetos',
-      active: !!professorProjects && professorProjects.length > 0,
-      isLoading: professorProjects == null,
-    },
-    {
-      href: Links.PUBLIC_PROFESSOR_PATENTS,
-      title: 'Patentes',
-      active: !!professorPatents && professorPatents.length > 0,
-      isLoading: professorPatents == null,
-    },
-    {
-      href: Links.PUBLIC_PROFESSOR_SUPERVISIONS,
-      title: 'Orientações Acadêmicas',
-      active: !!professorStudents && professorStudents.length > 0,
-      isLoading: professorStudents == null,
-    },
-  ];
+  // const currentTitle = menuOptions.find(option => {
+  //   const normalizedPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
+  //   return option.href.replace(':alias', alias || '') === normalizedPathname;
+  // })?.title;
 
-  const currentTitle = menuOptions.find(option => {
-    const normalizedPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-    return option.href.replace(':alias', alias || '') === normalizedPathname;
-  })?.title;
+  const context = {
+    publications: professorPublications,
+    projects: professorProjects,
+    patents: professorPatents,
+    supervisions: professorStudents,
+  } as PublicProfessorContext;
 
   return (
     <>
@@ -194,26 +169,35 @@ export default function PublicProfessor() {
         minHeight='100vh'
         mt={4}
         marginX='auto'
+        display='flex'
+        flexDirection={{ xs: 'column', md: 'row' }}
+        justifyContent='start'
+        alignItems='start'
       >
-        <Grid xs={12} md={3}>
-          <SideMenu isLoading={professorIsLoading} menuOptions={menuOptions} professor={professor} alias={alias} />
+        <Grid xs={12} md={3} sx={{ height: 'min-content' }}>
+          <SideMenu isLoading={professorIsLoading} context={context} professor={professor} alias={alias} />
         </Grid>
-        <Grid xs={12} md={8} display='flex' flexDirection='column' gap={4}>
-          <Typography variant='h4' fontWeight={500}>
-            {currentTitle}
-          </Typography>
-          <Outlet
-            context={
-              {
-                publications: professorPublications,
-                projects: professorProjects,
-                patents: professorPatents,
-                supervisions: professorStudents,
-              } as PublicProfessorOutlet
-            }
+        <Grid
+          xs={12}
+          md={8}
+          display={{ xs: 'none', md: 'flex' }}
+          flexDirection='column'
+          gap={4}
+          sx={{ height: '100%' }}
+        >
+          <Outlet context={context} />
+        </Grid>
+
+        {/* MOBILE */}
+        <Grid xs={12} display={{ xs: 'flex', md: 'none' }} flexDirection='column' gap={4} sx={{ height: '100%' }}>
+          <MobileMenu
+            options={[{ Card: PublicationItem, dataType: 'publications', title: 'Publicações' }]}
+            data={context}
           />
         </Grid>
       </Grid>
+
+      <ScrollButtons />
     </>
   );
 }

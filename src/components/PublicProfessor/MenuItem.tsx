@@ -1,14 +1,13 @@
 import { Skeleton, Typography } from '@mui/material';
 import { useMatch, useNavigate, useParams } from 'react-router-dom';
-import { Links } from '../../types/enums';
+import { ProfessorListProps, PublicProfessorContextKey } from '../../types/PublicProfessor.d';
 
-export interface MenuItemProps {
-  title: string;
-  href: Links;
-  active: boolean;
-  isLoading: boolean;
-}
-export default function MenuItem({ title, href, active, isLoading }: MenuItemProps) {
+export default function MenuItem<K extends PublicProfessorContextKey>({
+  title,
+  href,
+  isVisible,
+  isLoading,
+}: ProfessorListProps<K>) {
   const { alias } = useParams();
   const isActive = !!useMatch(href);
   const navigate = useNavigate();
@@ -40,7 +39,7 @@ export default function MenuItem({ title, href, active, isLoading }: MenuItemPro
         '&:hover': {
           color: 'red',
         },
-        display: active ? 'block' : 'none',
+        display: isVisible ? 'block' : 'none',
       }}
     >
       {title}
