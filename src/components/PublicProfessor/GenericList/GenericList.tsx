@@ -1,7 +1,5 @@
 import { Box, Typography } from '@mui/material';
-import { ReactNode } from 'react';
-import { useOutletContext } from 'react-router-dom';
-import { PublicProfessorOutlet } from '../../../pages/PublicProfessor';
+import React, { ReactNode } from 'react';
 
 function StateContainer({ children, message }: { children?: ReactNode; message?: string }) {
   return (
@@ -29,28 +27,14 @@ StateContainer.defaultProps = {
   children: null,
   message: '',
 };
-export type PublicProfessorOutletKey = keyof PublicProfessorOutlet;
-export type PublicProfessorOutletValue<K extends PublicProfessorOutletKey> = PublicProfessorOutlet[K] extends Array<
-  infer T
->
-  ? T
-  : never;
 
-interface GenericListProps<K extends PublicProfessorOutletKey> {
-  itemsKey: K;
-  renderItem: (item: PublicProfessorOutletValue<K>) => JSX.Element;
-  // sortFunction?: (a: PublicProfessorOutletValue<K>, b: PublicProfessorOutletValue<K>) => number;
+export interface GenericListProps<T> {
+  data: T[] | null;
+  Card: React.ComponentType<T>;
 }
 
-export default function GenericList<K extends PublicProfessorOutletKey>({
-  renderItem,
-  itemsKey,
-}: // sortFunction,
-GenericListProps<K>) {
-  const context = useOutletContext<PublicProfessorOutlet>();
-  const items = context[itemsKey] as PublicProfessorOutletValue<K>[] | undefined;
-
-  if (!items) {
+export default function GenericList<T>({ Card, data }: GenericListProps<T>) {
+  if (!data || data.length === 0) {
     return (
       <StateContainer message='Nenhum dado encontrado'>
         <Typography variant='h5' fontSize={20}>
@@ -62,7 +46,9 @@ GenericListProps<K>) {
 
   return (
     <Box display='flex' flexDirection='column' gap={4}>
-      {items.map(renderItem)}
+      {data.map(item => (
+        <Card {...item} key={Math.random()} />
+      ))}
     </Box>
   );
 }

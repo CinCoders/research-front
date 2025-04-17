@@ -1,6 +1,10 @@
+import { useOutletContext } from 'react-router-dom';
+import { PublicProfessorContext } from '../../../types/PublicProfessor.d';
 import GenericList from '../GenericList/GenericList';
 import ProjectItem from './ProjectItem';
 
 export default function ProjectsList() {
-  return <GenericList itemsKey='projects' renderItem={props => <ProjectItem {...props} key={Math.random()} />} />;
+  const { projects } = useOutletContext<PublicProfessorContext>();
+
+  return <GenericList Card={ProjectItem} data={projects} />;
 }
