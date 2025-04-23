@@ -14,6 +14,7 @@ export type PublicProfessorContext = {
   projects: ProfessorProjects[] | null;
   patents: ProfessorPatents[] | null;
   supervisions: ProfessorStudents[] | null;
+  isLoading: boolean;
 };
 
 export type PublicProfessorContextKey = keyof PublicProfessorContext;

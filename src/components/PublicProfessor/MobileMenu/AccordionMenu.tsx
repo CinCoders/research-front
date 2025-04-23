@@ -12,14 +12,14 @@ interface AccordionMenuProps<T> extends GenericListProps<T> {
   defaultExpanded: boolean | undefined;
 }
 
-export default function AccordionMenu<T>({ title, defaultExpanded, data, Card }: AccordionMenuProps<T>) {
+export default function AccordionMenu<T>({ title, defaultExpanded, ...props }: AccordionMenuProps<T>) {
   const [expanded, setExpanded] = React.useState(defaultExpanded ?? false);
 
   const handleExpansion = () => {
     setExpanded(prevExpanded => !prevExpanded);
   };
 
-  if (!data || data.length === 0) {
+  if (!props.data || props.data.length === 0) {
     return null;
   }
 
@@ -54,7 +54,7 @@ export default function AccordionMenu<T>({ title, defaultExpanded, data, Card }:
           </Typography>
         </AccordionSummary>
         <AccordionDetails>
-          <GenericList data={data} Card={Card} />
+          <GenericList {...props} />
         </AccordionDetails>
       </Accordion>
     </div>

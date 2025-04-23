@@ -4,6 +4,7 @@ import { RomanNumbers } from '../../../types/enums';
 import { ProfessorHr } from '../../../types/HRProfessor.d';
 import { getMenuOptions, PublicProfessorContext } from '../../../types/PublicProfessor.d';
 import { getProfessorLinks } from '../../../utils/getProfessorLinks';
+import ImageWithLoading from '../../share/ImageWithLoading';
 import LinkItem from '../LinkItem';
 import MenuItem from '../MenuItem';
 import { SideMenuSkeleton } from './SideMenuSkeleton';
@@ -15,22 +16,12 @@ interface SideMenuProps {
   alias: string | undefined;
 }
 
-export default function SideMenu({
-  professor,
-  context: { patents, projects, publications, supervisions },
-  alias,
-  isLoading,
-}: SideMenuProps) {
+export default function SideMenu({ professor, context, alias, isLoading }: SideMenuProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   if (isLoading || !alias) return <SideMenuSkeleton />;
 
-  const menuOptions = getMenuOptions({
-    patents,
-    projects,
-    publications,
-    supervisions,
-  });
+  const menuOptions = getMenuOptions(context);
 
   if (!professor) {
     return null;
@@ -77,7 +68,7 @@ export default function SideMenu({
       <Box display='flex' flexWrap='wrap' gap={1}>
         {professorLinks.map(link => (
           <LinkItem to={link.href} key={link.href}>
-            {link.icon}
+            <ImageWithLoading src={link.iconUrl} alt={link.alt} width={24} height={24} />
           </LinkItem>
         ))}
       </Box>

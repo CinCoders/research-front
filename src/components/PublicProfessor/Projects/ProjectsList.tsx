@@ -4,7 +4,7 @@ import GenericList from '../GenericList/GenericList';
 import ProjectItem from './ProjectItem';
 
 export default function ProjectsList() {
-  const { projects } = useOutletContext<PublicProfessorContext>();
+  const { projects, isLoading } = useOutletContext<PublicProfessorContext>();
 
-  return <GenericList Card={ProjectItem} data={projects} />;
+  return <GenericList isLoading={isLoading} Card={ProjectItem} data={projects} />;
 }

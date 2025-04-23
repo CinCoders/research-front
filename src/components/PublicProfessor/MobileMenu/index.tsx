@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   PublicProfessorContext,
   PublicProfessorContextKey,
@@ -17,7 +17,16 @@ interface MobileMenuProps<K extends PublicProfessorContextKey> {
 }
 
 export default function MobileMenu<K extends PublicProfessorContextKey>({ options, data }: MobileMenuProps<K>) {
-  const totalContributions = Object.values(data).reduce((acc, curr) => acc + (curr?.length || 0), 0);
+  const [totalContributions, setTotalContributions] = useState<number | undefined>(undefined);
+
+  useEffect(() => {
+    const values = Object.values(data);
+
+    if (!values.some(v => !Array.isArray(v))) {
+      const total = values.reduce((acc, curr) => acc + (Array.isArray(curr) ? curr.length : 0), 0);
+      setTotalContributions(total);
+    }
+  }, [data]);
 
   return (
     <div>
@@ -27,6 +36,7 @@ export default function MobileMenu<K extends PublicProfessorContextKey>({ option
           title={option.title}
           data={(data[option.dataType] ?? null) as PublicProfessorContextValue<K>[] | null}
           Card={option.Card as React.ComponentType<PublicProfessorContextValue<K>>}
+          isLoading={data.isLoading}
           defaultExpanded={idx === 0}
         />
       ))}

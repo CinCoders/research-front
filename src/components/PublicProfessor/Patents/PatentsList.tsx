@@ -4,7 +4,7 @@ import GenericList from '../GenericList/GenericList';
 import PatentItem from './PatentItem';
 
 export default function PatentsList() {
-  const { patents } = useOutletContext<PublicProfessorContext>();
+  const { patents, isLoading } = useOutletContext<PublicProfessorContext>();
 
-  return <GenericList Card={PatentItem} data={patents} />;
+  return <GenericList isLoading={isLoading} Card={PatentItem} data={patents} />;
 }

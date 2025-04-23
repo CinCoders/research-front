@@ -1,13 +1,17 @@
 import { Box, Typography } from '@mui/material';
 import React from 'react';
 import StateContainer from '../../share/StateContainer';
+import GenericListSkeleton from './GenericListSkeleton';
 
 export interface GenericListProps<T> {
   data: T[] | null;
   Card: React.ComponentType<T>;
+  isLoading: boolean;
 }
 
-export default function GenericList<T>({ Card, data }: GenericListProps<T>) {
+export default function GenericList<T>({ Card, data, isLoading }: GenericListProps<T>) {
+  if (isLoading) <GenericListSkeleton />;
+
   if (!data || data.length === 0) {
     return (
       <StateContainer message='Nenhum dado encontrado'>

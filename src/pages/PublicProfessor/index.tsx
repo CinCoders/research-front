@@ -30,6 +30,7 @@ export default function PublicProfessor() {
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
   const [professorIsLoading, setProfessorIsLoading] = useState(true);
+  const [professorDetailsIsLoading, setProfessorDetailsIsLoading] = useState(true);
   const [professorNotFound, setProfessorNotFound] = useState(false);
   const [professorPublications, setProfessorPublications] = useState<ProfessorPublications[] | null>(null);
   const [professorProjects, setProfessorProjects] = useState<ProfessorProjects[] | null>(null);
@@ -100,6 +101,8 @@ export default function PublicProfessor() {
           toast.error('Ocorreu um erro ao carregar as contribuições. Tente novamente mais tarde.', {
             autoClose: 2000,
           });
+        } finally {
+          setProfessorDetailsIsLoading(false);
         }
       };
 
@@ -149,6 +152,7 @@ export default function PublicProfessor() {
     projects: professorProjects,
     patents: professorPatents,
     supervisions: professorStudents,
+    isLoading: professorDetailsIsLoading,
   } as PublicProfessorContext;
 
   return (
