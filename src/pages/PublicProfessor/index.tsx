@@ -5,8 +5,11 @@ import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
 import { Outlet, useNavigate, useParams } from 'react-router-dom';
 import MobileMenu from '../../components/PublicProfessor/MobileMenu';
+import PatentItem from '../../components/PublicProfessor/Patents/PatentItem';
+import ProjectItem from '../../components/PublicProfessor/Projects/ProjectItem';
 import PublicationItem from '../../components/PublicProfessor/Publications/PublicationItem';
 import SideMenu from '../../components/PublicProfessor/SideMenu/SideMenu';
+import SupervisionItem from '../../components/PublicProfessor/Supervisions/SupervisionItem';
 import HumanResourcesService from '../../services/HumanResourcesService';
 import { PatentService } from '../../services/PatentService';
 import { ProjectsService } from '../../services/ProjectsService';
@@ -191,7 +194,12 @@ export default function PublicProfessor() {
         {/* MOBILE */}
         <Grid xs={12} display={{ xs: 'flex', md: 'none' }} flexDirection='column' gap={4} sx={{ height: '100%' }}>
           <MobileMenu
-            options={[{ Card: PublicationItem, dataType: 'publications', title: 'Publicações' }]}
+            options={[
+              { Card: PublicationItem, dataType: 'publications', title: 'Publicações' },
+              { Card: PatentItem, dataType: 'patents', title: 'Patentes' },
+              { Card: ProjectItem, dataType: 'projects', title: 'Projetos' },
+              { Card: SupervisionItem, dataType: 'supervisions', title: 'Orientações Acadêmicas' },
+            ]}
             data={context}
           />
         </Grid>
