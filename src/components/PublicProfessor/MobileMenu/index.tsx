@@ -4,6 +4,7 @@ import {
   PublicProfessorContextKey,
   PublicProfessorContextValue,
 } from '../../../types/PublicProfessor.d';
+import StateContainer from '../../share/StateContainer';
 import AccordionMenu from './AccordionMenu';
 
 interface MobileMenuProps<K extends PublicProfessorContextKey> {
@@ -16,9 +17,7 @@ interface MobileMenuProps<K extends PublicProfessorContextKey> {
 }
 
 export default function MobileMenu<K extends PublicProfessorContextKey>({ options, data }: MobileMenuProps<K>) {
-  if (!options || options.length === 0) {
-    return null;
-  }
+  const totalContributions = Object.values(data).reduce((acc, curr) => acc + (curr?.length || 0), 0);
 
   return (
     <div>
@@ -31,6 +30,8 @@ export default function MobileMenu<K extends PublicProfessorContextKey>({ option
           defaultExpanded={idx === 0}
         />
       ))}
+
+      {totalContributions === 0 && <StateContainer message='Nenhuma contribuição encontrada' />}
     </div>
   );
 }

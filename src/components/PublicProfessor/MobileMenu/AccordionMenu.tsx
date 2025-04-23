@@ -15,11 +15,13 @@ interface AccordionMenuProps<T> extends GenericListProps<T> {
 export default function AccordionMenu<T>({ title, defaultExpanded, data, Card }: AccordionMenuProps<T>) {
   const [expanded, setExpanded] = React.useState(defaultExpanded ?? false);
 
-  console.log('defaultExpanded', defaultExpanded);
-
   const handleExpansion = () => {
     setExpanded(prevExpanded => !prevExpanded);
   };
+
+  if (!data || data.length === 0) {
+    return null;
+  }
 
   return (
     <div>
