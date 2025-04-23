@@ -43,7 +43,7 @@ export default function SideMenu({
     : professor.positionName;
 
   return (
-    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+    <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'start' }}>
       <Box
         sx={{
           display: 'flex',
@@ -56,32 +56,30 @@ export default function SideMenu({
           onLoad={() => setImageLoaded(true)}
           src={professor.imageUrl}
           alt={`Foto de perfil de ${professor.name}`}
-          sx={{ width: '7rem', height: '7rem', borderRadius: '0.5rem', backgroundcolor: 'gray', color: 'white' }}
+          sx={{ width: '6rem', height: '6rem', borderRadius: '0.5rem', backgroundcolor: 'gray', color: 'white' }}
         >
           {!imageLoaded && alias}
         </Avatar>
 
-        <Box display='flex' flexDirection='column' gap='0.5rem' justifyContent='space-between'>
-          <Box>
-            <Typography variant='subtitle1' fontWeight={500}>
-              {professor.name}
-            </Typography>
-            <Typography variant='subtitle2' color={professor.rolesDescription.length > 0 ? 'gray' : '#e7000b'}>
-              {positionName}
-            </Typography>
-            <Typography variant='subtitle2' color='#e7000b'>
-              {professor.rolesDescription[0]}
-            </Typography>
-          </Box>
-
-          <Box display='flex' gap={1}>
-            {professorLinks.map(link => (
-              <LinkItem to={link.href} key={link.href}>
-                {link.icon}
-              </LinkItem>
-            ))}
-          </Box>
+        <Box>
+          <Typography variant='subtitle1' fontWeight={500}>
+            {professor.name}
+          </Typography>
+          <Typography variant='subtitle2' color={professor.rolesDescription.length > 0 ? 'gray' : '#e7000b'}>
+            {positionName}
+          </Typography>
+          <Typography variant='subtitle2' color='#e7000b'>
+            {professor.rolesDescription[0]}
+          </Typography>
         </Box>
+      </Box>
+
+      <Box display='flex' flexWrap='wrap' gap={1}>
+        {professorLinks.map(link => (
+          <LinkItem to={link.href} key={link.href}>
+            {link.icon}
+          </LinkItem>
+        ))}
       </Box>
 
       <Box display={{ xs: 'none', md: 'flex' }} flexDirection='column'>
