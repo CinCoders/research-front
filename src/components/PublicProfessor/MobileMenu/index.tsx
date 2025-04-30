@@ -6,6 +6,7 @@ import {
 } from '../../../types/PublicProfessor.d';
 import StateContainer from '../../share/StateContainer';
 import AccordionMenu from './AccordionMenu';
+import { AccordionSkeleton } from './AccordionSkeleton';
 
 interface MobileMenuProps<K extends PublicProfessorContextKey> {
   data: PublicProfessorContext;
@@ -30,16 +31,21 @@ export default function MobileMenu<K extends PublicProfessorContextKey>({ option
 
   return (
     <div>
-      {options.map((option, idx) => (
-        <AccordionMenu
-          key={option.dataType}
-          title={option.title}
-          data={(data[option.dataType] ?? null) as PublicProfessorContextValue<K>[] | null}
-          Card={option.Card as React.ComponentType<PublicProfessorContextValue<K>>}
-          isLoading={data.isLoading}
-          defaultExpanded={idx === 0}
-        />
-      ))}
+      {data.isLoading ? (
+        <AccordionSkeleton />
+      ) : (
+        options.map((option, idx) => (
+          <AccordionMenu
+            key={option.dataType}
+            title={option.title}
+            data={(data[option.dataType] ?? null) as PublicProfessorContextValue<K>[] | null}
+            Card={option.Card as React.ComponentType<PublicProfessorContextValue<K>>}
+            isLoading={data.isLoading}
+            isError={data.isError}
+            defaultExpanded={idx === 0}
+          />
+        ))
+      )}
 
       {totalContributions === 0 && <StateContainer message='Nenhuma contribuição encontrada' />}
     </div>

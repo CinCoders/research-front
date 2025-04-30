@@ -1,12 +1,11 @@
-import { Skeleton, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useMatch, useNavigate, useParams } from 'react-router-dom';
-import { ProfessorListProps, PublicProfessorContextKey } from '../../types/PublicProfessor.d';
+import { ProfessorListProps, PublicProfessorContextKey } from '../../../types/PublicProfessor.d';
 
-export default function MenuItem<K extends PublicProfessorContextKey>({
+export default function NavbarItem<K extends PublicProfessorContextKey>({
   title,
   href,
   isVisible,
-  isLoading,
 }: ProfessorListProps<K>) {
   const { alias } = useParams();
   const isActive = !!useMatch(href);
@@ -14,10 +13,6 @@ export default function MenuItem<K extends PublicProfessorContextKey>({
 
   if (!alias) {
     return null;
-  }
-
-  if (isLoading) {
-    return <Skeleton variant='rounded' width='70%' height={24} />;
   }
 
   return (
@@ -30,12 +25,21 @@ export default function MenuItem<K extends PublicProfessorContextKey>({
         textAlign: 'start',
         outline: 'none',
         border: 'none',
-        color: 'black',
+        color: isActive ? 'red' : 'black',
         textDecoration: 'none',
         cursor: 'pointer',
-        borderLeft: isActive ? '2px solid red' : 'none',
-        paddingLeft: isActive ? '8px' : '0',
-        transition: 'border-left 0.1s ease, padding-left 0.2s ease',
+
+        // sempre definimos estilo, largura e cor da borda
+        borderLeftStyle: 'solid',
+        borderLeftColor: 'red',
+        borderLeftWidth: isActive ? '2px' : '0px',
+
+        // padding-left também varia
+        paddingLeft: isActive ? '8px' : '0px',
+
+        // a transição SEMPRE existe, para entrar e sair
+        transition: 'border-left-width 0.2s ease, padding-left 0.2s ease',
+
         '&:hover': {
           color: 'red',
         },

@@ -2,26 +2,34 @@ import { Avatar, Box, Typography } from '@mui/material';
 import { useState } from 'react';
 import { RomanNumbers } from '../../../types/enums';
 import { ProfessorHr } from '../../../types/HRProfessor.d';
-import { getMenuOptions, PublicProfessorContext } from '../../../types/PublicProfessor.d';
 import { getProfessorLinks } from '../../../utils/getProfessorLinks';
-import ImageWithLoading from '../../share/ImageWithLoading';
-import LinkItem from '../LinkItem';
-import MenuItem from '../MenuItem';
+import EmployeeContact from './EmployeeContact';
+import EmployeeLinks from './EmployeeLinks';
+import ResearchAreas from './ResearchAreas';
 import { SideMenuSkeleton } from './SideMenuSkeleton';
 
+const getRoleLevel = (role: string): number => {
+  const levels = [
+    { keyword: 'DIRETOR', level: 3 },
+    { keyword: 'CHEFE', level: 2 },
+    { keyword: 'COORDENADOR', level: 1 },
+  ];
+
+  const upperRole = role.toUpperCase();
+
+  return levels.find(({ keyword }) => upperRole.includes(keyword))?.level ?? 0;
+};
+
 interface SideMenuProps {
-  context: PublicProfessorContext;
   professor: ProfessorHr | null;
   isLoading: boolean;
   alias: string | undefined;
 }
 
-export default function SideMenu({ professor, context, alias, isLoading }: SideMenuProps) {
+export default function SideMenu({ professor, alias, isLoading }: SideMenuProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
 
   if (isLoading || !alias) return <SideMenuSkeleton />;
-
-  const menuOptions = getMenuOptions(context);
 
   if (!professor) {
     return null;
@@ -32,6 +40,12 @@ export default function SideMenu({ professor, context, alias, isLoading }: SideM
   const positionName = positionLevel
     ? professor.positionName.replace(positionLevel.toString(), RomanNumbers[positionLevel as keyof typeof RomanNumbers])
     : professor.positionName;
+
+  const rolesWithLevel = professor.rolesDescription
+    .map(role => ({ role, level: getRoleLevel(role) }))
+    .sort((a, b) => b.level - a.level);
+
+  const mainRole = rolesWithLevel[0]?.role || '';
 
   return (
     <Box sx={{ width: '100%', display: 'flex', flexDirection: 'column', gap: '0.5rem', alignItems: 'start' }}>
@@ -56,28 +70,33 @@ export default function SideMenu({ professor, context, alias, isLoading }: SideM
           <Typography variant='subtitle1' fontWeight={500}>
             {professor.name}
           </Typography>
-          <Typography variant='subtitle2' color={professor.rolesDescription.length > 0 ? 'gray' : '#e7000b'}>
+          <Typography variant='subtitle2' color={professor.rolesDescription.length > 0 ? '#474747' : '#e7000b'}>
             {positionName}
           </Typography>
           <Typography variant='subtitle2' color='#e7000b'>
-            {professor.rolesDescription[0]}
+            {mainRole}
           </Typography>
         </Box>
       </Box>
 
-      <Box display='flex' flexWrap='wrap' gap={1}>
-        {professorLinks.map(link => (
-          <LinkItem to={link.href} key={link.href}>
-            <ImageWithLoading src={link.iconUrl} alt={link.alt} width={24} height={24} />
-          </LinkItem>
+      <ResearchAreas researchAreas={professor?.researchAreasName} isLoading={isLoading} />
+
+      <Box>
+        {rolesWithLevel.slice(1).map(({ role }) => (
+          <Typography
+            variant='subtitle2'
+            color='gray'
+            sx={{
+              transform: 'translateX(0.4rem)',
+            }}
+          >
+            {`• ${role}`}
+          </Typography>
         ))}
       </Box>
 
-      <Box display={{ xs: 'none', md: 'flex' }} flexDirection='column'>
-        {menuOptions.map(option => (
-          <MenuItem {...option} key={option.href} />
-        ))}
-      </Box>
+      <EmployeeLinks links={professorLinks} />
+      <EmployeeContact {...professor} />
     </Box>
   );
 }

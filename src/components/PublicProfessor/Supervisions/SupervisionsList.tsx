@@ -4,7 +4,7 @@ import GenericList from '../GenericList/GenericList';
 import SupervisionItem from './SupervisionItem';
 
 export default function SupervisionsList() {
-  const { supervisions, isLoading } = useOutletContext<PublicProfessorContext>();
+  const { supervisions, isLoading, isError } = useOutletContext<PublicProfessorContext>();
 
-  return <GenericList isLoading={isLoading} Card={SupervisionItem} data={supervisions} />;
+  return <GenericList isLoading={isLoading} isError={isError} Card={SupervisionItem} data={supervisions} />;
 }

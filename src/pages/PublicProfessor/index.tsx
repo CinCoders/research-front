@@ -1,15 +1,14 @@
 import { toast, ToastContainer } from '@cincoders/cinnamon';
-import { ArrowLeftOutlined, PersonOff } from '@mui/icons-material';
-import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
-import { Outlet, useNavigate, useParams } from 'react-router-dom';
+import { Outlet, useParams } from 'react-router-dom';
 import MobileMenu from '../../components/PublicProfessor/MobileMenu';
 import PatentItem from '../../components/PublicProfessor/Patents/PatentItem';
 import ProjectItem from '../../components/PublicProfessor/Projects/ProjectItem';
 import PublicationItem from '../../components/PublicProfessor/Publications/PublicationItem';
 import SideMenu from '../../components/PublicProfessor/SideMenu/SideMenu';
 import SupervisionItem from '../../components/PublicProfessor/Supervisions/SupervisionItem';
+import VerticalNavbar from '../../components/PublicProfessor/VerticalNavbar';
 import HumanResourcesService from '../../services/HumanResourcesService';
 import { PatentService } from '../../services/PatentService';
 import { ProjectsService } from '../../services/ProjectsService';
@@ -22,15 +21,16 @@ import { ProfessorPublications } from '../../types/Publications.d';
 import { PublicProfessorContext } from '../../types/PublicProfessor.d';
 import { ProfessorStudents } from '../../types/Students.d';
 import ScrollButtons from '../../utils/ScrollButtons';
+import EmployeeNotFound from './EmployeeNotFound';
 
 export default function PublicProfessor() {
-  const navigate = useNavigate();
-  // const { pathname } = useLocation();
   const { alias } = useParams();
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
+  const [isTechinician, setIsTechnician] = useState(false);
   const [professorIsLoading, setProfessorIsLoading] = useState(true);
   const [professorDetailsIsLoading, setProfessorDetailsIsLoading] = useState(true);
+  const [professorDetailsIsError, setProfessorDetailsIsError] = useState(false);
   const [professorNotFound, setProfessorNotFound] = useState(false);
   const [professorPublications, setProfessorPublications] = useState<ProfessorPublications[] | null>(null);
   const [professorProjects, setProfessorProjects] = useState<ProfessorProjects[] | null>(null);
@@ -49,9 +49,11 @@ export default function PublicProfessor() {
 
         if (!professorHr || professorHr.length === 0) {
           setProfessorNotFound(true);
+          return;
         }
 
         setLattesCode(professorHr[0].lattesCode);
+        setIsTechnician(professorHr[0].position.category.toLowerCase() !== 'professor');
 
         setProfessor({
           ...professorHr[0],
@@ -62,7 +64,7 @@ export default function PublicProfessor() {
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : null;
-        toast.error(`Não foi possível carregar as informações do professor ${errorMessage}.`, {
+        toast.error(`Não foi possível encontrar informações para: ${alias}. ${errorMessage}.`, {
           autoClose: 3000,
         });
       } finally {
@@ -98,6 +100,7 @@ export default function PublicProfessor() {
             setProfessorStudents(data);
           });
         } catch (error) {
+          setProfessorDetailsIsError(true);
           toast.error('Ocorreu um erro ao carregar as contribuições. Tente novamente mais tarde.', {
             autoClose: 2000,
           });
@@ -110,42 +113,7 @@ export default function PublicProfessor() {
     }
   }, [professor]);
 
-  if (professorNotFound) {
-    return (
-      <div
-        style={{
-          height: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
-          padding: '20px',
-        }}
-      >
-        <PersonOff sx={{ fontSize: 80, color: 'grey.500', mb: 2 }} />
-        <Typography variant='h4' gutterBottom>
-          Nenhum professor encontrado
-        </Typography>
-        <Typography variant='body1' color='text.secondary' sx={{ mb: 3 }}>
-          Não foi possível encontrar informações para o professor solicitado.
-        </Typography>
-        <Button
-          variant='outlined'
-          startIcon={<ArrowLeftOutlined />}
-          onClick={() => navigate(-1)}
-          sx={{ borderColor: 'error.main', color: 'error.main' }}
-        >
-          Voltar
-        </Button>
-      </div>
-    );
-  }
-
-  // const currentTitle = menuOptions.find(option => {
-  //   const normalizedPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-  //   return option.href.replace(':alias', alias || '') === normalizedPathname;
-  // })?.title;
+  if (professorNotFound) return <EmployeeNotFound />;
 
   const context = {
     publications: professorPublications,
@@ -153,6 +121,7 @@ export default function PublicProfessor() {
     patents: professorPatents,
     supervisions: professorStudents,
     isLoading: professorDetailsIsLoading,
+    isError: professorDetailsIsError,
   } as PublicProfessorContext;
 
   return (
@@ -181,8 +150,17 @@ export default function PublicProfessor() {
         justifyContent='start'
         alignItems='start'
       >
-        <Grid xs={12} md={3} sx={{ height: 'min-content' }}>
-          <SideMenu isLoading={professorIsLoading} context={context} professor={professor} alias={alias} />
+        <Grid
+          xs={12}
+          md={3}
+          maxWidth={isTechinician ? '45%' : '100%'}
+          sx={{ height: 'min-content' }}
+          display='flex'
+          flexDirection='column'
+          gap={4}
+        >
+          <SideMenu isLoading={professorIsLoading} professor={professor} alias={alias} />
+          {!isTechinician && <VerticalNavbar professorData={context} />}
         </Grid>
         <Grid
           xs={12}

@@ -4,7 +4,7 @@ import GenericList from '../GenericList/GenericList';
 import PublicationItem from './PublicationItem';
 
 export default function PublicationList() {
-  const { publications, isLoading } = useOutletContext<PublicProfessorContext>();
+  const { publications, isLoading, isError } = useOutletContext<PublicProfessorContext>();
 
-  return <GenericList isLoading={isLoading} Card={PublicationItem} data={publications} />;
+  return <GenericList isLoading={isLoading} isError={isError} Card={PublicationItem} data={publications} />;
 }
