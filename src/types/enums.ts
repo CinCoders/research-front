@@ -70,3 +70,9 @@ export const RomanNumbers = {
   3: 'III',
   4: 'IV',
 } as const;
+
+export const RolesLevels = {
+  DIRETOR: 3,
+  CHEFE: 2,
+  COORDENADOR: 1,
+} as const;

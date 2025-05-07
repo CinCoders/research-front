@@ -1,8 +1,10 @@
+import { useOutletContext } from 'react-router-dom';
+import { PublicProfessorContext } from '../../../types/PublicProfessor.d';
 import GenericList from '../GenericList/GenericList';
 import SupervisionItem from './SupervisionItem';
 
 export default function SupervisionsList() {
-  return (
-    <GenericList itemsKey='supervisions' renderItem={props => <SupervisionItem {...props} key={Math.random()} />} />
-  );
+  const { supervisions, isLoading, isError } = useOutletContext<PublicProfessorContext>();
+
+  return <GenericList isLoading={isLoading} isError={isError} Card={SupervisionItem} data={supervisions} />;
 }

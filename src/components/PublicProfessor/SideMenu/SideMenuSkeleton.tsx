@@ -7,16 +7,6 @@ export function SideMenuSkeleton() {
       <Skeleton variant='text' width='80%' height={32} />
       <Skeleton variant='text' width='60%' height={24} />
       <Skeleton variant='text' width='40%' height={24} />
-
-      <Box display='flex' gap={1}>
-        <Skeleton variant='circular' width={40} height={40} />
-        <Skeleton variant='circular' width={40} height={40} />
-        <Skeleton variant='circular' width={40} height={40} />
-      </Box>
-
-      <Skeleton variant='rounded' width='100%' height={48} />
-      <Skeleton variant='rounded' width='100%' height={48} />
-      <Skeleton variant='rounded' width='100%' height={48} />
     </Box>
   );
 }
