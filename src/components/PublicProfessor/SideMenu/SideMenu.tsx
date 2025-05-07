@@ -1,19 +1,23 @@
 import { Avatar, Box, Typography } from '@mui/material';
 import { useState } from 'react';
-import { RomanNumbers } from '../../types/enums';
-import { ProfessorHr } from '../../types/HRProfessor.d';
-import { getProfessorLinks } from '../../utils/getProfessorLinks';
-import LinkItem from './LinkItem';
-import MenuItem, { MenuItemProps } from './MenuItem';
+import { RomanNumbers } from '../../../types/enums';
+import { ProfessorHr } from '../../../types/HRProfessor.d';
+import { getProfessorLinks } from '../../../utils/getProfessorLinks';
+import LinkItem from '../LinkItem';
+import MenuItem, { MenuItemProps } from '../MenuItem';
+import { SideMenuSkeleton } from './SideMenuSkeleton';
 
 interface SideMenuProps {
   menuOptions: MenuItemProps[];
   professor: ProfessorHr | null;
-  alias: string;
+  isLoading: boolean;
+  alias: string | undefined;
 }
 
-export default function SideMenu({ professor, alias, menuOptions }: SideMenuProps) {
+export default function SideMenu({ professor, alias, menuOptions, isLoading }: SideMenuProps) {
   const [imageLoaded, setImageLoaded] = useState(false);
+
+  if (isLoading || !alias) return <SideMenuSkeleton />;
 
   if (!professor) {
     return null;
@@ -54,7 +58,7 @@ export default function SideMenu({ professor, alias, menuOptions }: SideMenuProp
       </Box>
 
       {menuOptions.map(option => (
-        <MenuItem href={option.href} title={option.title} key={option.href} />
+        <MenuItem {...option} key={option.href} />
       ))}
     </Box>
   );

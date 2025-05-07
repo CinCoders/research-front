@@ -1,18 +1,24 @@
-import { Typography } from '@mui/material';
+import { Skeleton, Typography } from '@mui/material';
 import { useMatch, useNavigate, useParams } from 'react-router-dom';
 import { Links } from '../../types/enums';
 
 export interface MenuItemProps {
   title: string;
   href: Links;
+  active: boolean;
+  isLoading: boolean;
 }
-export default function MenuItem({ title, href }: MenuItemProps) {
+export default function MenuItem({ title, href, active, isLoading }: MenuItemProps) {
   const { alias } = useParams();
   const isActive = !!useMatch(href);
   const navigate = useNavigate();
 
   if (!alias) {
     return null;
+  }
+
+  if (isLoading) {
+    return <Skeleton variant='rounded' width='70%' height={24} />;
   }
 
   return (
@@ -34,6 +40,7 @@ export default function MenuItem({ title, href }: MenuItemProps) {
         '&:hover': {
           color: 'red',
         },
+        display: active ? 'block' : 'none',
       }}
     >
       {title}
