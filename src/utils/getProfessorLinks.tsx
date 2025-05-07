@@ -7,46 +7,41 @@ function getLinkTypeByUrl(url: string): CommonLinkTypes | null {
   return linkType ? CommonLinkTypes[linkType.toUpperCase() as keyof typeof CommonLinkTypes] : null;
 }
 
-function createCommonLink(href: string, icon: JSX.Element) {
-  return { href, icon };
-}
-
-export function getProfessorLinks(professor: ProfessorHr): { href: string; icon: JSX.Element }[] {
+export function getProfessorLinks(professor: ProfessorHr): { href: string; iconUrl: string; alt: string }[] {
   const links = [];
   if (professor?.email) {
-    links.push(
-      createCommonLink(
-        `mailto:${professor.email}`,
-        <img src={LinksIcons.EMAIL} width={24} height={24} alt='Link para o e-mail' />,
-      ),
-    );
+    links.push({
+      href: `mailto:${professor.email}`,
+      iconUrl: LinksIcons.EMAIL,
+      alt: 'e-mail',
+    });
   }
 
   if (professor?.website) {
-    links.push(
-      createCommonLink(
-        professor.website,
-        <img src={LinksIcons.WEBSITE} width={24} height={24} alt='Link para o site pessoal' />,
-      ),
-    );
+    links.push({
+      iconUrl: LinksIcons.WEBSITE,
+      href: professor.website,
+      alt: 'Site pessoal',
+    });
   }
 
   if (professor?.lattes) {
-    links.push(
-      createCommonLink(
-        professor.lattes,
-        <img src={LinksIcons.LATTES} width={24} height={24} alt='Link para o currículo lattes' />,
-      ),
-    );
+    links.push({
+      iconUrl: LinksIcons.LATTES,
+      href: professor.lattes,
+      alt: 'Currículo Lattes',
+    });
   }
 
   professor.links.forEach(link => {
     const linkType = getLinkTypeByUrl(link);
 
     if (linkType) {
-      links.push(
-        createCommonLink(link, <img src={LinksIcons[linkType]} width={24} height={24} alt={`Link para ${linkType}`} />),
-      );
+      links.push({
+        href: link,
+        iconUrl: LinksIcons[linkType],
+        alt: linkType,
+      });
     }
   });
 

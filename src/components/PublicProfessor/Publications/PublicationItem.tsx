@@ -4,7 +4,6 @@ import { ProfessorPublications } from '../../../types/Publications.d';
 export default function PublicationItem({
   acronymIssn,
   authors,
-  qualis,
   title,
   year,
   doi,
@@ -13,10 +12,9 @@ export default function PublicationItem({
 }: ProfessorPublications) {
   return (
     <Box width='100%' display='flex' flexDirection='column'>
-      <Box display='flex' justifyContent='space-between' alignItems='center' width='100%'>
-        <Typography variant='subtitle2'>{year}</Typography>
-        {qualis && <Typography variant='subtitle2'>{`[${qualis}]`}</Typography>}
-      </Box>
+      <Typography variant='subtitle2' textAlign='start'>
+        {year}
+      </Typography>
       <Link
         href={`https://doi.org/${doi}`}
         target='_blank'
@@ -35,7 +33,6 @@ export default function PublicationItem({
       <Box>
         {isEvent && acronymIssn && <Typography variant='overline'>{`[${acronymIssn}] `}</Typography>}
         <Typography variant='overline'>{eventJournal}</Typography>
-        {!isEvent && acronymIssn && <Typography variant='overline'>{` (${acronymIssn}) `}</Typography>}
       </Box>
     </Box>
   );

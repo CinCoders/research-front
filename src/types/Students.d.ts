@@ -18,3 +18,10 @@ export interface ProfessorStudents {
   yearStart?: number;
   yearEnd?: number;
 }
+
+export enum StudentDegrees {
+  INICIACAO_CIENTIFICA = 'Iniciação Científica',
+  DOUTORADO = 'Doutorado',
+  MESTRADO = 'Mestrado',
+  'POS-DOUTORADO' = 'Pós-doutorado',
+}

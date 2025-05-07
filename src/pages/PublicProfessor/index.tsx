@@ -1,37 +1,36 @@
 import { toast, ToastContainer } from '@cincoders/cinnamon';
-import { ArrowLeftOutlined, PersonOff } from '@mui/icons-material';
-import { Button, Typography } from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation, useNavigate, useParams } from 'react-router-dom';
-import { MenuItemProps } from '../../components/PublicProfessor/MenuItem';
+import { Outlet, useParams } from 'react-router-dom';
+import MobileMenu from '../../components/PublicProfessor/MobileMenu';
+import PatentItem from '../../components/PublicProfessor/Patents/PatentItem';
+import ProjectItem from '../../components/PublicProfessor/Projects/ProjectItem';
+import PublicationItem from '../../components/PublicProfessor/Publications/PublicationItem';
 import SideMenu from '../../components/PublicProfessor/SideMenu/SideMenu';
+import SupervisionItem from '../../components/PublicProfessor/Supervisions/SupervisionItem';
+import VerticalNavbar from '../../components/PublicProfessor/VerticalNavbar';
 import HumanResourcesService from '../../services/HumanResourcesService';
 import { PatentService } from '../../services/PatentService';
 import { ProjectsService } from '../../services/ProjectsService';
 import { PublicationsService } from '../../services/PublicationsService';
 import { StudentsService } from '../../services/StudentsService';
-import { Links } from '../../types/enums';
 import { ProfessorHr } from '../../types/HRProfessor.d';
 import { ProfessorPatents } from '../../types/Patents.d';
 import { ProfessorProjects } from '../../types/Projects.d';
 import { ProfessorPublications } from '../../types/Publications.d';
+import { PublicProfessorContext } from '../../types/PublicProfessor.d';
 import { ProfessorStudents } from '../../types/Students.d';
-
-export type PublicProfessorOutlet = {
-  publications?: ProfessorPublications[];
-  projects?: ProfessorProjects[];
-  patents?: ProfessorPatents[];
-  supervisions?: ProfessorStudents[];
-};
+import ScrollButtons from '../../utils/ScrollButtons';
+import EmployeeNotFound from './EmployeeNotFound';
 
 export default function PublicProfessor() {
-  const navigate = useNavigate();
-  const { pathname } = useLocation();
   const { alias } = useParams();
 
   const [professor, setProfessor] = useState<ProfessorHr | null>(null);
+  const [isTechinician, setIsTechnician] = useState(false);
   const [professorIsLoading, setProfessorIsLoading] = useState(true);
+  const [professorDetailsIsLoading, setProfessorDetailsIsLoading] = useState(true);
+  const [professorDetailsIsError, setProfessorDetailsIsError] = useState(false);
   const [professorNotFound, setProfessorNotFound] = useState(false);
   const [professorPublications, setProfessorPublications] = useState<ProfessorPublications[] | null>(null);
   const [professorProjects, setProfessorProjects] = useState<ProfessorProjects[] | null>(null);
@@ -50,9 +49,11 @@ export default function PublicProfessor() {
 
         if (!professorHr || professorHr.length === 0) {
           setProfessorNotFound(true);
+          return;
         }
 
         setLattesCode(professorHr[0].lattesCode);
+        setIsTechnician(professorHr[0].position.category.toLowerCase() !== 'professor');
 
         setProfessor({
           ...professorHr[0],
@@ -63,7 +64,7 @@ export default function PublicProfessor() {
         });
       } catch (error) {
         const errorMessage = error instanceof Error ? error.message : null;
-        toast.error(`Não foi possível carregar as informações do professor ${errorMessage}.`, {
+        toast.error(`Não foi possível encontrar informações para: ${alias}. ${errorMessage}.`, {
           autoClose: 3000,
         });
       } finally {
@@ -99,9 +100,12 @@ export default function PublicProfessor() {
             setProfessorStudents(data);
           });
         } catch (error) {
+          setProfessorDetailsIsError(true);
           toast.error('Ocorreu um erro ao carregar as contribuições. Tente novamente mais tarde.', {
             autoClose: 2000,
           });
+        } finally {
+          setProfessorDetailsIsLoading(false);
         }
       };
 
@@ -109,69 +113,16 @@ export default function PublicProfessor() {
     }
   }, [professor]);
 
-  if (professorNotFound) {
-    return (
-      <div
-        style={{
-          height: '100vh',
-          display: 'flex',
-          flexDirection: 'column',
-          justifyContent: 'center',
-          alignItems: 'center',
-          textAlign: 'center',
-          padding: '20px',
-        }}
-      >
-        <PersonOff sx={{ fontSize: 80, color: 'grey.500', mb: 2 }} />
-        <Typography variant='h4' gutterBottom>
-          Nenhum professor encontrado
-        </Typography>
-        <Typography variant='body1' color='text.secondary' sx={{ mb: 3 }}>
-          Não foi possível encontrar informações para o professor solicitado.
-        </Typography>
-        <Button
-          variant='outlined'
-          startIcon={<ArrowLeftOutlined />}
-          onClick={() => navigate(-1)}
-          sx={{ borderColor: 'error.main', color: 'error.main' }}
-        >
-          Voltar
-        </Button>
-      </div>
-    );
-  }
+  if (professorNotFound) return <EmployeeNotFound />;
 
-  const menuOptions: MenuItemProps[] = [
-    {
-      href: Links.PUBLIC_PROFESSOR_PUBLICATIONS,
-      title: 'Publicações',
-      active: !!professorPublications && professorPublications.length > 0,
-      isLoading: professorPublications == null,
-    },
-    {
-      href: Links.PUBLIC_PROFESSOR_PROJECTS,
-      title: 'Projetos',
-      active: !!professorProjects && professorProjects.length > 0,
-      isLoading: professorProjects == null,
-    },
-    {
-      href: Links.PUBLIC_PROFESSOR_PATENTS,
-      title: 'Patentes',
-      active: !!professorPatents && professorPatents.length > 0,
-      isLoading: professorPatents == null,
-    },
-    {
-      href: Links.PUBLIC_PROFESSOR_SUPERVISIONS,
-      title: 'Orientações Acadêmicas',
-      active: !!professorStudents && professorStudents.length > 0,
-      isLoading: professorStudents == null,
-    },
-  ];
-
-  const currentTitle = menuOptions.find(option => {
-    const normalizedPathname = pathname.endsWith('/') ? pathname.slice(0, -1) : pathname;
-    return option.href.replace(':alias', alias || '') === normalizedPathname;
-  })?.title;
+  const context = {
+    publications: professorPublications,
+    projects: professorProjects,
+    patents: professorPatents,
+    supervisions: professorStudents,
+    isLoading: professorDetailsIsLoading,
+    isError: professorDetailsIsError,
+  } as PublicProfessorContext;
 
   return (
     <>
@@ -194,26 +145,49 @@ export default function PublicProfessor() {
         minHeight='100vh'
         mt={4}
         marginX='auto'
+        display='flex'
+        flexDirection={{ xs: 'column', md: 'row' }}
+        justifyContent='start'
+        alignItems='start'
       >
-        <Grid xs={12} md={3}>
-          <SideMenu isLoading={professorIsLoading} menuOptions={menuOptions} professor={professor} alias={alias} />
+        <Grid
+          xs={12}
+          md={3}
+          maxWidth={isTechinician ? '45%' : '100%'}
+          sx={{ height: 'min-content' }}
+          display='flex'
+          flexDirection='column'
+          gap={4}
+        >
+          <SideMenu isLoading={professorIsLoading} professor={professor} alias={alias} />
+          {!isTechinician && <VerticalNavbar professorData={context} />}
         </Grid>
-        <Grid xs={12} md={8} display='flex' flexDirection='column' gap={4}>
-          <Typography variant='h4' fontWeight={500}>
-            {currentTitle}
-          </Typography>
-          <Outlet
-            context={
-              {
-                publications: professorPublications,
-                projects: professorProjects,
-                patents: professorPatents,
-                supervisions: professorStudents,
-              } as PublicProfessorOutlet
-            }
+        <Grid
+          xs={12}
+          md={8}
+          display={{ xs: 'none', md: 'flex' }}
+          flexDirection='column'
+          gap={4}
+          sx={{ height: '100%' }}
+        >
+          <Outlet context={context} />
+        </Grid>
+
+        {/* MOBILE */}
+        <Grid xs={12} display={{ xs: 'flex', md: 'none' }} flexDirection='column' gap={4} sx={{ height: '100%' }}>
+          <MobileMenu
+            options={[
+              { Card: PublicationItem, dataType: 'publications', title: 'Publicações' },
+              { Card: PatentItem, dataType: 'patents', title: 'Patentes' },
+              { Card: ProjectItem, dataType: 'projects', title: 'Projetos' },
+              { Card: SupervisionItem, dataType: 'supervisions', title: 'Orientações Acadêmicas' },
+            ]}
+            data={context}
           />
         </Grid>
       </Grid>
+
+      <ScrollButtons />
     </>
   );
 }
