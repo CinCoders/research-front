@@ -21,6 +21,7 @@ export enum Links {
   PROFESSOR_PATENTS = '/research/professors/:id/patents',
   QUALIS = '/research/qualis/',
   IMPORT_XML = '/research/import-xml',
+  IMPORT_JSON = '/research/import-json',
   LATTES = 'http://lattes.cnpq.br/:id',
   PROFESSORS_LIST = '/research/professors/list',
   PROFESSOR_INFO = '/research/professor/:id',

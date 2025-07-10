@@ -7,6 +7,7 @@ import { ImportXmlService } from '../../services/ImportXmlService';
 import { ImportXmlProps, XMLProps } from '../../types/Xml.d';
 import { XMLDiv, FilesButton, ImportButton, DataDiv, ButtonsDiv } from './styles';
 import CircularWithValueLabel from '../CircularProgressWithLabel';
+import { ImportJsonService } from '../../services/ImportJsonService';
 
 interface CustomDialog {
   title: string;
@@ -70,7 +71,8 @@ function ImportCard(props: { handleClose: () => void }) {
         if (
           e.target.files[i].type !== 'text/xml' &&
           e.target.files[i].type !== 'application/x-zip-compressed' &&
-          e.target.files[i].type !== 'application/zip'
+          e.target.files[i].type !== 'application/zip' &&
+          e.target.files[i].type !== 'application/json' 
         ) {
           flag = false;
           showDialog('Tipo do arquivo incorreto', 'alert', 'O tipo do arquivo deve ser XML ou ZIP');
@@ -131,8 +133,15 @@ function ImportCard(props: { handleClose: () => void }) {
         type: 'info',
       },
     );
-    const response = await ImportXmlService.importXml(updateProgress, importXml);
-    if (response.status === 201 && id) {
+    const file = importXml.xmlFiles?.[0];
+    let response;
+    if (file.type === 'application/json') {
+      response = await ImportJsonService.importJson(updateProgress, { jsonFile: file });
+    } else if (file.type === 'text/xml') {
+      response = await ImportXmlService.importXml(updateProgress, { xmlFiles: importXml.xmlFiles });
+    }
+
+    if (response && response.status === 201 && id) {
       toast.update(id, {
         render: 'Os arquivos foram enviados com sucesso!',
         icon: true,
@@ -180,7 +189,7 @@ function ImportCard(props: { handleClose: () => void }) {
           <DataDiv>
             <DataGrid columns={columns} rows={rows} />
           </DataDiv>
-          <p style={{ fontSize: '0.7em' }}>**Apenas arquivos do tipo xml ou zip são permitidos</p>
+          <p style={{ fontSize: '0.7em' }}>**Apenas arquivos do tipo xml, json ou zip são permitidos</p>
           <ButtonsDiv>
             <label htmlFor='contained-button-file'>
               <input
@@ -188,7 +197,7 @@ function ImportCard(props: { handleClose: () => void }) {
                 type='file'
                 id='contained-button-file'
                 multiple
-                accept='.zip, .xml'
+                accept='.zip, .xml, .json'
                 onChange={e => {
                   onChange(e);
                 }}
