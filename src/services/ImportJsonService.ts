@@ -17,7 +17,7 @@ export class ImportJsonService {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
-      validateStatus: (status: number) => [201, 500].includes(status),
+      validateStatus: (status: number) => [201, 406, 500].includes(status),
       onUploadProgress: progressEvent => {
         const progress: number = progressEvent?.total
           ? Math.round((progressEvent.loaded / progressEvent.total) * 100)

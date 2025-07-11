@@ -113,6 +113,7 @@ function ImportCard(props: { handleClose: () => void }) {
     }
   }
 
+
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setBlockImport(true);
@@ -137,7 +138,7 @@ function ImportCard(props: { handleClose: () => void }) {
     let response;
     if (file.type === 'application/json') {
       response = await ImportJsonService.importJson(updateProgress, { jsonFile: file });
-    } else if (file.type === 'text/xml') {
+    } else {
       response = await ImportXmlService.importXml(updateProgress, { xmlFiles: importXml.xmlFiles });
     }
 
@@ -153,7 +154,19 @@ function ImportCard(props: { handleClose: () => void }) {
         onClose: () => handleClose(),
         containerId: 'popup',
       });
-    } else {
+    } else if (response.status === 406) {
+      toast.update(id, {
+        render: 'O arquivo enviado não é válido.',
+        icon: true,
+        hideProgressBar: true,
+        type: 'error',
+        autoClose: false,
+        closeOnClick: true,
+        onClose: () => handleClose(),
+        containerId: 'popup',
+      });
+    }
+     else {
       toast.update(id, {
         render: 'Ocorreu um erro ao tentar enviar os arquivos.',
         icon: true,
