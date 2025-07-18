@@ -18,8 +18,7 @@ type ImportItem = {
   includedAt: string;
   importTime?: string;
   user: string;
-  storedXml?: boolean;
-  storedJson?: boolean;
+  stored: boolean;
   type: 'xml' | 'json';
 };
 
@@ -60,33 +59,23 @@ function ImportXml() {
 
 
       const xmls = xmlRes.data.data.map((elem: any): ImportItem => ({
-        id: elem.id,
-        professor: elem.professor,
-        name: elem.name,
-        status: elem.status,
+        ...elem,
+        stored: elem.storedXml,
         includedAt: dateInFull(new Date(elem.includedAt)),
         importTime: elem.importTime ? `${elem.importTime}s` : '',
-        user: elem.user,
-        storedXml: elem.storedXml,
         type: 'xml',
       }));
 
 
       const jsons = jsonRes.data.data.map((elem: any): ImportItem => ({
-        id: elem.id,
-        professor: elem.professor ?? '', 
-        name: elem.name,
-        status: elem.status,
+        ...elem,
+        stored: elem.storedJson,
         includedAt: dateInFull(new Date(elem.includedAt)),
         importTime: elem.importTime ? `${elem.importTime}s` : '',
-        user: elem.user,
-        storedJson: elem.storedJson,
         type: 'json',
       }));
 
-      const combined = [...xmls, ...jsons];
-
-      setRows(combined);
+      setRows([...xmls, ...jsons]);
       setPageState(current => ({ ...current, total: xmlRes.data.totalElements + jsonRes.data.totalElements }));
     } catch {
       toast.error('Não foi possível carregar o histórico de importações. Tente novamente mais tarde.', {
@@ -102,7 +91,7 @@ function ImportXml() {
     try {
       if (type === 'xml') {
         await ImportXmlService.reprocessXML(id);
-      } else {
+      } else if(type === 'json') {  
         await ImportJsonService.reprocessJson(id);
       }
       await loadPaginatedData(1, pageState.pageSize);
@@ -174,8 +163,8 @@ function ImportXml() {
       align: 'center',
       flex: 2,
       renderCell: params => {
-        const { status, storedXml, id, type } = params.row;
-        if (type === 'xml' && storedXml) {
+        const { status, stored, id, type } = params.row;
+        if (type === 'xml' && stored) {
           return (
             <AnimatedRefreshButton
               isrotating={['In Progress', 'Pending'].includes(status) || rotatingButtons[id]}
@@ -188,7 +177,7 @@ function ImportXml() {
               <RefreshIcon />
             </AnimatedRefreshButton>
           );
-        } else if (type === 'json') {
+        } else if (type === 'json' && stored) {
           return (
             <AnimatedRefreshButton
               isrotating={['In Progress', 'Pending'].includes(status) || rotatingButtons[id]}

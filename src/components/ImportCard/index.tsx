@@ -113,6 +113,20 @@ function ImportCard(props: { handleClose: () => void }) {
     }
   }
 
+  function toastMessage(message: string, type: 'success' | 'error' | 'info', hideProgressBar: boolean) {
+    if (id) {
+      toast.update(id, {
+        render: message,
+        icon: true,
+        hideProgressBar,
+        type,
+        autoClose: 5000,
+        closeOnClick: true,
+        onClose: () => handleClose(),
+        containerId: 'popup',
+      });
+    }
+  }
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -142,41 +156,16 @@ function ImportCard(props: { handleClose: () => void }) {
       response = await ImportXmlService.importXml(updateProgress, { xmlFiles: importXml.xmlFiles });
     }
 
-    if (response && response.status === 201 && id) {
-      toast.update(id, {
-        render: 'Os arquivos foram enviados com sucesso!',
-        icon: true,
-        hideProgressBar: false,
-        type: 'success',
-        closeButton: true,
-        closeOnClick: false,
-        autoClose: 5000,
-        onClose: () => handleClose(),
-        containerId: 'popup',
-      });
+    if (response && response.status === 201) {
+      toastMessage('Arquivos enviados com sucesso!', 'success', false);
     } else if (response.status === 406) {
-      toast.update(id, {
-        render: 'O arquivo enviado não é válido.',
-        icon: true,
-        hideProgressBar: true,
-        type: 'error',
-        autoClose: false,
-        closeOnClick: true,
-        onClose: () => handleClose(),
-        containerId: 'popup',
-      });
-    }
-     else {
-      toast.update(id, {
-        render: 'Ocorreu um erro ao tentar enviar os arquivos.',
-        icon: true,
-        hideProgressBar: true,
-        type: 'error',
-        autoClose: false,
-        closeOnClick: true,
-        onClose: () => handleClose(),
-        containerId: 'popup',
-      });
+      toastMessage(
+        'Formato inválido: o arquivo JSON deve conter um array de objetos.',
+        'error',
+        true,
+      );
+    } else {
+      toastMessage('Ocorreu um erro ao tentar enviar os arquivos.', 'error', true);
     }
     setBlockImport(false);
     setProgressValue(0);
@@ -202,7 +191,7 @@ function ImportCard(props: { handleClose: () => void }) {
           <DataDiv>
             <DataGrid columns={columns} rows={rows} />
           </DataDiv>
-          <p style={{ fontSize: '0.7em' }}>**Apenas arquivos do tipo xml, json ou zip são permitidos</p>
+          <p style={{ fontSize: '0.7em' }}>**Apenas arquivos do tipo xml, json ou zip de xmls são permitidos</p>
           <ButtonsDiv>
             <label htmlFor='contained-button-file'>
               <input
