@@ -9,8 +9,8 @@ export class ImportJsonService {
   ): Promise<AxiosResponse> {
     const formData = new FormData();
 
-    if (importJson.jsonFile) {    
-        formData.append(`file`, importJson.jsonFile);
+    if (importJson.jsonFile) {
+      formData.append('file', importJson.jsonFile);
     }
 
     const response = await apiBack.post('import-json', formData, {

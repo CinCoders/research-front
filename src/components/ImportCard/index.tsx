@@ -72,7 +72,7 @@ function ImportCard(props: { handleClose: () => void }) {
           e.target.files[i].type !== 'text/xml' &&
           e.target.files[i].type !== 'application/x-zip-compressed' &&
           e.target.files[i].type !== 'application/zip' &&
-          e.target.files[i].type !== 'application/json' 
+          e.target.files[i].type !== 'application/json'
         ) {
           flag = false;
           showDialog('Tipo do arquivo incorreto', 'alert', 'O tipo do arquivo deve ser XML ou ZIP');
@@ -159,11 +159,7 @@ function ImportCard(props: { handleClose: () => void }) {
     if (response && response.status === 201) {
       toastMessage('Arquivos enviados com sucesso!', 'success', false);
     } else if (response.status === 406) {
-      toastMessage(
-        'Formato inválido: o arquivo JSON deve conter um array de objetos.',
-        'error',
-        true,
-      );
+      toastMessage('Formato inválido: o arquivo JSON deve conter um array de objetos.', 'error', true);
     } else {
       toastMessage('Ocorreu um erro ao tentar enviar os arquivos.', 'error', true);
     }
