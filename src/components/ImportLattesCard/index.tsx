@@ -1,5 +1,5 @@
-import { useState, FormEvent, useEffect, ReactText } from 'react';
-import { Dialog, toast } from '@cincoders/cinnamon';
+import { useState, FormEvent, useEffect, useCallback } from 'react';
+import { Dialog, toast, ToastContainer } from '@cincoders/cinnamon';
 import { DataGrid, GridColDef, ptBR } from '@mui/x-data-grid';
 import { Modal, Grow } from '@mui/material';
 import { ProfessorService } from '../../services/ProfessorService';
@@ -30,26 +30,24 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
   const [blockImport, setBlockImport] = useState(false);
   const [selectedProfessor, setSelectedProfessor] = useState<string | null>(null);
 
-  let id: ReactText | undefined;
-
   const columns: GridColDef[] = [
     { field: 'identifier', headerName: 'Código Lattes', headerAlign: 'center', align: 'center', flex: 1 },
     { field: 'professorName', headerName: 'Nome', headerAlign: 'center', align: 'center', flex: 2 },
   ];
 
   function toastMessage(message: string, type: 'success' | 'error' | 'info', hideProgressBar: boolean) {
-    if (id) {
-      toast.update(id, {
-        render: message,
-        icon: true,
-        hideProgressBar,
-        type,
-        autoClose: 5000,
-        closeOnClick: true,
-        onClose: () => setOpen(false),
-        containerId: 'popup',
-      });
-    }
+    toast(message, {
+      icon: true,
+      hideProgressBar,
+      type,
+      autoClose: 5000,
+      closeOnClick: true,
+      onClose: () => {
+        setOpen(false);
+        setBlockImport(false);
+      },
+      containerId: 'popup',
+    });
   }
 
   function showDialog(
@@ -61,7 +59,7 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
     setDialogOptions({ title, type, content });
   }
 
-  async function findAllProfessors() {
+  const findAllProfessors = useCallback(async () => {
     setRows([]);
     try {
       const response = await ProfessorService.getProfessors();
@@ -74,13 +72,13 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
         setRows(data);
       }
     } catch {
-      toastMessage('Erro ao carregar a lista de professores.', 'error', true);  
+      toastMessage('Erro ao carregar a lista de professores.', 'error', true);
     }
-  }
+  }, []);
 
   useEffect(() => {
     if (open) findAllProfessors();
-  }, [open]);
+  }, [open, findAllProfessors]);
 
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -92,14 +90,12 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
 
     const response = await ImportXmlService.importProfessorById(selectedProfessor);
     if (response.status === 200) {
-      toastMessage('Currículo importado com sucesso!', 'success', true);
+      toastMessage('Currículo importado com sucesso!', 'success', false);
     } else if (response.status === 404) {
       toastMessage('Professor não encontrado.', 'error', true);
     } else {
       toastMessage('Erro ao importar o currículo.', 'error', true);
     }
-
-    setBlockImport(false);
     loadPaginatedData(pageState.page, pageState.pageSize);
   }
 
@@ -123,6 +119,10 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
 
             <form onSubmit={handleSubmit}>
               <DataDiv m='auto' mt='2em' mb='2em' pl='30px' pr='30px' sx={{ minWidth: '50vw' }}>
+                <ToastContainer
+                  topInitialPosition={0}
+                  toastProps={{ position: 'top-center', enableMultiContainer: true, containerId: 'popup' }}
+                />
                 <DataGrid
                   columns={columns}
                   rows={rows}
