@@ -1,5 +1,5 @@
 import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
-import { ReactText, useState } from 'react';
+import { useState } from 'react';
 import { toast } from '@cincoders/cinnamon';
 import { ImportButton } from './styles';
 import { ImportXmlService } from '../../services/ImportXmlService';
@@ -15,23 +15,22 @@ function ImportCardAll() {
     setOpen(false);
   };
 
-  let id: ReactText | undefined;
   function toastMessage(message: string, type: 'success' | 'error' | 'info', hideProgressBar: boolean) {
-    if (!id) {
-      id = toast(message, {
-        type,
-        hideProgressBar,
-        autoClose: 5000,
-        closeOnClick: true,
-        containerId: 'popup',
-      });
-    }
+    toast(message, {
+      icon: true,
+      type,
+      hideProgressBar,
+      autoClose: 5000,
+      closeOnClick: true,
+      containerId: 'page',
+    });
   }
 
   async function handleSubmit() {
     const response = await ImportXmlService.importAllProfessors();
     if (response.status === 200) {
-      toastMessage('Importação iniciada com sucesso!', 'success', true);
+      handleClose();
+      toastMessage('Importação iniciada com sucesso!', 'success', false);
     } else {
       toastMessage('Erro ao iniciar a importação!', 'error', true);
     }
