@@ -24,7 +24,6 @@ export const DataDiv = styled(Box)({
   width: '100%',
 });
 
-
 export const CardType = styled(Card)({
   display: 'flex',
   flexDirection: 'column',
