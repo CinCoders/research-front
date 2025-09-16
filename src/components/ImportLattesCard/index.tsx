@@ -32,7 +32,7 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
 
   const columns: GridColDef[] = [
     { field: 'identifier', headerName: 'Código Lattes', headerAlign: 'center', align: 'center', flex: 1 },
-    { field: 'professorName', headerName: 'Nome', headerAlign: 'center', align: 'center', flex: 2 },
+    { field: 'professorName', headerName: 'Professor', headerAlign: 'center', align: 'center', flex: 2 },
   ];
 
   function toastMessage(message: string, type: 'success' | 'error' | 'info', hideProgressBar: boolean) {
