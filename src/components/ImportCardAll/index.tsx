@@ -1,0 +1,68 @@
+import { Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, Button } from '@mui/material';
+import { useState } from 'react';
+import { toast } from '@cincoders/cinnamon';
+import { ImportButton } from './styles';
+import { ImportXmlService } from '../../services/ImportXmlService';
+
+function ImportCardAll() {
+  const [open, setOpen] = useState<boolean>(false);
+
+  const handleClickOpen = () => {
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  function toastMessage(message: string, type: 'success' | 'error' | 'info', hideProgressBar: boolean) {
+    toast(message, {
+      icon: true,
+      type,
+      hideProgressBar,
+      autoClose: 5000,
+      closeOnClick: true,
+      containerId: 'page',
+    });
+  }
+
+  async function handleSubmit() {
+    const response = await ImportXmlService.importAllProfessors();
+    if (response.status === 200) {
+      handleClose();
+      toastMessage('Importação iniciada com sucesso!', 'success', false);
+    } else {
+      toastMessage('Erro ao iniciar a importação!', 'error', true);
+    }
+    handleClose();
+  }
+
+  return (
+    <>
+      <ImportButton type='button' variant='contained' size='large' onClick={handleClickOpen}>
+        Importar Todos
+      </ImportButton>
+      <Dialog
+        open={open}
+        onClose={handleClose}
+        aria-labelledby='alert-dialog-title'
+        aria-describedby='alert-dialog-description'
+      >
+        <DialogTitle id='alert-dialog-title'>Tem certeza?</DialogTitle>
+        <DialogContent>
+          <DialogContentText id='alert-dialog-description'>
+            Ao clicar em confirmar, os CVs Lattes de todos os professores serão importados.
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Cancelar</Button>
+          <Button onClick={handleSubmit} autoFocus>
+            Confirmar
+          </Button>
+        </DialogActions>
+      </Dialog>
+    </>
+  );
+}
+
+export default ImportCardAll;
