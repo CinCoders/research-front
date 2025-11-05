@@ -8,7 +8,8 @@ import { ImportXmlService } from '../../services/ImportXmlService';
 import { ImportJsonService } from '../../services/ImportJsonService';
 import { renderImportStatus } from '../../components/ImportStatus';
 import ImportCard from '../../components/ImportCard';
-
+import ImportLattesCard from '../../components/ImportLattesCard';
+import ImportCardAll from '../../components/ImportCardAll';
 
 type ImportItem = {
   id: string;
@@ -57,23 +58,25 @@ function ImportXml() {
         ImportJsonService.findAllJsons(pageSize, page - 1),
       ]);
 
+      const xmls = xmlRes.data.data.map(
+        (elem: any): ImportItem => ({
+          ...elem,
+          stored: elem.storedXml,
+          includedAt: dateInFull(new Date(elem.includedAt)),
+          importTime: elem.importTime ? `${elem.importTime}s` : '',
+          type: 'xml',
+        }),
+      );
 
-      const xmls = xmlRes.data.data.map((elem: any): ImportItem => ({
-        ...elem,
-        stored: elem.storedXml,
-        includedAt: dateInFull(new Date(elem.includedAt)),
-        importTime: elem.importTime ? `${elem.importTime}s` : '',
-        type: 'xml',
-      }));
-
-
-      const jsons = jsonRes.data.data.map((elem: any): ImportItem => ({
-        ...elem,
-        stored: elem.storedJson,
-        includedAt: dateInFull(new Date(elem.includedAt)),
-        importTime: elem.importTime ? `${elem.importTime}s` : '',
-        type: 'json',
-      }));
+      const jsons = jsonRes.data.data.map(
+        (elem: any): ImportItem => ({
+          ...elem,
+          stored: elem.storedJson,
+          includedAt: dateInFull(new Date(elem.includedAt)),
+          importTime: elem.importTime ? `${elem.importTime}s` : '',
+          type: 'json',
+        }),
+      );
 
       setRows([...xmls, ...jsons]);
       setPageState(current => ({ ...current, total: xmlRes.data.totalElements + jsonRes.data.totalElements }));
@@ -91,7 +94,7 @@ function ImportXml() {
     try {
       if (type === 'xml') {
         await ImportXmlService.reprocessXML(id);
-      } else if(type === 'json') {  
+      } else if (type === 'json') {
         await ImportJsonService.reprocessJson(id);
       }
       await loadPaginatedData(1, pageState.pageSize);
@@ -105,7 +108,7 @@ function ImportXml() {
   };
 
   const columns: GridColDef[] = [
-   {
+    {
       field: 'name',
       headerName: 'Arquivo',
       headerAlign: 'center',
@@ -170,20 +173,25 @@ function ImportXml() {
               isrotating={['In Progress', 'Pending'].includes(status) || rotatingButtons[id]}
               onClick={() => handleReprocessClick(id, 'xml')}
               variant='text'
-              style={{ pointerEvents: ['In Progress', 'Pending'].includes(status) || rotatingButtons[id] ? 'none' : 'auto' }}
+              style={{
+                pointerEvents: ['In Progress', 'Pending'].includes(status) || rotatingButtons[id] ? 'none' : 'auto',
+              }}
               sx={{ '&:hover': { backgroundColor: 'initial' } }}
               disableRipple
             >
               <RefreshIcon />
             </AnimatedRefreshButton>
           );
-        } else if (type === 'json' && stored) {
+        }
+        if (type === 'json' && stored) {
           return (
             <AnimatedRefreshButton
               isrotating={['In Progress', 'Pending'].includes(status) || rotatingButtons[id]}
               onClick={() => handleReprocessClick(id, 'json')}
               variant='text'
-              style={{ pointerEvents: ['In Progress', 'Pending'].includes(status) || rotatingButtons[id] ? 'none' : 'auto' }}
+              style={{
+                pointerEvents: ['In Progress', 'Pending'].includes(status) || rotatingButtons[id] ? 'none' : 'auto',
+              }}
               sx={{ '&:hover': { backgroundColor: 'initial' } }}
               disableRipple
             >
@@ -233,14 +241,18 @@ function ImportXml() {
         <ImportButton type='button' variant='contained' size='large' onClick={() => setOpen(!open)}>
           Realizar Importação
         </ImportButton>
+        <ImportLattesCard loadPaginatedData={loadPaginatedData} pageState={pageState} />
+        <ImportCardAll />
       </ButtonsDiv>
       <Modal open={open} onClose={() => setOpen(false)}>
         <Grow in={open} {...(open ? { timeout: 500 } : {})}>
           <CardType>
-            <ImportCard handleClose={() => {
-              setOpen(false);
-              loadPaginatedData(pageState.page, pageState.pageSize);
-            }} />
+            <ImportCard
+              handleClose={() => {
+                setOpen(false);
+                loadPaginatedData(pageState.page, pageState.pageSize);
+              }}
+            />
           </CardType>
         </Grow>
       </Modal>

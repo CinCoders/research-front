@@ -48,4 +48,18 @@ export class ImportXmlService {
     });
     return response;
   }
+
+  static async importAllProfessors(): Promise<AxiosResponse> {
+    const response = await apiBack.post('import-xml/professors/lattes/import', {
+      validateStatus: (status: number) => [200].includes(status),
+    });
+    return response;
+  }
+
+  static async importProfessorById(identifier: string): Promise<AxiosResponse> {
+    const response = await apiBack.post(`import-xml/professors/${identifier}/lattes/import`, {
+      validateStatus: (status: number) => [200, 404].includes(status),
+    });
+    return response;
+  }
 }

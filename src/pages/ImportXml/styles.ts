@@ -62,7 +62,8 @@ export const DataDiv = styled(Box)({
 export const ButtonsDiv = styled(Box)({
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'space-between',
+  justifyContent: 'start',
+  gap: '1em',
   marginTop: '1em',
 });
 
