@@ -5,15 +5,27 @@ import { Modal, Grow } from '@mui/material';
 import RefreshIcon from '@mui/icons-material/Refresh';
 import { XMLDiv, DataDiv, ButtonsDiv, ImportButton, CardType, AnimatedRefreshButton } from './styles';
 import { ImportXmlService } from '../../services/ImportXmlService';
+import { ImportJsonService } from '../../services/ImportJsonService';
 import { renderImportStatus } from '../../components/ImportStatus';
-
 import ImportCard from '../../components/ImportCard';
-import { ImportXmlDto } from '../../types/Xml.d';
+
+
+type ImportItem = {
+  id: string;
+  professor?: string;
+  name: string;
+  status: string;
+  includedAt: string;
+  importTime?: string;
+  user: string;
+  stored: boolean;
+  type: 'xml' | 'json';
+};
 
 function ImportXml() {
   const navbar = useNavbar();
   const [loading, setLoading] = useState<boolean>(true);
-  const [rows, setRows] = useState<ImportXmlDto[]>([]);
+  const [rows, setRows] = useState<ImportItem[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [pageState, setPageState] = useState({
     page: 1,
@@ -21,7 +33,7 @@ function ImportXml() {
     isLoading: false,
     pageSize: 25,
   });
-  const [rotatingButtons, setRotatingButtons] = useState<{ [xmlId: string]: boolean }>({});
+  const [rotatingButtons, setRotatingButtons] = useState<{ [id: string]: boolean }>({});
 
   function dateInFull(date: Date) {
     const fullDate = date.toLocaleString(undefined, {
@@ -40,21 +52,31 @@ function ImportXml() {
     setLoading(true);
 
     try {
-      const { data } = await ImportXmlService.findAllImportedXmls(pageSize, page - 1);
+      const [xmlRes, jsonRes] = await Promise.all([
+        ImportXmlService.findAllImportedXmls(pageSize, page - 1),
+        ImportJsonService.findAllJsons(pageSize, page - 1),
+      ]);
 
-      const xmls = data.data.map(elem => ({
-        id: elem.id,
-        professor: elem.professor,
-        name: elem.name,
-        status: elem.status,
+
+      const xmls = xmlRes.data.data.map((elem: any): ImportItem => ({
+        ...elem,
+        stored: elem.storedXml,
         includedAt: dateInFull(new Date(elem.includedAt)),
         importTime: elem.importTime ? `${elem.importTime}s` : '',
-        user: elem.user,
-        storedXml: elem.storedXml,
+        type: 'xml',
       }));
 
-      setRows(xmls);
-      setPageState(currentValue => ({ ...currentValue, total: data.totalElements }));
+
+      const jsons = jsonRes.data.data.map((elem: any): ImportItem => ({
+        ...elem,
+        stored: elem.storedJson,
+        includedAt: dateInFull(new Date(elem.includedAt)),
+        importTime: elem.importTime ? `${elem.importTime}s` : '',
+        type: 'json',
+      }));
+
+      setRows([...xmls, ...jsons]);
+      setPageState(current => ({ ...current, total: xmlRes.data.totalElements + jsonRes.data.totalElements }));
     } catch {
       toast.error('Não foi possível carregar o histórico de importações. Tente novamente mais tarde.', {
         containerId: 'page',
@@ -64,22 +86,26 @@ function ImportXml() {
     }
   }, []);
 
-  const handleReprocessClick = async (xmlId: string) => {
-    setRotatingButtons(prevState => ({ ...prevState, [xmlId]: true }));
+  const handleReprocessClick = async (id: string, type: 'xml' | 'json') => {
+    setRotatingButtons(prev => ({ ...prev, [id]: true }));
     try {
-      await ImportXmlService.reprocessXML(xmlId);
+      if (type === 'xml') {
+        await ImportXmlService.reprocessXML(id);
+      } else if(type === 'json') {  
+        await ImportJsonService.reprocessJson(id);
+      }
       await loadPaginatedData(1, pageState.pageSize);
-    } catch (error) {
-      toast.error('Não foi possível reprocessar o XML. Tente novamente mais tarde.', {
+    } catch {
+      toast.error('Não foi possível reprocessar o arquivo. Tente novamente mais tarde.', {
         containerId: 'page',
       });
     } finally {
-      setRotatingButtons(prevState => ({ ...prevState, [xmlId]: false }));
+      setRotatingButtons(prev => ({ ...prev, [id]: false }));
     }
   };
 
   const columns: GridColDef[] = [
-    {
+   {
       field: 'name',
       headerName: 'Arquivo',
       headerAlign: 'center',
@@ -137,22 +163,28 @@ function ImportXml() {
       align: 'center',
       flex: 2,
       renderCell: params => {
-        const { status, storedXml, id } = params.row;
-        if (storedXml) {
+        const { status, stored, id, type } = params.row;
+        if (type === 'xml' && stored) {
           return (
             <AnimatedRefreshButton
-              isrotating={status === 'In Progress' || status === 'Pending' || rotatingButtons[id]}
-              onClick={() => handleReprocessClick(id)}
+              isrotating={['In Progress', 'Pending'].includes(status) || rotatingButtons[id]}
+              onClick={() => handleReprocessClick(id, 'xml')}
               variant='text'
-              style={{
-                pointerEvents:
-                  status === 'In Progress' || status === 'Pending' || rotatingButtons[id] ? 'none' : 'auto',
-              }}
-              sx={{
-                '&:hover': {
-                  backgroundColor: 'initial',
-                },
-              }}
+              style={{ pointerEvents: ['In Progress', 'Pending'].includes(status) || rotatingButtons[id] ? 'none' : 'auto' }}
+              sx={{ '&:hover': { backgroundColor: 'initial' } }}
+              disableRipple
+            >
+              <RefreshIcon />
+            </AnimatedRefreshButton>
+          );
+        } else if (type === 'json' && stored) {
+          return (
+            <AnimatedRefreshButton
+              isrotating={['In Progress', 'Pending'].includes(status) || rotatingButtons[id]}
+              onClick={() => handleReprocessClick(id, 'json')}
+              variant='text'
+              style={{ pointerEvents: ['In Progress', 'Pending'].includes(status) || rotatingButtons[id] ? 'none' : 'auto' }}
+              sx={{ '&:hover': { backgroundColor: 'initial' } }}
               disableRipple
             >
               <RefreshIcon />
@@ -165,7 +197,7 @@ function ImportXml() {
   ];
 
   useEffect(() => {
-    navbar?.setTitle('Importação de XML');
+    navbar?.setTitle('Importação de XML e JSON');
   }, [navbar]);
 
   useEffect(() => {
@@ -182,50 +214,33 @@ function ImportXml() {
           localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
           rowCount={pageState.total}
           rowHeight={55}
-          onPageChange={(newPage: number) => {
-            setPageState({ ...pageState, page: newPage + 1 });
-          }}
-          onPageSizeChange={newPageSize => {
-            setPageState({ ...pageState, pageSize: newPageSize });
-          }}
+          onPageChange={(newPage: number) => setPageState({ ...pageState, page: newPage + 1 })}
+          onPageSizeChange={newPageSize => setPageState({ ...pageState, pageSize: newPageSize })}
           page={pageState.page - 1}
           paginationMode='server'
           pageSize={pageState.pageSize}
           rowsPerPageOptions={[25, 50, 100]}
           sx={{
             '&>.MuiDataGrid-main': {
-              '&>.MuiDataGrid-columnHeaders': {
-                outline: 0,
-              },
-              '& div div div div >.MuiDataGrid-cell': {
-                outline: 0,
-              },
+              '&>.MuiDataGrid-columnHeaders': { outline: 0 },
+              '& div div div div >.MuiDataGrid-cell': { outline: 0 },
             },
           }}
           key={pageState.page}
         />
       </DataDiv>
       <ButtonsDiv>
-        <ImportButton
-          type='button'
-          variant='contained'
-          size='large'
-          onClick={() => {
-            setOpen(!open);
-          }}
-        >
+        <ImportButton type='button' variant='contained' size='large' onClick={() => setOpen(!open)}>
           Realizar Importação
         </ImportButton>
       </ButtonsDiv>
       <Modal open={open} onClose={() => setOpen(false)}>
         <Grow in={open} {...(open ? { timeout: 500 } : {})}>
           <CardType>
-            <ImportCard
-              handleClose={() => {
-                setOpen(false);
-                loadPaginatedData(pageState.page, pageState.pageSize);
-              }}
-            />
+            <ImportCard handleClose={() => {
+              setOpen(false);
+              loadPaginatedData(pageState.page, pageState.pageSize);
+            }} />
           </CardType>
         </Grow>
       </Modal>

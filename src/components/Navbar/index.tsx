@@ -54,7 +54,7 @@ export const links: SideMenuLink[] = [
   },
   {
     id: 8,
-    title: 'Importar XMLs',
+    title: 'Importar XMLs/Json',
     href: Links.IMPORT_XML,
     IconComponent: () => <UploadIcon />,
   },
