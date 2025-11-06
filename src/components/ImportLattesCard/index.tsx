@@ -1,11 +1,9 @@
-import { useState, FormEvent, useEffect, useCallback } from 'react';
 import { Dialog, toast, ToastContainer } from '@cincoders/cinnamon';
-import { DataGrid, GridColDef, ptBR } from '@mui/x-data-grid';
-import { Modal, Grow, Input, TextField } from '@mui/material';
-import { ProfessorService } from '../../services/ProfessorService';
-import { ImportButton, DataDiv, CardType, ImportLattesButton } from './styles';
+import { Grow, Modal, TextField } from '@mui/material';
+import { GridColDef } from '@mui/x-data-grid';
+import { FormEvent, useState } from 'react';
 import { ImportXmlService } from '../../services/ImportXmlService';
-import type { ProfessorDetails } from '../../types/Professor';
+import { CardType, DataDiv, ImportButton, ImportLattesButton } from './styles';
 
 interface CustomDialog {
   title: string;
@@ -62,15 +60,12 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
     if (!lattesProfessor || String(lattesProfessor).length !== 16) {
-      console.log('LATTES::: 1', lattesProfessor);
       showDialog('Código inválido', 'alert', 'O código Lattes deve conter 16 dígitos.');
       return;
     }
     setBlockImport(true);
 
-    console.log('LATTES::: 2', lattesProfessor);
     const response = await ImportXmlService.importProfessorById(lattesProfessor);
-    console.log('RESPONSE::: ', response);
     if (response.status === 200) {
       toastMessage('Currículo importado com sucesso!', 'success', false);
     } else if (response.status === 404) {
