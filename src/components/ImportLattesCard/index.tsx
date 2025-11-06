@@ -1,6 +1,5 @@
 import { Dialog, toast, ToastContainer } from '@cincoders/cinnamon';
 import { Grow, Modal, TextField } from '@mui/material';
-import { GridColDef } from '@mui/x-data-grid';
 import { FormEvent, useState } from 'react';
 import { ImportXmlService } from '../../services/ImportXmlService';
 import { CardType, DataDiv, ImportButton, ImportLattesButton } from './styles';
@@ -18,7 +17,6 @@ interface ImportLattesCardProps {
 
 function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLattesCardProps>) {
   const [open, setOpen] = useState(false);
-  const [rows, setRows] = useState<{ id: string; identifier: string; professorName: string }[]>([]);
   const [openDialog, setOpenDialog] = useState<boolean>(false);
   const [dialogOptions, setDialogOptions] = useState<CustomDialog>({
     title: '',
@@ -27,11 +25,6 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
   });
   const [blockImport, setBlockImport] = useState(false);
   const [lattesProfessor, setLattesProfessor] = useState<string | null>(null);
-
-  const columns: GridColDef[] = [
-    { field: 'identifier', headerName: 'Código Lattes', headerAlign: 'center', align: 'center', flex: 1 },
-    { field: 'professorName', headerName: 'Professor', headerAlign: 'center', align: 'center', flex: 2 },
-  ];
 
   function toastMessage(message: string, type: 'success' | 'error' | 'info', hideProgressBar: boolean) {
     toast(message, {
