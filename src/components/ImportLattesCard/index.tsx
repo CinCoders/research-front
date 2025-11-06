@@ -1,11 +1,9 @@
-import { useState, FormEvent, useEffect, useCallback } from 'react';
 import { Dialog, toast, ToastContainer } from '@cincoders/cinnamon';
-import { DataGrid, GridColDef, ptBR } from '@mui/x-data-grid';
-import { Modal, Grow } from '@mui/material';
-import { ProfessorService } from '../../services/ProfessorService';
-import { ImportButton, DataDiv, CardType, ImportLattesButton } from './styles';
+import { Grow, Modal, TextField } from '@mui/material';
+import { GridColDef } from '@mui/x-data-grid';
+import { FormEvent, useState } from 'react';
 import { ImportXmlService } from '../../services/ImportXmlService';
-import type { ProfessorDetails } from '../../types/Professor';
+import { CardType, DataDiv, ImportButton, ImportLattesButton } from './styles';
 
 interface CustomDialog {
   title: string;
@@ -28,7 +26,7 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
     content: '',
   });
   const [blockImport, setBlockImport] = useState(false);
-  const [selectedProfessor, setSelectedProfessor] = useState<string | null>(null);
+  const [lattesProfessor, setLattesProfessor] = useState<string | null>(null);
 
   const columns: GridColDef[] = [
     { field: 'identifier', headerName: 'Código Lattes', headerAlign: 'center', align: 'center', flex: 1 },
@@ -59,36 +57,15 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
     setDialogOptions({ title, type, content });
   }
 
-  const findAllProfessors = useCallback(async () => {
-    setRows([]);
-    try {
-      const response = await ProfessorService.getProfessors();
-      if (response.status === 200) {
-        const data = response.data.map((prof: ProfessorDetails) => ({
-          id: prof.identifier,
-          identifier: prof.identifier,
-          professorName: prof.professorName,
-        }));
-        setRows(data);
-      }
-    } catch {
-      toastMessage('Erro ao carregar a lista de professores.', 'error', true);
-    }
-  }, []);
-
-  useEffect(() => {
-    if (open) findAllProfessors();
-  }, [open, findAllProfessors]);
-
   async function handleSubmit(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!selectedProfessor) {
-      showDialog('Nenhum professor selecionado', 'alert', 'Selecione um professor para importar o currículo.');
+    if (!lattesProfessor || String(lattesProfessor).length !== 16) {
+      showDialog('Código inválido', 'alert', 'O código Lattes deve conter 16 dígitos.');
       return;
     }
     setBlockImport(true);
 
-    const response = await ImportXmlService.importProfessorById(selectedProfessor);
+    const response = await ImportXmlService.importProfessorById(lattesProfessor);
     if (response.status === 200) {
       toastMessage('Currículo importado com sucesso!', 'success', false);
     } else if (response.status === 404) {
@@ -123,22 +100,12 @@ function ImportLattesCard({ loadPaginatedData, pageState }: Readonly<ImportLatte
                   topInitialPosition={0}
                   toastProps={{ position: 'top-center', enableMultiContainer: true, containerId: 'popup' }}
                 />
-                <DataGrid
-                  columns={columns}
-                  rows={rows}
-                  localeText={ptBR.components.MuiDataGrid.defaultProps.localeText}
-                  rowHeight={55}
-                  autoHeight
-                  pageSize={5}
-                  onSelectionModelChange={ids => {
-                    setSelectedProfessor(ids.length > 0 ? ids[0].toString() : null);
-                  }}
-                  sx={{
-                    '&>.MuiDataGrid-main': {
-                      '&>.MuiDataGrid-columnHeaders': { outline: 0 },
-                      '& div div div div >.MuiDataGrid-cell': { outline: 0 },
-                    },
-                  }}
+                <TextField
+                  placeholder='Digite o código Lattes do professor'
+                  type='number'
+                  fullWidth
+                  onChange={e => setLattesProfessor(e.target.value)}
+                  inputProps={{ inputMode: 'numeric', pattern: '[0-9]*' }}
                 />
                 <ImportButton type='submit' variant='contained' size='large' disabled={blockImport}>
                   Importar
