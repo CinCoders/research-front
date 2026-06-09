@@ -15,6 +15,7 @@
   "scripts": {
     "start": "REACT_APP_VERSION=$npm_package_version react-scripts start",
     "build": "GENERATE_SOURCEMAP=false REACT_APP_VERSION=$npm_package_version react-scripts build",
+    "build:dev": "GENERATE_SOURCEMAP=false REACT_APP_VERSION=$npm_package_version react-scripts build && ((kubectl get pods -l app=$(npm pkg get name | tr -d '\"') -o jsonpath='{.items[*].metadata.name}' | xargs -I {} kubectl exec {} -- docker-entrypoint.sh) || true )",
     "lint": "eslint \"{src,apps,libs,test}/*/.ts\" --fix",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
