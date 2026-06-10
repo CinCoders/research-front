@@ -50,10 +50,8 @@ then
 else
   sed -i "/index  index.html index.htm;/a \        try_files \$uri \$uri/ \/$BASEURL\/index.html;" ./etc/nginx/conf.d/default.conf
   sed -i "s/location \/ {/location \/$BASEURL {/g" ./etc/nginx/conf.d/default.conf
+  sed -i "/location \/$BASEURL/,/}/s/root /alias/" ./etc/nginx/conf.d/default.conf
 
-  mv /usr/share/nginx/html/ /usr/share/nginx/html$BASEURL
-  mkdir /usr/share/nginx/html
-  mv /usr/share/nginx/html$BASEURL/ /usr/share/nginx/html/$BASEURL
 fi
 
 echo `date +%FT%T%Z` "- docker-entrypoint.sh finished..."
