@@ -40,9 +40,16 @@ else
 fi
 
 # Defining environment variables
-sed -i "s;<research_apiurl>;$RESEARCH_APIURL;g" ${list}
-sed -i "s;<hr_apiurl>;$HR_APIURL;g" ${list}
-sed -i "s;\"<keycloak_public_json>\";'$KEYCLOAK_PUBLIC_JSON';g" ${list}
+if grep -E "<research_apiurl>|<hr_apiurl>|<keycloak_public_json>" ${list} -q;
+then
+  echo "Replacing environment variables in ${list}"
+
+  sed -i "s;<research_apiurl>;$RESEARCH_APIURL;g" ${list}
+  sed -i "s;<hr_apiurl>;$HR_APIURL;g" ${list}
+  sed -i "s;\"<keycloak_public_json>\";'$KEYCLOAK_PUBLIC_JSON';g" ${list}
+else
+  echo "No environment placeholders found to replace in ${list}"
+fi
 
 if grep "try_files" /etc/nginx/conf.d/default.conf -q;
 then
