@@ -13,8 +13,8 @@
     "url": "https://github.com/cincoders/research-front"
   },
   "scripts": {
-    "start": "react-scripts start",
-    "build": "GENERATE_SOURCEMAP=false react-scripts build",
+    "start": "REACT_APP_VERSION=$npm_package_version react-scripts start",
+    "build": "GENERATE_SOURCEMAP=false REACT_APP_VERSION=$npm_package_version react-scripts build",
     "lint": "eslint \"{src,apps,libs,test}/*/.ts\" --fix",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

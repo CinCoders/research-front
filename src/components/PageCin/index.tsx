@@ -39,6 +39,7 @@ export default function PageCin({ auth, permittedRoles }: PageCinProps) {
         textLink: 'Site',
         description: 'Helpdesk - Gerência de Sistemas \n Sala B011',
         copyrightText: 'CIn UFPE | Todos os direitos reservados',
+        appVersion: process.env.REACT_APP_VERSION,
       }}
       haveToast
       createNavbarContext
