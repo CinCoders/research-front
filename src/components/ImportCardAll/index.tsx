@@ -27,9 +27,12 @@ function ImportCardAll() {
   }
 
   async function handleSubmit() {
-    const {data, status} = await ImportXmlService.importAllProfessors();
+    const { data, status } = await ImportXmlService.importAllProfessors();
     if (status === 200) {
-      const message = data.professorsCount > 0 ? `Importação de ${data.professorsCount} professores iniciada com sucesso!` : 'Nenhum professor encontrado para atualização';
+      const message =
+        data.professorsCount > 0
+          ? `Importação de ${data.professorsCount} professores iniciada com sucesso!`
+          : 'Nenhum professor encontrado para atualização';
       toastMessage(message, data.professorsCount > 0 ? 'success' : 'info', false);
     } else {
       toastMessage('Erro ao iniciar a importação!', 'error', true);
