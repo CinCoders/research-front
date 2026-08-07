@@ -1,6 +1,6 @@
 import { AxiosResponse } from 'axios';
-import apiBack from './api';
 import { ImportXmlDto, ImportXmlProps, Pagination } from '../types/Xml.d';
+import apiBack from './api';
 
 export class ImportXmlService {
   static async importXml(
@@ -49,8 +49,8 @@ export class ImportXmlService {
     return response;
   }
 
-  static async importAllProfessors(): Promise<AxiosResponse> {
-    const response = await apiBack.post('import-xml/professors/lattes/import', {
+  static async importAllProfessors(): Promise<AxiosResponse<{ professorsCount: number }>> {
+    const response = await apiBack.post<{ professorsCount: number }>('import-xml/update-all', {
       validateStatus: (status: number) => [200].includes(status),
     });
     return response;
