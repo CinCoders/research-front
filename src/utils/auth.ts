@@ -12,4 +12,5 @@ export const authProviderProps: AuthProviderProps = {
   automaticSilentRenew: true,
   checkSessionIntervalInSeconds: 2,
   monitorSession: false,
+  redirectMethod: 'replace',
 };
