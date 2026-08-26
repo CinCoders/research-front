@@ -40,20 +40,29 @@ else
 fi
 
 # Defining environment variables
-sed -i "s;<research_apiurl>;$RESEARCH_APIURL;g" ${list}
-sed -i "s;<hr_apiurl>;$HR_APIURL;g" ${list}
-sed -i "s;\"<keycloak_public_json>\";'$KEYCLOAK_PUBLIC_JSON';g" ${list}
+if grep -E "<research_apiurl>|<hr_apiurl>|<keycloak_public_json>" ${list} -q;
+then
+  echo "Replacing environment variables in ${list}"
 
-if grep "try_files" ./etc/nginx/conf.d/default.conf;
+  sed -i "s;<research_apiurl>;$RESEARCH_APIURL;g" ${list}
+  sed -i "s;<hr_apiurl>;$HR_APIURL;g" ${list}
+  sed -i "s;\"<keycloak_public_json>\";'$KEYCLOAK_PUBLIC_JSON';g" ${list}
+else
+  echo "No environment placeholders found to replace in ${list}"
+fi
+
+if grep "try_files" /etc/nginx/conf.d/default.conf -q;
 then
   echo "Try file already configured"
 else
-  sed -i "/index  index.html index.htm;/a \        try_files \$uri \$uri/ \/$BASEURL\/index.html;" ./etc/nginx/conf.d/default.conf
-  sed -i "s/location \/ {/location \/$BASEURL {/g" ./etc/nginx/conf.d/default.conf
-
-  mv /usr/share/nginx/html/ /usr/share/nginx/html$BASEURL
-  mkdir /usr/share/nginx/html
-  mv /usr/share/nginx/html$BASEURL/ /usr/share/nginx/html/$BASEURL
+  if [ -z "$BASEURL" ]
+  then
+      sed -i '/index  index.html index.htm;/a \        try_files $uri $uri/ /index.html;' /etc/nginx/conf.d/default.conf
+  else
+      sed -i "\|index  index.html index.htm;|a \        try_files \$uri \$uri/ /$BASEURL/index.html;" /etc/nginx/conf.d/default.conf
+      sed -i "s|location / {|location /$BASEURL {|g" /etc/nginx/conf.d/default.conf
+      sed -i "\|location /$BASEURL|,/}/s|root |alias|" /etc/nginx/conf.d/default.conf
+  fi
 fi
 
 echo `date +%FT%T%Z` "- docker-entrypoint.sh finished..."
